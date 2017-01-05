@@ -1,0 +1,1 @@
+This folder contains the hand sketched screen just raw out of mind and would be updated based on the future developments.

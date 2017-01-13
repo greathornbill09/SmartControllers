@@ -22,7 +22,6 @@ public class SplashScreen extends Activity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             }
         };
         splashThread.start();

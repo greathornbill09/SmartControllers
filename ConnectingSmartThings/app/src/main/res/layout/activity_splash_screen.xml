@@ -15,5 +15,6 @@
         android:textStyle="bold"
         android:textSize="50sp"
         android:gravity="center"
-        android:text="@string/dummy_content" />
+        android:text="@string/dummy_content"
+        android:theme="@style/AppTheme" />
 </RelativeLayout>

@@ -2,6 +2,8 @@
     <string name="app_name">ConnectingSmartThings</string>
     <string name="dummy_content">Company \n Logo </string>
     <string name="filter">About Us </string>
-    <string name="version">App-Version "0.0.2" </string>
+    <string name="version">App-Version "0.0.3" </string>
     <string name="app_introduction">Introduction </string>
+    <string name="error_bluetooth_not_supported">This Phone does not support this functionality</string>
+    <string name="unknown_device">Unknown device</string>
 </resources>

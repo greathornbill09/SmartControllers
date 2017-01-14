@@ -1,11 +1,9 @@
 package com.hornbill.great.connectingsmartthings;
 
-import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public class DeviceScan extends ListActivity {
@@ -32,6 +30,8 @@ public class DeviceScan extends ListActivity {
                 //openSearchView();
                 return true;
             case R.id.action_app_introduction:
+                Intent intent = new Intent(this, IntroActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -17,8 +17,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DeviceScan"
-                  android:theme="@style/MyTheme"></activity>
+        <activity
+            android:name=".DeviceScan"
+            android:theme="@style/MyTheme" />
+        <activity
+            android:name=".IntroActivity"
+            android:theme="@style/IntroTheme"/>
     </application>
+
 
 </manifest>

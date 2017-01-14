@@ -19,4 +19,9 @@
         <item name="android:src">@drawable/settings_slider</item>
     </style>
 
+    <style name="IntroTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/CadetBlue</item>
+    </style>
+
 </resources>

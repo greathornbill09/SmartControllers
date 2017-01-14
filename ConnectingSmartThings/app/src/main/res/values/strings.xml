@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">ConnectingSmartThings</string>
     <string name="dummy_content">Company \n Logo </string>
+    <string name="filter">About Us </string>
+    <string name="version">App-Version "0.0.1" </string>
+    <string name="app_introduction">Introduction </string>
+
 </resources>

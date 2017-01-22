@@ -32,6 +32,10 @@
         <activity
             android:name=".IntroActivity"
             android:theme="@style/IntroTheme"/>
+
+        <service
+            android:name=".BluetoothLeService"
+            android:enabled="true" />
     </application>
 
 

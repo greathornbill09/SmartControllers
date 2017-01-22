@@ -4,17 +4,23 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -30,6 +36,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public class DeviceScan extends ListActivity {
@@ -45,15 +52,39 @@ public class DeviceScan extends ListActivity {
     private Handler mHandler;
     private SwipeRefreshLayout mySwipeRefreshLayout;
 
+
+    /*Bluetooth related*/
+    private BluetoothLeService mBluetoothLeService;
+    private String mDeviceAddress;
+    private String mDeviceName;
+    ProgressDialog showProgress;
+
+    // Internal state machine.
+    public enum ConnectionState
+    {
+        IDLE,
+        CONNECT_GATT,
+        DISCOVER_SERVICES,
+        READ_CHARACTERISTIC,
+        FAILED,
+        SUCCEEDED,
+    }
+
+    private ConnectionState mState = ConnectionState.IDLE;
+
+
+    private final static String TAG = DeviceScan.class.getSimpleName();
+
    @Override
     protected void onCreate(Bundle savedInstanceState) {
        super.onCreate(savedInstanceState);
+       Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+       bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
        getActionBar().setTitle(R.string.app_name);
        activity = this;
        mHandler = new Handler();
        setContentView(R.layout.activity_device_scan);
-
-
+       showProgress = new ProgressDialog(this);
        // Ask for required permission
        //BT/BLE
        // Use this check to determine whether BLE is supported on the device.  Then you can
@@ -107,10 +138,10 @@ public class DeviceScan extends ListActivity {
                new SwipeRefreshLayout.OnRefreshListener() {
                    @Override
                    public void onRefresh() {
-                       Log.w("scanLeDevice", "onRefresh called from SwipeRefreshLayout");
-
-                       // This method performs the actual data-refresh operation.
-                       // The method calls setRefreshing(false) when it's finished.
+                       Log.e(TAG, "onRefresh called from SwipeRefreshLayout");
+                      // This method performs the actual data-refresh operation.
+                      // This method performs the actual data-refresh operation.
+                      // The method calls setRefreshing(false) when it's finished.
 
                        scanLeDevice(false);
                        mLeDeviceListAdapter.notifyDataSetChanged();
@@ -122,6 +153,27 @@ public class DeviceScan extends ListActivity {
 
     }
 
+
+    // Code to manage Service lifecycle.
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            Log.e(TAG, "onServiceConnected: initializing");
+            mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
+            if (!mBluetoothLeService.initialize()) {
+                Log.e(TAG, "Unable to initialize Bluetooth");
+                finish();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mBluetoothLeService = null;
+        }
+    };
+
+
     /*Permission related methods*/
 
     @Override
@@ -129,7 +181,7 @@ public class DeviceScan extends ListActivity {
         switch (requestCode) {
             case PERMISSION_COARSE_LOACTION_REQUEST: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.w("BleActivity", "Granted coarse location permission");
+                    Log.e(TAG, "Granted coarse location permission");
                     //Enable GPS
                     if (!isLocationServiceEnabled(activity)) {
                         Intent enableLocationIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -271,7 +323,7 @@ public class DeviceScan extends ListActivity {
 
     private void scanLeDevice(final boolean enable) {
 
-        Log.w("scanLeDevice", "scanLeDevice with "+enable);
+        Log.e(TAG, "scanLeDevice with "+enable);
 
         if (enable) {
             // Start the discovery just popup the pairing dialog to foreground
@@ -336,6 +388,14 @@ public class DeviceScan extends ListActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mBluetoothLeService.disconnect();
+        unbindService(mServiceConnection);
+        mBluetoothLeService = null;
+    }
+
+   @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // User chose not to enable Bluetooth.
         if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
@@ -356,6 +416,7 @@ public class DeviceScan extends ListActivity {
         super.onPause();
         scanLeDevice(false);
         mLeDeviceListAdapter.clear();
+        unregisterReceiver(mGattUpdateReceiver);
     }
 
 
@@ -384,13 +445,30 @@ public class DeviceScan extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
+
         final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
         if (device == null) return;
         if (mScanning) {
             scanLeDevice(false);
             mScanning = false;
         }
-        Log.w("scanLeDevice", "onListItemClick clicked ");
+        Log.e(TAG, "onListItemClick clicked ");
+        mDeviceName = device.getName();
+        mDeviceAddress = device.getAddress();
+        showProgress.setTitle("Connecting");
+        showProgress.setMessage("Please wait while we communicate with the device...");
+        showProgress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        showProgress.show();
+        Log.e(TAG, "Loading Status: "+showProgress.isShowing());
+        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        if (mBluetoothLeService != null) {
+            final boolean result = mBluetoothLeService.connect(mDeviceAddress);
+            // Update state.
+            mState = ConnectionState.CONNECT_GATT;
+            Log.d(TAG, "Connect request result=" + result);
+        }
+/* To dismiss the dialog
+        progress.dismiss();*/
     }
 
 
@@ -399,6 +477,7 @@ public class DeviceScan extends ListActivity {
         if (doubleBackToExitPressedOnce) {
             //super.onBackPressed();
             if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()){
+                mBluetoothLeService.disconnect();
                 mBluetoothAdapter.disable();
             }
             moveTaskToBack(true);
@@ -417,5 +496,93 @@ public class DeviceScan extends ListActivity {
             }
         }, 2000);
     }
+
+
+    /* Connection related methods */
+    private static IntentFilter makeGattUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(BluetoothLeService.ACTION_AQUA_RTC_CHAR_AVAILABLE);
+        intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        return intentFilter;
+    }
+
+    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                final String action = intent.getAction();
+                if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                    mState = ConnectionState.DISCOVER_SERVICES;
+                    Log.e(TAG, "mGattUpdateReceiver : Gatt Connected");
+                } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                    Log.e(TAG, "mGattUpdateReceiver : Gatt DisConnected");
+                    switch (mState) {
+                        case IDLE:
+                            // Do nothing in this case.
+                            break;
+                        case CONNECT_GATT:
+                            // This can happen if the bond information is incorrect. Delete it and reconnect.
+                            deleteBondInformation(mBluetoothLeService.mBluetoothGatt.getDevice());
+                            mBluetoothLeService.connect(mDeviceAddress);
+                            break;
+                        case DISCOVER_SERVICES:
+                            // This can also happen if the bond information is incorrect. Delete it and reconnect.
+                            deleteBondInformation(mBluetoothLeService.mBluetoothGatt.getDevice());
+                            mBluetoothLeService.connect(mDeviceAddress);
+                            break;
+                        case READ_CHARACTERISTIC:
+                            // Disconnected while reading the characteristic. Probably just a link failure.
+                            mBluetoothLeService.mBluetoothGatt.close();
+                            mState = ConnectionState.FAILED;
+                            break;
+                        case FAILED:
+                        case SUCCEEDED:
+                            // Normal disconnection.
+                            break;
+                        default:
+                            //             mBluetoothLeService.mBluetoothGatt.close();
+                    }
+
+                    invalidateOptionsMenu();
+                } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                    // Show all the supported services and characteristics on the user interface.
+                    //    displayGattServices(mBluetoothLeService.getSupportedGattServices());
+                    Log.w(TAG, "mGattUpdateReceiver : Service Discovery Complete");
+                    mState = ConnectionState.READ_CHARACTERISTIC;
+                } else if (BluetoothLeService.ACTION_AQUA_RTC_CHAR_AVAILABLE.equals(action)) {
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_RTC_CHAR_AVAILABLE ");
+                    mState = ConnectionState.SUCCEEDED;
+                    /* Display the read or notification here*/
+                    String data;
+                    if((data = intent.getExtras().getString("RTC_DATA")) != null) {
+                        Log.w(TAG, "mGattDataUpdateReceiver : RTC_DATA"+data);
+                    }
+                }else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
+                    final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
+                    final int prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
+
+                    if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
+                        Log.w(TAG, "Paired");
+                    } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED) {
+                        Log.w(TAG, "Unpaired");
+                    }
+                }
+            }
+    };
+
+
+    public static void deleteBondInformation(BluetoothDevice device)
+    {
+        try{
+            // FFS Google, just unhide the method.
+            Method m = device.getClass().getMethod("removeBond", (Class[]) null);
+            m.invoke(device, (Object[]) null);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
 
 }

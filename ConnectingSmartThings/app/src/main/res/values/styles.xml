@@ -23,5 +23,4 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/CadetBlue</item>
     </style>
-
 </resources>

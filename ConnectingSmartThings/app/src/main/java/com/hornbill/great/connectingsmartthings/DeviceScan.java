@@ -45,6 +45,7 @@ public class DeviceScan extends ListActivity {
     private static final int LOCATION_SERVICE_ENABLED = 3;
     private static final long SCAN_PERIOD = 10000;
     boolean doubleBackToExitPressedOnce = false;
+    boolean isRecieverRgistered = false;
     private Activity activity;
     private BluetoothAdapter mBluetoothAdapter;
     private LeDeviceListAdapter mLeDeviceListAdapter;
@@ -416,7 +417,10 @@ public class DeviceScan extends ListActivity {
         super.onPause();
         scanLeDevice(false);
         mLeDeviceListAdapter.clear();
-        unregisterReceiver(mGattUpdateReceiver);
+        if(isRecieverRgistered == true) {
+            unregisterReceiver(mGattUpdateReceiver);
+            isRecieverRgistered = false;
+        }
     }
 
 
@@ -461,6 +465,7 @@ public class DeviceScan extends ListActivity {
         showProgress.show();
         Log.e(TAG, "Loading Status: "+showProgress.isShowing());
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        isRecieverRgistered = true;
         if (mBluetoothLeService != null) {
             final boolean result = mBluetoothLeService.connect(mDeviceAddress);
             // Update state.

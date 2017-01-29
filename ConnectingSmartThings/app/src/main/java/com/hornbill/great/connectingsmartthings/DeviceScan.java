@@ -131,7 +131,6 @@ public class DeviceScan extends ListActivity {
            }
        }
 
-
        /* Swipe to Refresh*/
        /* * Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked when the user * performs a swipe-to-refresh gesture. */
        mySwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
@@ -510,7 +509,10 @@ public class DeviceScan extends ListActivity {
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
         intentFilter.addAction(BluetoothLeService.ACTION_AQUA_RTC_CHAR_AVAILABLE);
+        intentFilter.addAction(BluetoothLeService.ACTION_AQUA_LIGHT_CHAR_AVAILABLE);
+        intentFilter.addAction(BluetoothLeService.ACTION_AQUA_MOTOR_CHAR_AVAILABLE);
         intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(BluetoothLeService.ACTION_NO_CHAR_AVAILABLE);
         return intentFilter;
     }
 
@@ -559,11 +561,43 @@ public class DeviceScan extends ListActivity {
                 } else if (BluetoothLeService.ACTION_AQUA_RTC_CHAR_AVAILABLE.equals(action)) {
                     Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_RTC_CHAR_AVAILABLE ");
                     mState = ConnectionState.SUCCEEDED;
-                    /* Display the read or notification here*/
-                    String data;
-                    if((data = intent.getExtras().getString("RTC_DATA")) != null) {
-                        Log.w(TAG, "mGattDataUpdateReceiver : RTC_DATA"+data);
+                    /* Now its time to move on to control centre activity*/
+                    if(showProgress.isShowing() == true)
+                    {
+                        showProgress.dismiss();
                     }
+                    final Intent controlIntent = new Intent(activity,ControlCentre.class);
+                    startActivity(controlIntent);
+
+                }else if (BluetoothLeService.ACTION_AQUA_LIGHT_CHAR_AVAILABLE.equals(action)) {
+                    ((globalData)activity.getApplication()).setAquaChar((byte)1);
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " +((globalData)activity.getApplication()).getAquaChar());
+
+                }else if (BluetoothLeService.ACTION_AQUA_MOTOR_CHAR_AVAILABLE.equals(action)) {
+                    ((globalData)activity.getApplication()).setAquaChar((byte)2);
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaChar());
+                }else if (BluetoothLeService.ACTION_NO_CHAR_AVAILABLE.equals(action)) {
+                    if(showProgress.isShowing() == true)
+                    {
+                        showProgress.dismiss();
+                    }
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_NO_CHAR_AVAILABLE ");
+                    /* Not the intended message*/
+                    AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(activity);
+
+                    dlgAlert.setMessage("This is not the right device, Please scan again");
+                    dlgAlert.setTitle("Error Message...");
+                    dlgAlert.setPositiveButton("OK", null);
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.create().show();
+
+                    dlgAlert.setPositiveButton("Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+
                 }else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
                     final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
                     final int prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);

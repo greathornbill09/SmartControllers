@@ -23,8 +23,10 @@ import java.util.HashMap;
 public class SampleGattAttributes {
     private static HashMap<String, String> attributes = new HashMap();
     public static String AQUA_SERVICE = "0003CAA4-0000-1000-8000-00805F9B0141";
-    public static String AQUA_LIGHT_CHARACTERISTIC = "0003CAA5-0010-0080-0000-805F9B013130";
     public static String AQUA_RTC_CHARACTERISTIC = "0003CAA5-0010-0080-0000-805F9B013120";
+    public static String AQUA_LIGHT_CHARACTERISTIC = "0003CAA5-0010-0080-0000-805F9B013130";
+    public static String AQUA_MOTOR_CHARACTERISTIC = "0003CAA5-0010-0080-0000-805F9B013140";
+
     public static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
 
     static {

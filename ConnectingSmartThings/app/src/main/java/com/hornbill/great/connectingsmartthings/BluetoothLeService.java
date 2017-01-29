@@ -57,7 +57,9 @@ public class BluetoothLeService extends Service {
     private String mBluetoothDeviceAddress;
     public BluetoothGatt mBluetoothGatt;
     private int mConnectionState = STATE_DISCONNECTED;
-    public boolean aquaDeviceReadInProgress = false;
+    public boolean aquaDeviceRTCReadInProgress = false;
+    public boolean aquaDeviceLightReadInProgress = false;
+    public boolean aquaDeviceMotorReadInProgress = false;
 
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
@@ -75,13 +77,23 @@ public class BluetoothLeService extends Service {
             "com.example.bluetooth.le.EXTRA_DATA";
     public final static String ACTION_AQUA_RTC_CHAR_AVAILABLE =
             "com.example.bluetooth.le.ACTION_AQUA_RTC_CHAR_AVAILABLE";
+    public final static String ACTION_AQUA_LIGHT_CHAR_AVAILABLE =
+            "com.example.bluetooth.le.ACTION_AQUA_LIGHT_CHAR_AVAILABLE";
+    public final static String ACTION_AQUA_MOTOR_CHAR_AVAILABLE =
+            "com.example.bluetooth.le.ACTION_AQUA_MOTOR_CHAR_AVAILABLE";
+
+    public final static String ACTION_NO_CHAR_AVAILABLE =
+            "com.example.bluetooth.le.ACTION_NO_CHAR_AVAILABLE";
+
 
     public final static UUID UUID_AQUA_SERVICE =
             UUID.fromString(SampleGattAttributes.AQUA_SERVICE);
-    public final static UUID UUID_AQUA_LIGHT =
-            UUID.fromString(SampleGattAttributes.AQUA_LIGHT_CHARACTERISTIC);
     public final static UUID UUID_AQUA_RTC_CHARACTERISTIC =
             UUID.fromString(SampleGattAttributes.AQUA_RTC_CHARACTERISTIC);
+    public final static UUID UUID_AQUA_LIGHT_CHARACTERISTIC =
+            UUID.fromString(SampleGattAttributes.AQUA_LIGHT_CHARACTERISTIC);
+    public final static UUID UUID_AQUA_MOTOR_CHARACTERISTIC =
+            UUID.fromString(SampleGattAttributes.AQUA_MOTOR_CHARACTERISTIC);
     public final static UUID UUID_CLIENT_CHARACTERISTIC_CONFIG =
             UUID.fromString(SampleGattAttributes.CLIENT_CHARACTERISTIC_CONFIG);
 
@@ -116,9 +128,9 @@ public class BluetoothLeService extends Service {
                 /* Read characteristics */
                 BluetoothGattCharacteristic characteristic = null;
                 if(characteristic == null) {
-                    characteristic = getAquaCharacteristic();
+                    characteristic = getAquaCharacteristic(UUID_AQUA_SERVICE,UUID_AQUA_RTC_CHARACTERISTIC);
                     if (characteristic != null) {
-                        aquaDeviceReadInProgress = true;
+                        aquaDeviceRTCReadInProgress = true;
                     }
                 }
                 /* Read the characteristics obtained*/
@@ -127,6 +139,7 @@ public class BluetoothLeService extends Service {
                     readCharacteristic(characteristic);
                 } else {
                     Log.w(TAG, "Failed to obtain read characteristic ");
+                    broadcastUpdate(ACTION_NO_CHAR_AVAILABLE);
                 }
 
             }else if (status == BluetoothGatt.GATT_INSUFFICIENT_AUTHENTICATION ||
@@ -142,6 +155,7 @@ public class BluetoothLeService extends Service {
                 }
             }else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
+                broadcastUpdate(ACTION_NO_CHAR_AVAILABLE);
             }
         }
 
@@ -150,14 +164,36 @@ public class BluetoothLeService extends Service {
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                Log.w(TAG, "onCharacteristicRead: GATT_SUCCESS ==>"+aquaDeviceReadInProgress );
-                if(aquaDeviceReadInProgress == true) {
+                Log.w(TAG, "onCharacteristicRead: GATT_SUCCESS <==>");
+                if(aquaDeviceRTCReadInProgress == true) {
                     //broadcastUpdate(ACTION_AQUA_RTC_CHAR_AVAILABLE, characteristic);
+                    aquaDeviceRTCReadInProgress = false;
+                    /* Check for Schedule Light Characteristics*/
+                    characteristic = getAquaCharacteristic(UUID_AQUA_SERVICE, UUID_AQUA_LIGHT_CHARACTERISTIC);
+                    if (characteristic != null) {
+                        aquaDeviceLightReadInProgress = true;
+                        Log.w(TAG, "onCharacteristicRead: aquaDeviceLightReadInProgress ===");
+                        readCharacteristic(characteristic);
+                    }
+                }
+                else if (aquaDeviceLightReadInProgress == true) {
+                    broadcastUpdate(ACTION_AQUA_LIGHT_CHAR_AVAILABLE, characteristic);
+                    characteristic = getAquaCharacteristic(UUID_AQUA_SERVICE, UUID_AQUA_MOTOR_CHARACTERISTIC);
+                    if (characteristic != null) {
+                        aquaDeviceMotorReadInProgress = true;
+                        Log.w(TAG, "onCharacteristicRead: aquaDeviceMotorReadInProgress ===");
+                        readCharacteristic(characteristic);
+                        aquaDeviceLightReadInProgress = false;
+                    }
+                }
+                else if (aquaDeviceMotorReadInProgress == true){
+                    broadcastUpdate(ACTION_AQUA_MOTOR_CHAR_AVAILABLE, characteristic);
+                    aquaDeviceMotorReadInProgress = false;
+                    Log.w(TAG, "onCharacteristicRead: All Characteristic Reads done ===");
                     /* Enable Notification as well*/
                     writeCustomCharacteristic(0x0001,UUID_AQUA_RTC_CHARACTERISTIC);
-                    aquaDeviceReadInProgress = false;
-
-                }else {
+                }
+                else {
                     broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
                 }
             }else if (BluetoothGatt.GATT_INSUFFICIENT_AUTHENTICATION == status ||
@@ -173,6 +209,7 @@ public class BluetoothLeService extends Service {
                 }
             } else {
                 Log.w(TAG, "Some other error");
+                broadcastUpdate(ACTION_NO_CHAR_AVAILABLE);
             }
         }
 
@@ -192,6 +229,7 @@ public class BluetoothLeService extends Service {
     private void broadcastUpdate(final String action,
                                  final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
+        boolean updateActivity = false;
 
         // This is special handling for the Heart Rate Measurement profile.  Data parsing is
         // carried out as per profile specifications:
@@ -218,17 +256,49 @@ public class BluetoothLeService extends Service {
                     Log.w(TAG, "broadcastUpdate: minute "+minute );
                     Log.w(TAG, "broadcastUpdate: seconds "+seconds );
                     Log.w(TAG, "broadcastUpdate: dayofweek "+dayofweek );
-                    syncRTCOnDevice(month,day,hour,minute,dayofweek,characteristic);
+                    updateActivity = syncRTCOnDevice(month,day,hour,minute,dayofweek,characteristic);
                     intent.putExtra("RTC_DATA", stringBuilder.toString());
+                    if(updateActivity == true) {
+                        sendBroadcast(intent);
+                    }
+
+                }
+                else if (characteristic.getUuid().compareTo(UUID_AQUA_LIGHT_CHARACTERISTIC) == 0){
+                    Log.w(TAG, "broadcastUpdate: UUID_AQUA_LIGHT_CHARACTERISTIC" );
+                    Log.w(TAG, "broadcastUpdate: UUID_AQUA_LIGHT_CHARACTERISTIC data length:" +data.length);
+                    /*final byte lightMode = bb.get(0);
+                    final byte lightStatus = bb.get(1);
+                    final byte lightdayOfWeek = bb.get(2);
+                    final byte lightHours = bb.get(3);
+                    final byte lightMinutes = bb.get(4);
+                    final byte lightRecurrences = bb.get(5);
+                    final byte lightDurationHours = bb.get(6);
+                    final byte lightDurationMinutes = bb.get(7);
+                    Log.w(TAG, "broadcastUpdate: Light Mode"+lightMode);
+                    Log.w(TAG, "broadcastUpdate: Light Status"+lightStatus);
+                    Log.w(TAG, "broadcastUpdate: Light DoW"+lightdayOfWeek);
+                    Log.w(TAG, "broadcastUpdate: Light Hours"+lightHours);
+                    Log.w(TAG, "broadcastUpdate: Light Minutes"+lightMinutes);
+                    Log.w(TAG, "broadcastUpdate: Light Recurrences"+lightRecurrences);
+                    Log.w(TAG, "broadcastUpdate: Light Duration Hours"+lightDurationHours);
+                    Log.w(TAG, "broadcastUpdate: Light Duration Minutes"+lightDurationMinutes);*/
+                    sendBroadcast(intent);
+
+                }
+                else if (characteristic.getUuid().compareTo(UUID_AQUA_MOTOR_CHARACTERISTIC) == 0) {
+                    Log.w(TAG, "broadcastUpdate: UUID_AQUA_MOTOR_CHARACTERISTIC" );
+                    Log.w(TAG, "broadcastUpdate: UUID_AQUA_MOTOR_CHARACTERISTIC data length:" +data.length);
+                    sendBroadcast(intent);
                 }
             }
         }
-        sendBroadcast(intent);
+
     }
 
-    public void syncRTCOnDevice(byte month, byte day,byte hour,byte minute,byte dayofweek,
+    public boolean syncRTCOnDevice(byte month, byte day,byte hour,byte minute,byte dayofweek,
                                 final BluetoothGattCharacteristic characteristic){
 
+        boolean isSyncCompleted = false;
         Log.w(TAG, "syncRTCOnDevice: Checking for the host time and date");
         if (characteristic.getUuid().compareTo(UUID_AQUA_RTC_CHARACTERISTIC) == 0) {
             int hostMonth, hostDay, hostHour, hostMinute, hostSeconds, hostDayOfWeek;
@@ -255,9 +325,11 @@ public class BluetoothLeService extends Service {
 
             } else {
                 Log.w(TAG, "syncRTCOnDevice: Sync not required");
+                isSyncCompleted = true;
             }
         }
 
+        return isSyncCompleted;
     }
 
     public class LocalBinder extends Binder {
@@ -266,7 +338,7 @@ public class BluetoothLeService extends Service {
         }
     }
 
-    public BluetoothGattCharacteristic getAquaCharacteristic() {
+    public BluetoothGattCharacteristic getAquaCharacteristic(UUID Service, UUID Characteristics) {
         BluetoothGattCharacteristic mWriteCharacteristic = null;
 
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
@@ -274,14 +346,14 @@ public class BluetoothLeService extends Service {
             return mWriteCharacteristic;
         }
         /*check if the service is available on the device*/
-        BluetoothGattService mCustomService = mBluetoothGatt.getService(UUID_AQUA_SERVICE);
+        BluetoothGattService mCustomService = mBluetoothGatt.getService(Service);
         if(mCustomService == null){
             Log.w(TAG, "Custom BLE Service not found");
             return mWriteCharacteristic;
         }
 
         /* get the read characteristic from the service */
-        mWriteCharacteristic = mCustomService.getCharacteristic(UUID_AQUA_RTC_CHARACTERISTIC);
+        mWriteCharacteristic = mCustomService.getCharacteristic(Characteristics);
         if(mWriteCharacteristic == null) {
             Log.w(TAG, "Wrong Characteristic UUID");
             return mWriteCharacteristic;
@@ -447,7 +519,7 @@ public class BluetoothLeService extends Service {
         UUID ccd = null;
 
         if(UUID_AQUA_RTC_CHARACTERISTIC == uuid){
-            characteristic = getAquaCharacteristic();
+            characteristic = getAquaCharacteristic(UUID_AQUA_SERVICE,UUID_AQUA_RTC_CHARACTERISTIC);
             if (characteristic == null){
                 Log.w(TAG, "Failed to obtain  Aqua LIGHT RTC notify characteristic ");
             }

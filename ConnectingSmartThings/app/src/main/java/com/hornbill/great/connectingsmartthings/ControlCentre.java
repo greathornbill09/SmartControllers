@@ -16,7 +16,7 @@ public class ControlCentre extends Activity {
     private final static String TAG = ControlCentre.class.getSimpleName();
     private Button light_btn;
     private Button motor_btn;
-    byte aquaChar = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,27 +26,25 @@ public class ControlCentre extends Activity {
         getActionBar().setTitle(R.string.control_centre);
         light_btn = (Button) findViewById(R.id.lightButton);
         motor_btn = (Button) findViewById(R.id.MotorButton);
-        aquaChar = ((globalData) this.getApplication()).getAquaChar();
-        if( aquaChar == 2){
-            light_btn.setVisibility(View.VISIBLE);
-            motor_btn.setVisibility(View.VISIBLE);
+        light_btn.setVisibility(View.VISIBLE);
+        motor_btn.setVisibility(View.VISIBLE);
 
 
 
-            light_btn.setOnClickListener(new Button.OnClickListener() {
-                public void onClick(View v) {
-                    Log.e(TAG, "Light Button On Click");
-                }
-            });
+        light_btn.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                Log.e(TAG, "Light Button On Click");
+            }
+        });
 
-            motor_btn.setOnClickListener(new Button.OnClickListener() {
-                public void onClick(View v) {
-                    Log.e(TAG, "Motor Button On Click");
-                }
-            });
+        motor_btn.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                Log.e(TAG, "Motor Button On Click");
+            }
+        });
 
 
-        }
+
     }
 
 

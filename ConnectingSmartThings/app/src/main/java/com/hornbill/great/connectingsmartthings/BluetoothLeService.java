@@ -266,28 +266,13 @@ public class BluetoothLeService extends Service {
                 else if (characteristic.getUuid().compareTo(UUID_AQUA_LIGHT_CHARACTERISTIC) == 0){
                     Log.w(TAG, "broadcastUpdate: UUID_AQUA_LIGHT_CHARACTERISTIC" );
                     Log.w(TAG, "broadcastUpdate: UUID_AQUA_LIGHT_CHARACTERISTIC data length:" +data.length);
-                    /*final byte lightMode = bb.get(0);
-                    final byte lightStatus = bb.get(1);
-                    final byte lightdayOfWeek = bb.get(2);
-                    final byte lightHours = bb.get(3);
-                    final byte lightMinutes = bb.get(4);
-                    final byte lightRecurrences = bb.get(5);
-                    final byte lightDurationHours = bb.get(6);
-                    final byte lightDurationMinutes = bb.get(7);
-                    Log.w(TAG, "broadcastUpdate: Light Mode"+lightMode);
-                    Log.w(TAG, "broadcastUpdate: Light Status"+lightStatus);
-                    Log.w(TAG, "broadcastUpdate: Light DoW"+lightdayOfWeek);
-                    Log.w(TAG, "broadcastUpdate: Light Hours"+lightHours);
-                    Log.w(TAG, "broadcastUpdate: Light Minutes"+lightMinutes);
-                    Log.w(TAG, "broadcastUpdate: Light Recurrences"+lightRecurrences);
-                    Log.w(TAG, "broadcastUpdate: Light Duration Hours"+lightDurationHours);
-                    Log.w(TAG, "broadcastUpdate: Light Duration Minutes"+lightDurationMinutes);*/
+                    intent.putExtra("LIGHTSchedule",data);
                     sendBroadcast(intent);
 
                 }
                 else if (characteristic.getUuid().compareTo(UUID_AQUA_MOTOR_CHARACTERISTIC) == 0) {
                     Log.w(TAG, "broadcastUpdate: UUID_AQUA_MOTOR_CHARACTERISTIC" );
-                    Log.w(TAG, "broadcastUpdate: UUID_AQUA_MOTOR_CHARACTERISTIC data length:" +data.length);
+                    intent.putExtra("MOTORSchedule",data);
                     sendBroadcast(intent);
                 }
             }

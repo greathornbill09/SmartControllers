@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public class DeviceScan extends ListActivity {
@@ -570,12 +571,59 @@ public class DeviceScan extends ListActivity {
                     startActivity(controlIntent);
 
                 }else if (BluetoothLeService.ACTION_AQUA_LIGHT_CHAR_AVAILABLE.equals(action)) {
-                    ((globalData)activity.getApplication()).setAquaChar((byte)1);
-                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " +((globalData)activity.getApplication()).getAquaChar());
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE ");
+                    final byte[]scheduleData;
+                    if ((scheduleData = intent.getExtras().getByteArray("LIGHTSchedule")) != null) {
+                        Log.w(TAG,"mGattDataUpdateReceiver : Got the Light Schedule data in App");
+                        ByteBuffer scheduleBuffer = ByteBuffer.wrap(scheduleData);
+                        Log.w(TAG, "broadcastUpdate: LIGHTSchedule Buffer Length "+scheduleData.length);
+
+                        ((globalData)activity.getApplication()).setAquaLightChar("lightmode",(scheduleBuffer.get(0)));
+                        ((globalData)activity.getApplication()).setAquaLightChar("lightstatus",(scheduleBuffer.get(1)));
+                        ((globalData)activity.getApplication()).setAquaLightChar("lightdow",(scheduleBuffer.get(2)));
+                        ((globalData)activity.getApplication()).setAquaLightChar("lighthours",(scheduleBuffer.get(3)));
+                        ((globalData)activity.getApplication()).setAquaLightChar("lightminutes",(scheduleBuffer.get(4)));
+                        ((globalData)activity.getApplication()).setAquaLightChar("lightrecurrences",(scheduleBuffer.get(5)));
+                        ((globalData)activity.getApplication()).setAquaLightChar("lightdurationhours",(scheduleBuffer.get(6)));
+                        ((globalData)activity.getApplication()).setAquaLightChar("lightdurationminutes",(scheduleBuffer.get(7)));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightmode"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightstatus"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightdow"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lighthours"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightminutes"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightrecurrences"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightdurationhours"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightdurationminutes"));
+                    }
 
                 }else if (BluetoothLeService.ACTION_AQUA_MOTOR_CHAR_AVAILABLE.equals(action)) {
-                    ((globalData)activity.getApplication()).setAquaChar((byte)2);
-                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaChar());
+                    final byte[]scheduleMotorData;
+                    if ((scheduleMotorData = intent.getExtras().getByteArray("MOTORSchedule")) != null) {
+                        Log.w(TAG,"mGattDataUpdateReceiver : Got the Light Schedule data in App");
+                        ByteBuffer scheduleBuffer = ByteBuffer.wrap(scheduleMotorData);
+                        Log.w(TAG, "broadcastUpdate: MOTORSchedule Buffer Length "+ scheduleMotorData.length);
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motormode",(scheduleBuffer.get(0)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motorpump",(scheduleBuffer.get(1)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motorvalve",(scheduleBuffer.get(2)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motordow",(scheduleBuffer.get(3)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motorhours",(scheduleBuffer.get(4)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motorminutes",(scheduleBuffer.get(5)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motorrecurrence",(scheduleBuffer.get(6)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motordurationhours",(scheduleBuffer.get(7)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motordurationminutes",(scheduleBuffer.get(8)));
+
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motormode"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motorpump"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motorvalve"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motordow"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motorhours"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motorminutes"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours"));
+                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes"));
+                    }
+
+
                 }else if (BluetoothLeService.ACTION_NO_CHAR_AVAILABLE.equals(action)) {
                     if(showProgress.isShowing() == true)
                     {

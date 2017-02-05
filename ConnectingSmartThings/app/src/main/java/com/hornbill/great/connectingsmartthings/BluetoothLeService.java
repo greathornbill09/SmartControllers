@@ -229,7 +229,7 @@ public class BluetoothLeService extends Service {
     private void broadcastUpdate(final String action,
                                  final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
-        boolean updateActivity = false;
+
 
         // This is special handling for the Heart Rate Measurement profile.  Data parsing is
         // carried out as per profile specifications:
@@ -249,6 +249,7 @@ public class BluetoothLeService extends Service {
                     final byte minute = bb.get(5);
                     final byte seconds = bb.get(6);
                     final byte dayofweek = bb.get(7);
+                    /*
                     Log.w(TAG, "broadcastUpdate: year "+year );
                     Log.w(TAG, "broadcastUpdate: month "+month );
                     Log.w(TAG, "broadcastUpdate: day "+day );
@@ -256,11 +257,11 @@ public class BluetoothLeService extends Service {
                     Log.w(TAG, "broadcastUpdate: minute "+minute );
                     Log.w(TAG, "broadcastUpdate: seconds "+seconds );
                     Log.w(TAG, "broadcastUpdate: dayofweek "+dayofweek );
-                    updateActivity = syncRTCOnDevice(month,day,hour,minute,dayofweek,characteristic);
+                    */
+                    syncRTCOnDevice(month,day,hour,minute,dayofweek,characteristic);
                     intent.putExtra("RTC_DATA", stringBuilder.toString());
-                    if(updateActivity == true) {
-                        sendBroadcast(intent);
-                    }
+                    sendBroadcast(intent);
+
 
                 }
                 else if (characteristic.getUuid().compareTo(UUID_AQUA_LIGHT_CHARACTERISTIC) == 0){
@@ -496,6 +497,21 @@ public class BluetoothLeService extends Service {
         if (mBluetoothGatt == null) return null;
 
         return mBluetoothGatt.getServices();
+    }
+
+
+    public void writeDataToCustomCharacteristic(UUID uuid,byte[] data){
+        BluetoothGattCharacteristic charValue=null;
+
+        Log.w(TAG, "writeDataToCustomCharacteristic:"+data);
+
+        if(uuid == UUID_AQUA_LIGHT_CHARACTERISTIC) {
+            charValue = getAquaCharacteristic(UUID_AQUA_SERVICE, UUID_AQUA_LIGHT_CHARACTERISTIC);
+        }else if (uuid == UUID_AQUA_MOTOR_CHARACTERISTIC){
+            charValue = getAquaCharacteristic(UUID_AQUA_SERVICE, UUID_AQUA_MOTOR_CHARACTERISTIC);
+        }
+        charValue.setValue(data);
+        mBluetoothGatt.writeCharacteristic(charValue);
     }
 
 

@@ -166,6 +166,7 @@ public class DeviceScan extends ListActivity {
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
+
         }
 
         @Override
@@ -393,7 +394,8 @@ public class DeviceScan extends ListActivity {
         super.onDestroy();
         mBluetoothLeService.disconnect();
         unbindService(mServiceConnection);
-        mBluetoothLeService = null;
+        //mBluetoothLeService = null;
+        //((globalData)activity.getApplication()).setBluetoothLeService(mBluetoothLeService);
     }
 
    @Override

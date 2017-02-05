@@ -11,6 +11,7 @@ public class globalData extends Application {
 
     private final static String TAG = globalData.class.getSimpleName();
 
+
     /* Light Char*/
     private byte lightMode = 0;
     private byte lightStatus = 0;

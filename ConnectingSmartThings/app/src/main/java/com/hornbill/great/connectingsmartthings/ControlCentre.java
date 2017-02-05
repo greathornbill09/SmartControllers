@@ -28,12 +28,11 @@ public class ControlCentre extends Activity {
         motor_btn = (Button) findViewById(R.id.MotorButton);
         light_btn.setVisibility(View.VISIBLE);
         motor_btn.setVisibility(View.VISIBLE);
-
-
-
+        final Intent onLightClickIntent = new Intent(this,LightController.class);
         light_btn.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 Log.e(TAG, "Light Button On Click");
+                startActivity(onLightClickIntent);
             }
         });
 

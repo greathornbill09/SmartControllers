@@ -1,10 +1,18 @@
 <resources>
     <string name="app_name">ConnectingSmartThings</string>
     <string name="control_centre">Control Centre</string>
+    <string name="light_control">Light Controller</string>
+    <string name="motor_control">Motor Controller</string>
     <string name="dummy_content">Company \n Logo </string>
     <string name="filter">About Us </string>
     <string name="version">App-Version "0.0.3" </string>
     <string name="app_introduction">Introduction </string>
     <string name="error_bluetooth_not_supported">This Phone does not support this functionality</string>
     <string name="unknown_device">Unknown device</string>
+
+    <string-array name="repeat">
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+    </string-array>
 </resources>

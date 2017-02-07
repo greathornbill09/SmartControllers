@@ -393,6 +393,8 @@ public class DeviceScan extends ListActivity {
     protected void onDestroy() {
         super.onDestroy();
         mBluetoothLeService.disconnect();
+        /* Clear off the RTC sync flag*/
+        ((globalData) this.getApplication()).setRtcSyncDone(false);
         unbindService(mServiceConnection);
         //mBluetoothLeService = null;
         //((globalData)activity.getApplication()).setBluetoothLeService(mBluetoothLeService);
@@ -419,10 +421,10 @@ public class DeviceScan extends ListActivity {
         super.onPause();
         scanLeDevice(false);
         mLeDeviceListAdapter.clear();
-        if(isRecieverRgistered == true) {
+        /*if(isRecieverRgistered == true) {
             unregisterReceiver(mGattUpdateReceiver);
             isRecieverRgistered = false;
-        }
+        }*/
     }
 
 
@@ -466,6 +468,8 @@ public class DeviceScan extends ListActivity {
         showProgress.setCancelable(false); // disable dismiss by tapping outside of the dialog
         showProgress.show();
         Log.e(TAG, "Loading Status: "+showProgress.isShowing());
+        /* Clear off the RTC sync flag*/
+        ((globalData) this.getApplication()).setRtcSyncDone(false);
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         isRecieverRgistered = true;
         if (mBluetoothLeService != null) {
@@ -486,6 +490,10 @@ public class DeviceScan extends ListActivity {
             if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()){
                 mBluetoothLeService.disconnect();
                 mBluetoothAdapter.disable();
+                if(isRecieverRgistered == true) {
+                    unregisterReceiver(mGattUpdateReceiver);
+                    isRecieverRgistered = false;
+                }
             }
             moveTaskToBack(true);
             android.os.Process.killProcess(android.os.Process.myPid());

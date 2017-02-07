@@ -229,6 +229,7 @@ public class BluetoothLeService extends Service {
     private void broadcastUpdate(final String action,
                                  final BluetoothGattCharacteristic characteristic) {
         final Intent intent = new Intent(action);
+        boolean rtcSyncDone=false;
 
 
         // This is special handling for the Heart Rate Measurement profile.  Data parsing is
@@ -258,9 +259,13 @@ public class BluetoothLeService extends Service {
                     Log.w(TAG, "broadcastUpdate: seconds "+seconds );
                     Log.w(TAG, "broadcastUpdate: dayofweek "+dayofweek );
                     */
-                    syncRTCOnDevice(month,day,hour,minute,dayofweek,characteristic);
-                    intent.putExtra("RTC_DATA", stringBuilder.toString());
-                    sendBroadcast(intent);
+                    rtcSyncDone=syncRTCOnDevice(month,day,hour,minute,dayofweek,characteristic);
+                    if ((rtcSyncDone == true) && ((((globalData)this.getApplication()).getRtcSyncStatus()) == false)) {
+                        ((globalData) this.getApplication()).setRtcSyncDone(rtcSyncDone);
+                        intent.putExtra("RTC_DATA", stringBuilder.toString());
+                        Log.w(TAG, "Sending Broadcast Update to App: UUID_AQUA_RTC_CHARACTERISTIC" );
+                        sendBroadcast(intent);
+                    }
 
 
                 }

@@ -1,6 +1,7 @@
 package com.hornbill.great.connectingsmartthings;
 
 import android.app.Application;
+import android.icu.text.DateFormat;
 import android.util.Log;
 
 /**
@@ -11,6 +12,9 @@ public class globalData extends Application {
 
     private final static String TAG = globalData.class.getSimpleName();
 
+
+    /* RTC Sync Details*/
+    private boolean rtcSyncNotified = false;
 
     /* Light Char*/
     private byte lightMode = 0;
@@ -33,6 +37,14 @@ public class globalData extends Application {
     private byte motorDurationHours = 0;
     private byte motorDurationMinutes = 0;
 
+    public boolean getRtcSyncStatus(){
+        return rtcSyncNotified;
+    }
+
+    public void setRtcSyncDone(Boolean val){
+
+        rtcSyncNotified = val;
+    }
 
     public byte getAquaLightChar(String returnString) {
 

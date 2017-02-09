@@ -155,19 +155,19 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                 Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorpump"));
                 motorScheduleData[1] = ((globalData)activity.getApplication()).getAquaMotorChar("motorpump");
                 Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorvalve"));
-                motorScheduleData[1] = ((globalData)activity.getApplication()).getAquaMotorChar("motorvalve");
+                motorScheduleData[2] = ((globalData)activity.getApplication()).getAquaMotorChar("motorvalve");
                 Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motordow"));
-                motorScheduleData[2] = ((globalData)activity.getApplication()).getAquaMotorChar("motordow");
+                motorScheduleData[3] = ((globalData)activity.getApplication()).getAquaMotorChar("motordow");
                 Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorhours"));
-                motorScheduleData[3] = ((globalData)activity.getApplication()).getAquaMotorChar("motorhours");
+                motorScheduleData[4] = ((globalData)activity.getApplication()).getAquaMotorChar("motorhours");
                 Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorminutes"));
-                motorScheduleData[4] = ((globalData)activity.getApplication()).getAquaMotorChar("motorminutes");
+                motorScheduleData[5] = ((globalData)activity.getApplication()).getAquaMotorChar("motorminutes");
                 Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence"));
-                motorScheduleData[5] = ((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence");
+                motorScheduleData[6] = ((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence");
                 Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours"));
-                motorScheduleData[6] = ((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours");
+                motorScheduleData[7] = ((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours");
                 Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes"));
-                motorScheduleData[7] = ((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes");
+                motorScheduleData[8] = ((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes");
 
                 Log.w(TAG," Writing Schedule details over BLE");
                 motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,motorScheduleData);

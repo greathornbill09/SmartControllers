@@ -65,6 +65,11 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         }
 
 
+        scheduleView = (TextView) findViewById(R.id.scheduleDetails);
+        /* Update the display area*/
+        displaySchedule();
+
+
         /*Displaying in the Motor switch*/
         motorSwitch = (Switch) findViewById(R.id.myMotorSwitch);
         motorSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -172,8 +177,8 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                 Log.w(TAG," Writing Schedule details over BLE");
                 motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,motorScheduleData);
 
-                /* Update the display area
-                displaySchedule();*/
+                /* Update the display area*/
+                displaySchedule();
 
             }
         });
@@ -307,6 +312,42 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             Log.e(TAG, "onDateTimeCancel");
         }
     };
+
+
+    private void displaySchedule(){
+        if((((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence")!= 0)){
+            Log.w(TAG, "displaySchedule : Motor Schedule Available ");
+            String scheduleRecurrence = null;
+            switch (((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence")){
+                case 1:
+                    scheduleRecurrence = "Daily";
+                    break;
+                case 2:
+                    scheduleRecurrence = "Weekly";
+                    break;
+                case 3:
+                    scheduleRecurrence = "Monthly";
+                    break;
+                default:
+                    break;
+            }
+            scheduleView.setText("Upcoming Schedule\n" +
+                    "Time:"+ Byte.toString(((globalData)activity.getApplication()).getAquaMotorChar("motorhours"))+" Hrs "+
+                    Byte.toString(((globalData)activity.getApplication()).getAquaMotorChar("motorminutes"))+" Min\n"+
+                    "Duration:"+ Byte.toString(((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours"))+" Hrs "+
+                    Byte.toString(((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes"))+" Min\n"+
+                    "Freq:"+scheduleRecurrence);
+
+
+        }
+        else
+        {
+            Log.w(TAG, "displaySchedule : Schedule Not Available ");
+            scheduleView.setText("No Schedules Available yet !!!");
+        }
+
+    }
+
 
 
     @Override

@@ -40,6 +40,8 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+import static com.hornbill.great.connectingsmartthings.R.style.MyActionBar;
+
 public class DeviceScan extends ListActivity {
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int PERMISSION_COARSE_LOACTION_REQUEST = 2;
@@ -381,12 +383,15 @@ public class DeviceScan extends ListActivity {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
 
+        if(mState != ConnectionState.READ_CHARACTERISTIC) {
+
         /* Initializes list view adapter.*/
-        mLeDeviceListAdapter = new LeDeviceListAdapter();
-        setListAdapter(mLeDeviceListAdapter);
-        mySwipeRefreshLayout.setColorSchemeColors(Color.BLUE,Color.MAGENTA,Color.BLUE);
-        mySwipeRefreshLayout.setRefreshing(true);
-        scanLeDevice(true);
+            mLeDeviceListAdapter = new LeDeviceListAdapter();
+            setListAdapter(mLeDeviceListAdapter);
+            mySwipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.MAGENTA, Color.BLUE);
+            mySwipeRefreshLayout.setRefreshing(true);
+            scanLeDevice(true);
+        }
     }
 
     @Override
@@ -419,6 +424,7 @@ public class DeviceScan extends ListActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        mySwipeRefreshLayout.setRefreshing(false);
         scanLeDevice(false);
         mLeDeviceListAdapter.clear();
         /*if(isRecieverRgistered == true) {
@@ -463,6 +469,7 @@ public class DeviceScan extends ListActivity {
         Log.e(TAG, "onListItemClick clicked ");
         mDeviceName = device.getName();
         mDeviceAddress = device.getAddress();
+        showProgress.setProgressStyle(MyActionBar);
         showProgress.setTitle("Connecting");
         showProgress.setMessage("Please wait while we communicate with the device...");
         showProgress.setCancelable(false); // disable dismiss by tapping outside of the dialog

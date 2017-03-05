@@ -582,6 +582,7 @@ public class DeviceScan extends ListActivity {
                     mState = ConnectionState.SUCCEEDED;
                 } else if (BluetoothLeService.ACTION_AQUA_RTC_CHAR_AVAILABLE.equals(action)) {
                     Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_RTC_CHAR_AVAILABLE ");
+                    mState = ConnectionState.SUCCEEDED;
                     /* Now its time to move on to control centre activity*/
                     if(showProgress.isShowing() == true)
                     {

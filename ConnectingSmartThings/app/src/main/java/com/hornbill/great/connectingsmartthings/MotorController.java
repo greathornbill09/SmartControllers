@@ -32,6 +32,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     public int motorScheduleMin = 0;
     public int motorScheduleDurHour = 0;
     public int motorScheduleDurMin = 0;
+    private Byte statusMotor;
 
 
 
@@ -72,6 +73,11 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
 
         /*Displaying in the Motor switch*/
         motorSwitch = (Switch) findViewById(R.id.myMotorSwitch);
+        statusMotor = ((globalData)activity.getApplication()).getAquaMotorChar("motorpump");
+        if(statusMotor == 0x11)
+        {
+            motorSwitch.setChecked(true);
+        }
         motorSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override

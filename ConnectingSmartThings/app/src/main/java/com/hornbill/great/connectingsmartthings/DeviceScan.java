@@ -40,6 +40,7 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+import static com.hornbill.great.connectingsmartthings.R.color.PowderBlue;
 import static com.hornbill.great.connectingsmartthings.R.style.MyActionBar;
 
 public class DeviceScan extends ListActivity {
@@ -147,7 +148,7 @@ public class DeviceScan extends ListActivity {
                       // The method calls setRefreshing(false) when it's finished.
 
                        scanLeDevice(false);
-                       //mLeDeviceListAdapter.notifyDataSetChanged();
+                       mLeDeviceListAdapter.notifyDataSetChanged();
                        mLeDeviceListAdapter.clear();
                        scanLeDevice(true);
                    }
@@ -286,6 +287,13 @@ public class DeviceScan extends ListActivity {
             } else {
                 viewHolder = (ViewHolder) view.getTag();
             }
+
+           if (i % 2 == 1) {
+                view.setBackgroundColor(R.color.LightSeaGreen);
+            } else {
+                view.setBackgroundColor(R.color.LightSlateGray);
+            }
+
 
             BluetoothDevice device = mLeDevices.get(i);
             final String deviceName = device.getName();

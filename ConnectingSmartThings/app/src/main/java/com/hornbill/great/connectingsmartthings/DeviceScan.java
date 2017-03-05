@@ -452,10 +452,6 @@ public class DeviceScan extends ListActivity {
             case R.id.action_filter:
                 //openSearchView();
                 return true;
-            case R.id.action_app_introduction:
-                Intent intent = new Intent(this, IntroActivity.class);
-                startActivity(intent);
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -5,6 +5,7 @@
     <string name="motor_control">Motor Controller</string>
     <string name="dummy_content">Company \n Logo </string>
     <string name="filter">About Us </string>
+    <string name="calibrate"> Help </string>
     <string name="version">App-Version "0.0.3" </string>
     <string name="app_introduction">Introduction </string>
     <string name="error_bluetooth_not_supported">This Phone does not support this functionality</string>

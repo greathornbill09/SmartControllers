@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,6 +41,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     private Activity activity = this;
     private TextView scheduleView;
     private Switch motorSwitch;
+    private Switch calibrateMotorSwitch;
     private Button motorScheduleButton;
     private Button motorScheduleDurationButton;
     private Button motorScheduleTriggerButton;
@@ -108,6 +111,39 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                 }
                 Log.w(TAG," Writing Motor Switch Status BLE");
                 motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,data);
+            }
+        });
+
+        calibrateMotorSwitch = (Switch) findViewById(R.id.myCalibrateSwitch);
+        calibrateMotorSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
+
+                /*byte[]data = new byte[9];
+                if(isChecked){
+                    Log.w(TAG,"Write On");
+                    data[1]= 0x11;
+                    data[2]= 0x11;
+                    Log.w(TAG,"Motor Mode : "+data[0]);
+                    updateGlobalSpace("motormode",data[0]);
+                    Log.w(TAG,"Motor Pump Status : "+data[1]);
+                    Log.w(TAG,"Motor Valve Status : "+data[1]);
+                    updateGlobalSpace("motorpump",data[1]);
+                    updateGlobalSpace("motorvalve",data[2]);
+                }else{
+                    Log.w(TAG,"Write Off");
+                    data[1]= 0x10;
+                    data[2]= 0x10;
+                    Log.w(TAG,"Motor Mode : "+data[0]);
+                    updateGlobalSpace("motormode",data[0]);
+                    Log.w(TAG,"Motor Pump Status : "+data[1]);
+                    Log.w(TAG,"Motor Valve Status : "+data[1]);
+                    updateGlobalSpace("motorpump",data[1]);
+                    updateGlobalSpace("motorvalve",data[2]);
+                }*/
+                Log.w(TAG," Writing Motor Calibrate Switch Status BLE");
+                //motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,data);
             }
         });
 
@@ -354,6 +390,28 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
 
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.calibratehelp, menu);
+        super.onCreateOptionsMenu(menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.calibrate_help:
+                Intent intent = new Intent(this, IntroActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 
     @Override

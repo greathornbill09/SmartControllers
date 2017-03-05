@@ -78,5 +78,6 @@ public class ControlCentre extends Activity {
         mBluetoothLeService.disconnect();
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
+
     }
 }

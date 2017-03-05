@@ -147,7 +147,7 @@ public class DeviceScan extends ListActivity {
                       // The method calls setRefreshing(false) when it's finished.
 
                        scanLeDevice(false);
-                       mLeDeviceListAdapter.notifyDataSetChanged();
+                       //mLeDeviceListAdapter.notifyDataSetChanged();
                        mLeDeviceListAdapter.clear();
                        scanLeDevice(true);
                    }
@@ -385,11 +385,15 @@ public class DeviceScan extends ListActivity {
 
         if(mState != ConnectionState.READ_CHARACTERISTIC) {
 
+            Log.e(TAG, "Initializing the list view adapter in Resume");
+
         /* Initializes list view adapter.*/
             mLeDeviceListAdapter = new LeDeviceListAdapter();
             setListAdapter(mLeDeviceListAdapter);
             mySwipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.MAGENTA, Color.BLUE);
             mySwipeRefreshLayout.setRefreshing(true);
+            //mLeDeviceListAdapter.notifyDataSetChanged();
+            mLeDeviceListAdapter.clear();
             scanLeDevice(true);
         }
     }
@@ -542,7 +546,7 @@ public class DeviceScan extends ListActivity {
                     mState = ConnectionState.DISCOVER_SERVICES;
                     Log.e(TAG, "mGattUpdateReceiver : Gatt Connected");
                 } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
-                    Log.e(TAG, "mGattUpdateReceiver : Gatt DisConnected");
+                    Log.e(TAG, "mGattUpdateReceiver : Gatt DisConnected in mState = "+mState );
                     switch (mState) {
                         case IDLE:
                             // Do nothing in this case.
@@ -575,10 +579,9 @@ public class DeviceScan extends ListActivity {
                     // Show all the supported services and characteristics on the user interface.
                     //    displayGattServices(mBluetoothLeService.getSupportedGattServices());
                     Log.w(TAG, "mGattUpdateReceiver : Service Discovery Complete");
-                    mState = ConnectionState.READ_CHARACTERISTIC;
+                    mState = ConnectionState.SUCCEEDED;
                 } else if (BluetoothLeService.ACTION_AQUA_RTC_CHAR_AVAILABLE.equals(action)) {
                     Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_RTC_CHAR_AVAILABLE ");
-                    mState = ConnectionState.SUCCEEDED;
                     /* Now its time to move on to control centre activity*/
                     if(showProgress.isShowing() == true)
                     {
@@ -646,7 +649,7 @@ public class DeviceScan extends ListActivity {
                     {
                         showProgress.dismiss();
                     }
-                    Log.w(TAG, "mGattUpdateReceiver : ACTION_NO_CHAR_AVAILABLE ");
+                    Log.e(TAG, "mGattUpdateReceiver : ACTION_NO_CHAR_AVAILABLE ");
                     /* Not the intended message*/
                     AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(activity);
 
@@ -662,6 +665,7 @@ public class DeviceScan extends ListActivity {
 
                                 }
                             });
+                    mState = ConnectionState.FAILED;
 
                 }else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
                     final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);

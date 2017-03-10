@@ -288,13 +288,6 @@ public class DeviceScan extends ListActivity {
                 viewHolder = (ViewHolder) view.getTag();
             }
 
-           if (i % 2 == 1) {
-                view.setBackgroundColor(R.color.LightSeaGreen);
-            } else {
-                view.setBackgroundColor(R.color.LightSlateGray);
-            }
-
-
             BluetoothDevice device = mLeDevices.get(i);
             final String deviceName = device.getName();
             if (deviceName != null && deviceName.length() > 0)

@@ -35,16 +35,19 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     public int motorScheduleDurHour = 0;
     public int motorScheduleDurMin = 0;
     private Byte statusMotor;
+    private Byte statusValve;
 
 
 
     private Activity activity = this;
     private TextView scheduleView;
     private Switch motorSwitch;
-    private Switch calibrateMotorSwitch;
+    private Switch valveSwitch;
     private Button motorScheduleButton;
     private Button motorScheduleDurationButton;
     private Button motorScheduleTriggerButton;
+    private Button motorCalibrateButton;
+    private byte calibrateButtonState;
     private final static String TAG = MotorController.class.getSimpleName();
     private BluetoothLeService motorBluetoothService;
 
@@ -91,61 +94,52 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                 if(isChecked){
                     Log.w(TAG,"Write On");
                     data[1]= 0x11;
-                    data[2]= 0x11;
                     Log.w(TAG,"Motor Mode : "+data[0]);
                     updateGlobalSpace("motormode",data[0]);
                     Log.w(TAG,"Motor Pump Status : "+data[1]);
-                    Log.w(TAG,"Motor Valve Status : "+data[1]);
-                    updateGlobalSpace("motorpump",data[1]);
-                    updateGlobalSpace("motorvalve",data[2]);
                 }else{
                     Log.w(TAG,"Write Off");
                     data[1]= 0x10;
-                    data[2]= 0x10;
-                    Log.w(TAG,"Motor Mode : "+data[0]);
+                     Log.w(TAG,"Motor Mode : "+data[0]);
                     updateGlobalSpace("motormode",data[0]);
                     Log.w(TAG,"Motor Pump Status : "+data[1]);
-                    Log.w(TAG,"Motor Valve Status : "+data[1]);
-                    updateGlobalSpace("motorpump",data[1]);
-                    updateGlobalSpace("motorvalve",data[2]);
                 }
+                updateGlobalSpace("motorpump",data[1]);
                 Log.w(TAG," Writing Motor Switch Status BLE");
                 motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,data);
             }
         });
 
-        calibrateMotorSwitch = (Switch) findViewById(R.id.myCalibrateSwitch);
-        calibrateMotorSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+        /*Displaying in the Motor switch*/
+        valveSwitch = (Switch) findViewById(R.id.myValveSwitch);
+        statusValve = ((globalData)activity.getApplication()).getAquaMotorChar("motorvalve");
+        if(statusValve == 0x11)
+        {
+            valveSwitch.setChecked(true);
+        }
+        valveSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
 
-                /*byte[]data = new byte[9];
+                byte[]data = new byte[9];
                 if(isChecked){
-                    Log.w(TAG,"Write On");
-                    data[1]= 0x11;
+                    Log.w(TAG,"Write On vALVE");
                     data[2]= 0x11;
-                    Log.w(TAG,"Motor Mode : "+data[0]);
-                    updateGlobalSpace("motormode",data[0]);
-                    Log.w(TAG,"Motor Pump Status : "+data[1]);
-                    Log.w(TAG,"Motor Valve Status : "+data[1]);
-                    updateGlobalSpace("motorpump",data[1]);
-                    updateGlobalSpace("motorvalve",data[2]);
+                    Log.w(TAG," Valve Status : "+data[2]);
                 }else{
                     Log.w(TAG,"Write Off");
-                    data[1]= 0x10;
                     data[2]= 0x10;
-                    Log.w(TAG,"Motor Mode : "+data[0]);
-                    updateGlobalSpace("motormode",data[0]);
-                    Log.w(TAG,"Motor Pump Status : "+data[1]);
-                    Log.w(TAG,"Motor Valve Status : "+data[1]);
-                    updateGlobalSpace("motorpump",data[1]);
-                    updateGlobalSpace("motorvalve",data[2]);
-                }*/
-                Log.w(TAG," Writing Motor Calibrate Switch Status BLE");
-                //motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,data);
+                    Log.w(TAG,"Motor Valve Status : "+data[2]);
+                }
+                updateGlobalSpace("motorvalve",data[2]);
+                Log.w(TAG," Writing vALVE Switch Status BLE");
+                motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,data);
             }
         });
+
 
         /* Displaying the Date and time Picker*/
         motorScheduleButton = (Button) findViewById(R.id.myMotorSchedule);
@@ -221,6 +215,29 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
 
                 /* Update the display area*/
                 displaySchedule();
+
+            }
+        });
+
+
+        motorCalibrateButton = (Button) findViewById(R.id.calibrate);
+        calibrateButtonState = ((globalData)activity.getApplication()).getAquaMotorChar("motorcalibratestate");
+
+        motorCalibrateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(calibrateButtonState == 0) {
+                    calibrateButtonState = 1;
+                    ((globalData)activity.getApplication()).setAquaMotorChar("motorcalibratestate",calibrateButtonState);
+                    motorCalibrateButton.setText("Calibration Stop");
+                }else
+                {
+                    calibrateButtonState = 0;
+                    ((globalData)activity.getApplication()).setAquaMotorChar("motorcalibratestate",calibrateButtonState);
+                    motorCalibrateButton.setText("Calibration Start");
+
+                }
 
             }
         });

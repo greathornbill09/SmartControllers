@@ -31,7 +31,7 @@
             android:name=".DeviceScan"
             android:theme="@style/MyTheme" />
         <activity
-            android:name=".IntroActivity"
+            android:name=".CalibrateHelpActivity"
             android:theme="@style/IntroTheme" />
 
         <service
@@ -47,6 +47,10 @@
         <activity
             android:name=".MotorController"
             android:theme="@style/MyTheme" />
+        <activity android:name=".IntroActivity"
+            android:theme="@style/IntroTheme" />
+
+
     </application>
 
 </manifest>

@@ -42,6 +42,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
     private Button lightScheduleButton;
     private Button lightScheduleDurationButton;
     private Button lightScheduleTriggerButton;
+    private Byte statusLight;
     private final static String TAG = LightController.class.getSimpleName();
     private BluetoothLeService mLightBluetoothService;
 
@@ -72,6 +73,11 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
 
         /*Displaying in the Light switch*/
         lightSwitch = (Switch) findViewById(R.id.mySwitch);
+        statusLight = ((globalData)activity.getApplication()).getAquaLightChar("lightstatus");
+        if(statusLight == 1)
+        {
+            lightSwitch.setChecked(true);
+        }
         lightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override

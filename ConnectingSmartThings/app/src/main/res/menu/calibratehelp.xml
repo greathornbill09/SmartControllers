@@ -6,14 +6,9 @@
     android:layout_height="match_parent">
 
     <item
-        android:id="@+id/action_filter"
-        android:title="@string/filter"
+        android:id="@+id/calibrate_help"
+        android:title="@string/calibrate"
         android:orderInCategory="100"
-        android:icon="@drawable/settings_slider"
         app:showAsAction="always"
         android:visible="true" />
-
-    <item
-        android:id="@+id/action_app_version"
-        android:title="@string/version"/>
 </menu>

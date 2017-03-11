@@ -6,15 +6,15 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="30sp"
-        android:id="@+id/heading"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal"
-        android:text="@string/app_introduction"
-        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="30sp"
+            android:id="@+id/calibheading"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:text="@string/calib_introduction"
+            />
 
         <TextView
             android:layout_width="wrap_content"
@@ -22,7 +22,7 @@
             android:textSize="20sp"
             android:id="@+id/paragraph"
             android:layout_gravity="center_vertical|right"
-            android:text="@string/welcome_note"
+            android:text="@string/calib_note1"
             android:layout_marginTop="80dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"

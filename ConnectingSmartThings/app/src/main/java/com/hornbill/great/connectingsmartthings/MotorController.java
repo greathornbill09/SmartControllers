@@ -422,7 +422,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         switch (item.getItemId()) {
 
             case R.id.calibrate_help:
-                Intent intent = new Intent(this, IntroActivity.class);
+                Intent intent = new Intent(this, CalibrateHelpActivity.class);
                 startActivity(intent);
                 return true;
             default:

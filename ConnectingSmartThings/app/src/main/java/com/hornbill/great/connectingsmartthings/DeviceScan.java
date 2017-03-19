@@ -566,6 +566,7 @@ public class DeviceScan extends ListActivity {
                         case FAILED:
                         case SUCCEEDED:
                             // Normal disconnection.
+                            mBluetoothLeService.close();
                             break;
                         default:
                             //             mBluetoothLeService.mBluetoothGatt.close();

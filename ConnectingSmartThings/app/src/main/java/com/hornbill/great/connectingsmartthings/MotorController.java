@@ -53,6 +53,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,7 +183,58 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
 
 
 
+        motorCalibrateButton = (Button) findViewById(R.id.calibrate);
+        calibrateButtonState = ((globalData)activity.getApplication()).getAquaMotorChar("motorcalibratestate");
+
+        Log.w(TAG, "calibrateButtonState "+calibrateButtonState);
+
+        if((calibrateButtonState == 2) || (calibrateButtonState == 6))
+        {
+            motorCalibrateButton.setText("Calibration Start");
+        }else if (calibrateButtonState == 3)
+        {
+            motorCalibrateButton.setText("Calibration Stop");
+        }
+        else if (calibrateButtonState == 5)
+        {
+            motorCalibrateButton.setEnabled(false);
+        }
+
+
+
+        motorCalibrateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                byte[]data = new byte[9];
+
+                if((calibrateButtonState == 2) || (calibrateButtonState == 6) ||(calibrateButtonState == 0)) {
+                    calibrateButtonState = 3;
+                    ((globalData)activity.getApplication()).setAquaMotorChar("motorcalibratestate",calibrateButtonState);
+                    motorCalibrateButton.setText("Calibration Stop");
+                    data[0] = (byte)3;
+                }else if (calibrateButtonState == 3)
+                {
+                    calibrateButtonState = 4;
+                    ((globalData)activity.getApplication()).setAquaMotorChar("motorcalibratestate",calibrateButtonState);
+                    //motorCalibrateButton.setText("Calibration Start");
+                    data[0] = (byte)4;
+                }
+
+                motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,data);
+
+            }
+        });
+
+
+
         motorScheduleTriggerButton = (Button) findViewById(R.id.scheduleTrigger);
+
+        if (calibrateButtonState != 6)
+        {
+            motorScheduleTriggerButton.setEnabled(false);
+        }
+
 
         motorScheduleTriggerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,27 +272,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         });
 
 
-        motorCalibrateButton = (Button) findViewById(R.id.calibrate);
-        calibrateButtonState = ((globalData)activity.getApplication()).getAquaMotorChar("motorcalibratestate");
 
-        motorCalibrateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(calibrateButtonState == 0) {
-                    calibrateButtonState = 1;
-                    ((globalData)activity.getApplication()).setAquaMotorChar("motorcalibratestate",calibrateButtonState);
-                    motorCalibrateButton.setText("Calibration Stop");
-                }else
-                {
-                    calibrateButtonState = 0;
-                    ((globalData)activity.getApplication()).setAquaMotorChar("motorcalibratestate",calibrateButtonState);
-                    motorCalibrateButton.setText("Calibration Start");
-
-                }
-
-            }
-        });
 
 
 
@@ -390,19 +422,36 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                 default:
                     break;
             }
-            scheduleView.setText("Upcoming Schedule\n" +
-                    "Time:"+ Byte.toString(((globalData)activity.getApplication()).getAquaMotorChar("motorhours"))+" Hrs "+
-                    Byte.toString(((globalData)activity.getApplication()).getAquaMotorChar("motorminutes"))+" Min\n"+
-                    "Duration:"+ Byte.toString(((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours"))+" Hrs "+
-                    Byte.toString(((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes"))+" Min\n"+
-                    "Freq:"+scheduleRecurrence);
+            if((((globalData)activity.getApplication()).getAquaMotorChar("motorcalibratestate")) == 6) {
+                scheduleView.setText("Upcoming Schedule\n" +
+                        "Time:" + Byte.toString(((globalData) activity.getApplication()).getAquaMotorChar("motorhours")) + " Hrs " +
+                        Byte.toString(((globalData) activity.getApplication()).getAquaMotorChar("motorminutes")) + " Min\n" +
+                        "Duration:" + Byte.toString(((globalData) activity.getApplication()).getAquaMotorChar("motordurationhours")) + " Hrs " +
+                        Byte.toString(((globalData) activity.getApplication()).getAquaMotorChar("motordurationminutes")) + " Min\n" +
+                        "Freq:" + scheduleRecurrence);
+            }else{
+                scheduleView.setText("Not yet calibrated!!! In order to schedule water maintenance,\n" +
+                        " please calibrate the motor atleast once");
+            }
+
+
 
 
         }
         else
         {
-            Log.w(TAG, "displaySchedule : Schedule Not Available ");
-            scheduleView.setText("No Schedules Available yet !!!");
+            if((((globalData)activity.getApplication()).getAquaMotorChar("motorcalibratestate")) == 6)
+            {
+                Log.w(TAG, "displaySchedule : Schedule Not Available ");
+                scheduleView.setText("No Schedules Available yet !!!");
+            }
+            else
+            {
+                scheduleView.setText("Not yet calibrated!!! To schedule water maintenance,\n" +
+                        " calibrate the motor\n" +
+                        " atleast once");
+            }
+
         }
 
     }

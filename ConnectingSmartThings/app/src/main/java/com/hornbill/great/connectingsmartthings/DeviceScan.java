@@ -621,7 +621,13 @@ public class DeviceScan extends ListActivity {
                         Log.w(TAG,"mGattDataUpdateReceiver : Got the Light Schedule data in App");
                         ByteBuffer scheduleBuffer = ByteBuffer.wrap(scheduleMotorData);
                         Log.w(TAG, "broadcastUpdate: MOTORSchedule Buffer Length "+ scheduleMotorData.length);
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motormode",(scheduleBuffer.get(0)));
+                        if((scheduleBuffer.get(0) == 0) || (scheduleBuffer.get(0)== 1)) {
+                            ((globalData) activity.getApplication()).setAquaMotorChar("motormode", (scheduleBuffer.get(0)));
+                        } else
+                        {
+                            ((globalData) activity.getApplication()).setAquaMotorChar("motorcalibratestate", (scheduleBuffer.get(0)));
+                        }
+
                         ((globalData)activity.getApplication()).setAquaMotorChar("motorpump",(scheduleBuffer.get(1)));
                         ((globalData)activity.getApplication()).setAquaMotorChar("motorvalve",(scheduleBuffer.get(2)));
                         ((globalData)activity.getApplication()).setAquaMotorChar("motordow",(scheduleBuffer.get(3)));

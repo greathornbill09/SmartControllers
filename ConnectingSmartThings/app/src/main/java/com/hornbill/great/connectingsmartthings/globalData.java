@@ -36,7 +36,7 @@ public class globalData extends Application {
     private byte motorRecurrence = 0;
     private byte motorDurationHours = 0;
     private byte motorDurationMinutes = 0;
-    private byte motorCalibrateState = 0;
+
 
     public boolean getRtcSyncStatus(){
         return rtcSyncNotified;
@@ -147,9 +147,6 @@ public class globalData extends Application {
             case "motordurationminutes":
                 returnVal = this.motorDurationMinutes ;
                 break;
-            case "motorcalibratestate":
-                returnVal = this.motorCalibrateState;
-                break;
             default:
                 Log.w(TAG, "getAquaMotorChar: No Matching case ");
                 break;
@@ -185,9 +182,6 @@ public class globalData extends Application {
                 break;
             case "motordurationminutes":
                 this.motorDurationMinutes = value;
-                break;
-            case "motorcalibratestate":
-                this.motorCalibrateState = value;
                 break;
             default:
                 Log.w(TAG, "setAquaMotorChar: No Matching case ");

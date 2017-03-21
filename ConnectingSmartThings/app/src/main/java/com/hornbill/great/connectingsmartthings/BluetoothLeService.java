@@ -192,6 +192,7 @@ public class BluetoothLeService extends Service {
                     Log.w(TAG, "onCharacteristicRead: All Characteristic Reads done ===");
                     /* Enable Notification as well*/
                     writeCustomCharacteristic(0x0001,UUID_AQUA_RTC_CHARACTERISTIC);
+                    writeCustomCharacteristic(0x0001,UUID_AQUA_MOTOR_CHARACTERISTIC);
                 }
                 else {
                     broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
@@ -216,8 +217,14 @@ public class BluetoothLeService extends Service {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
-            Log.w(TAG, "onCharacteristicChanged: ACTION_AQUA_RTC_CHAR_AVAILABLE" );
-            broadcastUpdate(ACTION_AQUA_RTC_CHAR_AVAILABLE, characteristic);
+            if (characteristic.getUuid().compareTo(UUID_AQUA_RTC_CHARACTERISTIC) == 0){
+                Log.w(TAG, "onCharacteristicChanged: ACTION_AQUA_RTC_CHAR_AVAILABLE" );
+                broadcastUpdate(ACTION_AQUA_RTC_CHAR_AVAILABLE, characteristic);
+            }else if (characteristic.getUuid().compareTo(UUID_AQUA_MOTOR_CHARACTERISTIC) == 0){
+                Log.w(TAG, "onCharacteristicChanged: ACTION_AQUA_MOTOR_CHAR_AVAILABLE" );
+                broadcastUpdate(ACTION_AQUA_MOTOR_CHAR_AVAILABLE, characteristic);
+            }
+
         }
     };
 

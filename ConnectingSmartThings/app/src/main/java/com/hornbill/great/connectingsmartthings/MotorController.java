@@ -1,9 +1,15 @@
 package com.hornbill.great.connectingsmartthings;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -24,6 +30,7 @@ import android.widget.TextView;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 
+import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -35,7 +42,10 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     public int motorScheduleDurHour = 0;
     public int motorScheduleDurMin = 0;
     private Byte statusMotor;
+    private Byte calibrationState;
     private Byte statusValve;
+    public Button motorCalibrateButton;
+    public Button motorScheduleTriggerButton;
 
 
 
@@ -45,8 +55,6 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     private Switch valveSwitch;
     private Button motorScheduleButton;
     private Button motorScheduleDurationButton;
-    private Button motorScheduleTriggerButton;
-    private Button motorCalibrateButton;
     private byte calibrateButtonState;
     private final static String TAG = MotorController.class.getSimpleName();
     private BluetoothLeService motorBluetoothService;
@@ -73,6 +81,10 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         }
 
 
+        /* Register the calibration update reciever*/
+        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+
+
         scheduleView = (TextView) findViewById(R.id.scheduleDetails);
         /* Update the display area*/
         displaySchedule();
@@ -81,6 +93,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         /*Displaying in the Motor switch*/
         motorSwitch = (Switch) findViewById(R.id.myMotorSwitch);
         statusMotor = ((globalData)activity.getApplication()).getAquaMotorChar("motorpump");
+        calibrationState = ((globalData)activity.getApplication()).getAquaMotorChar("motormode");
         if(statusMotor == 0x11)
         {
             motorSwitch.setChecked(true);
@@ -96,18 +109,24 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                     Log.w(TAG,"Write On");
                     data[1]= 0x11;
                     Log.w(TAG,"Motor Mode : "+data[0]);
-                    updateGlobalSpace("motormode",data[0]);
+
                     Log.w(TAG,"Motor Pump Status : "+data[1]);
                 }else{
                     Log.w(TAG,"Write Off");
                     data[1]= 0x10;
-                     Log.w(TAG,"Motor Mode : "+data[0]);
-                    updateGlobalSpace("motormode",data[0]);
+                    Log.w(TAG,"Motor Mode : "+data[0]);
                     Log.w(TAG,"Motor Pump Status : "+data[1]);
                 }
-                updateGlobalSpace("motorpump",data[1]);
-                Log.w(TAG," Writing Motor Switch Status BLE");
-                motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,data);
+                if((calibrationState <3 ) && (calibrationState > 5)) {
+                    updateGlobalSpace("motormode", data[0]);
+                    updateGlobalSpace("motorpump", data[1]);
+                    Log.w(TAG, " Writing Motor Switch Status BLE");
+                    sendMotorCustomCharacteristicDatafromGlobalStructure();
+                }
+                else
+                {
+                    Log.w(TAG, " Could not Write the motor switch manual status as calibration is in progress");
+                }
             }
         });
 
@@ -135,9 +154,16 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                     data[2]= 0x10;
                     Log.w(TAG,"Motor Valve Status : "+data[2]);
                 }
-                updateGlobalSpace("motorvalve",data[2]);
-                Log.w(TAG," Writing vALVE Switch Status BLE");
-                motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,data);
+                if((calibrationState <3 ) && (calibrationState > 5)){
+                    updateGlobalSpace("motorvalve",data[2]);
+                    Log.w(TAG," Writing vALVE Switch Status BLE");
+                    sendMotorCustomCharacteristicDatafromGlobalStructure();
+                }
+                else
+                {
+                    Log.w(TAG, " Could not Write the valve switch manual status as calibration is in progress");
+                }
+
             }
         });
 
@@ -184,7 +210,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
 
 
         motorCalibrateButton = (Button) findViewById(R.id.calibrate);
-        calibrateButtonState = ((globalData)activity.getApplication()).getAquaMotorChar("motorcalibratestate");
+        calibrateButtonState = ((globalData)activity.getApplication()).getAquaMotorChar("motormode");
 
         Log.w(TAG, "calibrateButtonState "+calibrateButtonState);
 
@@ -206,22 +232,16 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             @Override
             public void onClick(View v) {
 
-                byte[]data = new byte[9];
-
-                if((calibrateButtonState == 2) || (calibrateButtonState == 6) ||(calibrateButtonState == 0)) {
-                    calibrateButtonState = 3;
-                    ((globalData)activity.getApplication()).setAquaMotorChar("motorcalibratestate",calibrateButtonState);
+                if((calibrateButtonState == 2) || (calibrateButtonState == 6) || (calibrateButtonState == 0)) {
                     motorCalibrateButton.setText("Calibration Stop");
-                    data[0] = (byte)3;
+                    updateGlobalSpace("motormode",(byte)3);
                 }else if (calibrateButtonState == 3)
                 {
-                    calibrateButtonState = 4;
-                    ((globalData)activity.getApplication()).setAquaMotorChar("motorcalibratestate",calibrateButtonState);
                     //motorCalibrateButton.setText("Calibration Start");
-                    data[0] = (byte)4;
+                    updateGlobalSpace("motormode",(byte)4);
                 }
 
-                motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,data);
+                sendMotorCustomCharacteristicDatafromGlobalStructure();
 
             }
         });
@@ -240,31 +260,9 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             @Override
             public void onClick(View v) {
 
-                byte[]motorScheduleData = new byte[9];
-
-                motorScheduleData[0] = (byte) 1;
-                Log.w(TAG, "motorScheduleButton "+motorScheduleData[0]);
-                updateGlobalSpace("motormode",motorScheduleData[0]);
-                Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorpump"));
-                motorScheduleData[1] = ((globalData)activity.getApplication()).getAquaMotorChar("motorpump");
-                Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorvalve"));
-                motorScheduleData[2] = ((globalData)activity.getApplication()).getAquaMotorChar("motorvalve");
-                Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motordow"));
-                motorScheduleData[3] = ((globalData)activity.getApplication()).getAquaMotorChar("motordow");
-                Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorhours"));
-                motorScheduleData[4] = ((globalData)activity.getApplication()).getAquaMotorChar("motorhours");
-                Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorminutes"));
-                motorScheduleData[5] = ((globalData)activity.getApplication()).getAquaMotorChar("motorminutes");
-                Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence"));
-                motorScheduleData[6] = ((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence");
-                Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours"));
-                motorScheduleData[7] = ((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours");
-                Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes"));
-                motorScheduleData[8] = ((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes");
-
-                Log.w(TAG," Writing Schedule details over BLE");
-                motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,motorScheduleData);
-
+                updateGlobalSpace("motormode",(byte) 1);
+                /* Write data to the custom characteristics*/
+                sendMotorCustomCharacteristicDatafromGlobalStructure();
                 /* Update the display area*/
                 displaySchedule();
 
@@ -277,6 +275,65 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
 
 
     }
+
+
+    /* Connection related methods */
+    private static IntentFilter makeGattUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothLeService.ACTION_AQUA_MOTOR_CHAR_AVAILABLE);
+        return intentFilter;
+    }
+
+
+
+    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_AQUA_MOTOR_CHAR_AVAILABLE.equals(action)) {
+                final byte[]scheduleMotorData;
+                if ((scheduleMotorData = intent.getExtras().getByteArray("MOTORSchedule")) != null) {
+                    Log.w(TAG,"mGattDataUpdateReceiver : Got the Light Schedule data in App");
+                    ByteBuffer scheduleBuffer = ByteBuffer.wrap(scheduleMotorData);
+                    Log.w(TAG, "broadcastUpdate: MOTORSchedule Buffer Length "+ scheduleMotorData.length);
+                    ((globalData) activity.getApplication()).setAquaMotorChar("motormode", (scheduleBuffer.get(0)));
+                    if(scheduleBuffer.get(0) == 6)
+                    {
+                        motorCalibrateButton.setText("Calibration Start");
+                        motorScheduleTriggerButton.setEnabled(true);
+                        displaySchedule();
+                    }
+
+
+                    ((globalData)activity.getApplication()).setAquaMotorChar("motorpump",(scheduleBuffer.get(1)));
+                    ((globalData)activity.getApplication()).setAquaMotorChar("motorvalve",(scheduleBuffer.get(2)));
+                    ((globalData)activity.getApplication()).setAquaMotorChar("motordow",(scheduleBuffer.get(3)));
+                    ((globalData)activity.getApplication()).setAquaMotorChar("motorhours",(scheduleBuffer.get(4)));
+                    ((globalData)activity.getApplication()).setAquaMotorChar("motorminutes",(scheduleBuffer.get(5)));
+                    ((globalData)activity.getApplication()).setAquaMotorChar("motorrecurrence",(scheduleBuffer.get(6)));
+                    ((globalData)activity.getApplication()).setAquaMotorChar("motordurationhours",(scheduleBuffer.get(7)));
+                    ((globalData)activity.getApplication()).setAquaMotorChar("motordurationminutes",(scheduleBuffer.get(8)));
+
+                    Log.w(TAG, "Calibration Notification"+((globalData)activity.getApplication()).getAquaMotorChar("motormode"));
+                    Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motorpump"));
+                    Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motorvalve"));
+                    Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motordow"));
+                    Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motorhours"));
+                    Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motorminutes"));
+                    Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence"));
+                    Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours"));
+                    Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes"));
+                }
+
+            }
+
+        }
+    };
+
+
+
+
+
 
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id)
@@ -422,7 +479,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                 default:
                     break;
             }
-            if((((globalData)activity.getApplication()).getAquaMotorChar("motorcalibratestate")) == 6) {
+            if((((globalData)activity.getApplication()).getAquaMotorChar("motormode")) == 6) {
                 scheduleView.setText("Upcoming Schedule\n" +
                         "Time:" + Byte.toString(((globalData) activity.getApplication()).getAquaMotorChar("motorhours")) + " Hrs " +
                         Byte.toString(((globalData) activity.getApplication()).getAquaMotorChar("motorminutes")) + " Min\n" +
@@ -440,7 +497,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         }
         else
         {
-            if((((globalData)activity.getApplication()).getAquaMotorChar("motorcalibratestate")) == 6)
+            if((((globalData)activity.getApplication()).getAquaMotorChar("motormode")) == 6)
             {
                 Log.w(TAG, "displaySchedule : Schedule Not Available ");
                 scheduleView.setText("No Schedules Available yet !!!");
@@ -453,6 +510,35 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             }
 
         }
+
+    }
+
+    private void sendMotorCustomCharacteristicDatafromGlobalStructure()
+    {
+
+        byte[]motorScheduleData = new byte[9];
+        Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motormode"));
+        motorScheduleData[0] = ((globalData)activity.getApplication()).getAquaMotorChar("motormode");
+        Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorpump"));
+        motorScheduleData[1] = ((globalData)activity.getApplication()).getAquaMotorChar("motorpump");
+        Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorvalve"));
+        motorScheduleData[2] = ((globalData)activity.getApplication()).getAquaMotorChar("motorvalve");
+        Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motordow"));
+        motorScheduleData[3] = ((globalData)activity.getApplication()).getAquaMotorChar("motordow");
+        Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorhours"));
+        motorScheduleData[4] = ((globalData)activity.getApplication()).getAquaMotorChar("motorhours");
+        Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorminutes"));
+        motorScheduleData[5] = ((globalData)activity.getApplication()).getAquaMotorChar("motorminutes");
+        Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence"));
+        motorScheduleData[6] = ((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence");
+        Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours"));
+        motorScheduleData[7] = ((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours");
+        Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes"));
+        motorScheduleData[8] = ((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes");
+
+        Log.w(TAG," Writing Schedule details over BLE");
+        motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,motorScheduleData);
+
 
     }
 

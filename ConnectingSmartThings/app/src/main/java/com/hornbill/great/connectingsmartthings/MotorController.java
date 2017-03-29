@@ -154,15 +154,10 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                     data[2]= 0x10;
                     Log.w(TAG,"Motor Valve Status : "+data[2]);
                 }
-                if((calibrationState <3 ) && (calibrationState > 5)){
-                    updateGlobalSpace("motorvalve",data[2]);
-                    Log.w(TAG," Writing vALVE Switch Status BLE");
-                    sendMotorCustomCharacteristicDatafromGlobalStructure();
-                }
-                else
-                {
-                    Log.w(TAG, " Could not Write the valve switch manual status as calibration is in progress");
-                }
+
+                updateGlobalSpace("motorvalve",data[2]);
+                Log.w(TAG," Writing vALVE Switch Status BLE");
+                sendMotorCustomCharacteristicDatafromGlobalStructure();
 
             }
         });

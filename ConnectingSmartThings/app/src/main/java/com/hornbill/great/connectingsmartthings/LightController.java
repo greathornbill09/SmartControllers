@@ -155,6 +155,8 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             public void onClick(View v) {
 
                 updateGlobalSpace("lightmode",(byte) 1);
+                 /* Write data to the custom characteristics*/
+                sendLightCustomCharacteristicDatafromGlobalStructure();
                 /* Update the display area*/
                 displaySchedule();
 

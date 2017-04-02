@@ -59,9 +59,6 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     private final static String TAG = MotorController.class.getSimpleName();
     private BluetoothLeService motorBluetoothService;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,8 +100,8 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
-
                 byte[]data = new byte[9];
+                data[0] = 0x00; // manual mode
                 if(isChecked){
                     Log.w(TAG,"Write On");
                     data[1]= 0x11;
@@ -117,7 +114,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                     Log.w(TAG,"Motor Mode : "+data[0]);
                     Log.w(TAG,"Motor Pump Status : "+data[1]);
                 }
-                if((calibrationState <3 ) && (calibrationState > 5)) {
+                if((calibrationState < 3 ) || (calibrationState > 5)) {
                     updateGlobalSpace("motormode", data[0]);
                     updateGlobalSpace("motorpump", data[1]);
                     Log.w(TAG, " Writing Motor Switch Status BLE");
@@ -145,6 +142,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                                          boolean isChecked) {
 
                 byte[]data = new byte[9];
+                data[0] = 0x00; // manual mode
                 if(isChecked){
                     Log.w(TAG,"Write On vALVE");
                     data[2]= 0x11;
@@ -212,7 +210,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         if((calibrateButtonState == 2) || (calibrateButtonState == 6))
         {
             motorCalibrateButton.setText("Calibration Start");
-        }else if (calibrateButtonState == 3)
+        } else if (calibrateButtonState == 3)
         {
             motorCalibrateButton.setText("Calibration Stop");
         }
@@ -221,27 +219,22 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             motorCalibrateButton.setEnabled(false);
         }
 
-
-
         motorCalibrateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                calibrateButtonState = ((globalData)activity.getApplication()).getAquaMotorChar("motormode");
                 if((calibrateButtonState == 2) || (calibrateButtonState == 6) || (calibrateButtonState == 0)) {
                     motorCalibrateButton.setText("Calibration Stop");
                     updateGlobalSpace("motormode",(byte)3);
-                }else if (calibrateButtonState == 3)
+                } else if (calibrateButtonState == 3)
                 {
-                    //motorCalibrateButton.setText("Calibration Start");
+                    motorCalibrateButton.setText("Calibration Start");
                     updateGlobalSpace("motormode",(byte)4);
                 }
 
                 sendMotorCustomCharacteristicDatafromGlobalStructure();
-
             }
         });
-
-
 
         motorScheduleTriggerButton = (Button) findViewById(R.id.scheduleTrigger);
 
@@ -263,12 +256,6 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
 
             }
         });
-
-
-
-
-
-
     }
 
 
@@ -278,8 +265,6 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         intentFilter.addAction(BluetoothLeService.ACTION_AQUA_MOTOR_CHAR_AVAILABLE);
         return intentFilter;
     }
-
-
 
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
         @Override

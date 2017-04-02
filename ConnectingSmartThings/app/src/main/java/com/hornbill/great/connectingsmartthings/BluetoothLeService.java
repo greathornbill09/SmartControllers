@@ -190,7 +190,7 @@ public class BluetoothLeService extends Service {
                     broadcastUpdate(ACTION_AQUA_MOTOR_CHAR_AVAILABLE, characteristic);
                     aquaDeviceMotorReadInProgress = false;
                     Log.w(TAG, "onCharacteristicRead: All Characteristic Reads done ===");
-                    /* Enable Notification as well*/
+                    /* Enable Notification/Indication as well*/
                     writeCustomCharacteristic(0x0001,UUID_AQUA_RTC_CHARACTERISTIC);
                     writeCustomCharacteristic(0x0001,UUID_AQUA_MOTOR_CHARACTERISTIC);
                 }
@@ -531,24 +531,19 @@ public class BluetoothLeService extends Service {
         BluetoothGattCharacteristic characteristic = null;
         UUID ccd = null;
 
-        if(UUID_AQUA_RTC_CHARACTERISTIC == uuid){
-            characteristic = getAquaCharacteristic(UUID_AQUA_SERVICE,UUID_AQUA_RTC_CHARACTERISTIC);
-            if (characteristic == null){
-                Log.w(TAG, "Failed to obtain  Aqua LIGHT RTC notify characteristic ");
-            }
+        characteristic = getAquaCharacteristic(UUID_AQUA_SERVICE,uuid);
+        if (characteristic == null){
+            Log.w(TAG, "Failed to obtain  Aqua LIGHT RTC notify characteristic ");
+            return;
         }
 
-        if(characteristic != null) {
-            setCharacteristicNotification(characteristic, true);
-            //Enabled remote notifications
-            BluetoothGattDescriptor desc = characteristic.getDescriptor(UUID_CLIENT_CHARACTERISTIC_CONFIG);
-            desc.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            if(mBluetoothGatt.writeDescriptor(desc) == false) {
-                Log.w(TAG, "Failed to write characteristic");
-            }
+        setCharacteristicNotification(characteristic, true);
+        //Enabled remote notifications
+        BluetoothGattDescriptor desc = characteristic.getDescriptor(UUID_CLIENT_CHARACTERISTIC_CONFIG);
+        desc.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+        if(mBluetoothGatt.writeDescriptor(desc) == false) {
+            Log.w(TAG, "Failed to write characteristic");
         }
+        desc.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
     }
-
-
-
 }

@@ -45,9 +45,6 @@ public class ControlCentre extends Activity {
                 startActivity(onMotorClickIntent);
             }
         });
-
-
-
     }
 
 

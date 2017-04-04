@@ -1,15 +1,15 @@
 <resources>
-    <string name="app_name">ConnectingSmartThings</string>
-    <string name="control_centre">Control Centre</string>
+    <string name="app_name">ConnectSmartLife</string>
+    <string name="control_centre">Aqua-Gardens</string>
     <string name="light_control">Light Controller</string>
-    <string name="motor_control">Motor Controller</string>
-    <string name="dummy_content">Connect Smart Life </string>
+    <string name="motor_control">Water re-cycle Controller</string>
+    <string name="dummy_content">ConnectSmartLife </string>
     <string name="filter">About Us </string>
     <string name="calibrate"> Help </string>
     <string name="version">App-Version "0.0.3" </string>
     <string name="app_introduction"><b><u>Welcome</u></b></string>
     <string name="welcome_note"><i> <p style="text-align:center | justify">Dear Valued Customer, Thankyou for purchasing a high quality product
-        from ConnectSmartThings. Enjoy and Explore the fascinating new dimension in aquascape world.</p> </i> </string>
+        from ConnectSmartLife. Enjoy and Explore the fascinating new dimension in aquascape world.</p> </i> </string>
     <string name="Intro"> Introduction </string>
     <string name="calib_introduction"><b><u>How To Calibrate</u></b></string>
     <string name="calib_note1"><i> <p style="text-align:center | justify">Calibration is done always first time when you purchase the product.
@@ -17,7 +17,6 @@
 
     <string name="calib_note2"><i> <p style="text-align:center | justify">Once the calibration is done, just schedule the water change,
     sit back and relax. This product would take care of the complete maintenance of your aquarium.</p> </i> </string>
-
 
     <string name="error_bluetooth_not_supported">This Phone does not support this functionality</string>
     <string name="unknown_device">Unknown device</string>

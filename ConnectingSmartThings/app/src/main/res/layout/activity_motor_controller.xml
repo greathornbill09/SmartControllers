@@ -29,23 +29,7 @@
         android:layout_alignParentStart="true" />
 
     <TextView
-        android:id="@+id/scheduleDetails"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="left"
-        android:textAlignment="gravity"
-        android:layout_alignParentBottom="true"
-        android:textSize="22sp"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:padding="5dp"
-        android:lines="4"
-        android:background="@drawable/scheduledisplayborder"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:text="Frequency"
+        android:text="Recurrence"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/FrequencyOfMotor"
@@ -57,9 +41,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/myMotorSwitch"
-        android:layout_alignRight="@+id/myMotorSchedule"
-        android:layout_alignEnd="@+id/myMotorSchedule"
-        android:layout_marginTop="10dp" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="12dp" />
 
     <TextView
         android:id="@+id/valveSwitchStatus"
@@ -82,46 +66,15 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <TextView
-        android:text="Set Duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/DurationOfMotor"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_below="@+id/myMotorSchedule"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="35dp" />
-
-    <Button
-        android:text="Hours_Min"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/myMotorScheduleDuration"
-        android:layout_below="@+id/myMotorSchedule"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="15dp" />
-
     <Button
         android:text="Date_Time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="115dp"
+        android:layout_height="40dp"
         android:id="@+id/myMotorSchedule"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="12dp"
         android:layout_below="@+id/myValveSwitch"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/spinSelect"
-        android:entries="@array/repeat"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
 
     <Button
         android:text="Schedule"
@@ -129,17 +82,154 @@
         android:layout_height="wrap_content"
         android:id="@+id/scheduleTrigger"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:text="Calibration Start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/calibrate"
-        android:layout_above="@+id/scheduleDetails"
-        android:layout_toLeftOf="@+id/scheduleTrigger"
-        android:layout_toStartOf="@+id/scheduleTrigger"
-        android:layout_marginBottom="23dp" />
+        android:layout_marginTop="25dp"
+        android:layout_below="@+id/spinSelect"
+        android:layout_toLeftOf="@+id/myValveSwitch"
+        android:layout_toStartOf="@+id/myValveSwitch" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinSelect"
+        android:entries="@array/repeat"
+        android:layout_marginTop="12dp"
+        android:layout_below="@+id/myMotorSchedule"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/scheduleDetails"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="25dp"
+        android:layout_above="@+id/scheduleTrigger"
+        android:layout_below="@+id/calibrate">
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <TextView
+                android:id="@+id/TextView01" android:text="Schedule: Daily"
+                android:layout_weight="1" android:background="@color/NavajoWhite"
+                android:textColor="#000000"
+                android:padding="5dip" android:gravity="center"/>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_height="fill_parent"
+            android:layout_width="match_parent">
+
+            <ImageView
+                android:id="@+id/image1"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="85dp"
+                android:scaleType="center"
+                android:background="@layout/cell_layout"
+                android:src="@drawable/motorbutton" />
+
+            <ImageView
+                android:id="@+id/image1"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="85dp"
+                android:scaleType="center"
+                android:background="@layout/cell_layout"
+                android:src="@drawable/motorbutton" />
+
+            <ImageView
+                android:id="@+id/image1"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="85dp"
+                android:scaleType="center"
+                android:background="@layout/cell_layout"
+                android:src="@drawable/motorbutton" />
+
+            <ImageView
+                android:id="@+id/image1"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="85dp"
+                android:scaleType="center"
+                android:background="@layout/cell_layout"
+                android:src="@drawable/motorbutton" />
+
+            <ImageView
+                android:id="@+id/image1"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="85dp"
+                android:scaleType="center"
+                android:background="@layout/cell_layout"
+                android:src="@drawable/motorbutton" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_height="fill_parent"
+            android:layout_width="match_parent">
+
+            <TextView
+                android:id="@+id/TextView01" android:text="SUN\n9:30pm"
+                android:layout_weight="1" android:background="@color/Black"
+                android:textColor="@color/White"
+                android:padding="3dip"
+                android:textSize="13dp"
+                android:gravity="center"
+                android:layout_width="0dp" />
+
+            <TextView
+                android:id="@+id/TextView02" android:text="MON\n9:30pm"
+                android:layout_weight="1" android:background="@color/Black"
+                android:textColor="@color/White"
+                android:padding="3dip"
+                android:textSize="13dp"
+                android:gravity="center"
+                android:layout_width="0dp" />
+
+            <TextView
+                android:id="@+id/TextView03" android:text="TUE\n9:30pm"
+                android:layout_weight="1" android:background="@color/Black"
+                android:textColor="@color/White"
+                android:padding="3dip"
+                android:textSize="13dp"
+                android:gravity="center"
+                android:layout_width="0dp" />
+
+            <TextView
+                android:id="@+id/TextView04" android:text="WED\n9:30pm"
+                android:layout_weight="1" android:background="@color/Black"
+                android:textColor="@color/White"
+                android:padding="3dip"
+                android:textSize="13dp"
+                android:gravity="center"
+                android:layout_width="0dp" />
+
+            <TextView
+                android:id="@+id/TextView05" android:text="THU\n9:30pm"
+                android:layout_weight="1" android:background="@color/Black"
+                android:textColor="@color/White"
+                android:padding="3dip"
+                android:textSize="13dp"
+                android:gravity="center"
+                android:layout_width="0dp" />
+
+
+        </TableRow>
+
+    </TableLayout>
 
 </RelativeLayout>

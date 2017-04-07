@@ -282,11 +282,12 @@ public class BluetoothLeService extends Service {
         boolean isSyncCompleted = false;
         Log.w(TAG, "syncRTCOnDevice: Checking for the host time and date");
         if (characteristic.getUuid().compareTo(UUID_AQUA_RTC_CHARACTERISTIC) == 0) {
-            int hostMonth, hostDay, hostHour, hostMinute, hostSeconds, hostDayOfWeek;
+            int hostyear, hostMonth, hostDay, hostHour, hostMinute, hostSeconds, hostDayOfWeek;
             final byte[] data = new byte[8];
             Arrays.fill(data, (byte) 0);
             ByteBuffer bb = ByteBuffer.wrap(data);
             Calendar cal = Calendar.getInstance();
+            hostyear = cal.get(Calendar.YEAR);
             hostMonth = cal.get(Calendar.MONTH) + 1; // Note: zero based!
             hostDay = cal.get(Calendar.DAY_OF_MONTH);
             hostHour = cal.get(Calendar.HOUR_OF_DAY);
@@ -295,6 +296,8 @@ public class BluetoothLeService extends Service {
             hostDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
             if ((month != hostMonth) || (day != hostDay) || (hour != hostHour) ||
                 (minute != hostMinute) || (dayofweek != hostDayOfWeek)) {
+                bb.put(0, (byte) (hostyear & 0xFF));
+                bb.put(1, (byte) ((hostyear >> 8) & 0xFF));
                 bb.put(2, (byte) hostMonth);
                 bb.put(3, (byte) hostDay);
                 bb.put(4, (byte) hostHour);

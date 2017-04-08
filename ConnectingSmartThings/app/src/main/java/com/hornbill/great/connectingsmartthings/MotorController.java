@@ -41,6 +41,7 @@ import java.util.Date;
 public class MotorController extends FragmentActivity implements AdapterView.OnItemSelectedListener,NumberPicker.OnValueChangeListener{
 
     public int motorScheduleDayOfWeek = 0;
+    public int motorScheduleDayOfMonth = 0;
     public int motorScheduleHour = 0;
     public int motorScheduleMin = 0;
     public int motorScheduleDurHour = 0;
@@ -117,6 +118,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                 updateGlobalSpace("motorpump", data[1]);
                 Log.w(TAG, " Writing Motor Switch Status BLE");
                 sendMotorCustomCharacteristicDatafromGlobalStructure();
+                updateGlobalSpace("motormode", calibrationState);
             } else {
                 Log.w(TAG, " Could not Write the motor switch manual status as calibration is in progress");
             }
@@ -141,16 +143,19 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             if(isChecked) {
                 Log.w(TAG,"Write On Valve");
                 data[1]= 0x11;
-                Log.w(TAG," Valve Status : "+data[2]);
+                Log.w(TAG," Valve Status : "+data[1]);
             } else {
                 Log.w(TAG,"Write Off");
                 data[1]= 0x10;
-                Log.w(TAG,"Motor Valve Status : "+data[2]);
+                Log.w(TAG,"Motor Valve Status : "+data[1]);
             }
 
+            calibrationState = ((globalData)activity.getApplication()).getAquaMotorChar("motormode");
+            updateGlobalSpace("motormode", data[0]);
             updateGlobalSpace("motorvalve",data[1]);
-            Log.w(TAG," Writing vALVE Switch Status BLE");
+            Log.w(TAG," Writing Valve Switch Status BLE");
             sendMotorCustomCharacteristicDatafromGlobalStructure();
+            updateGlobalSpace("motormode", calibrationState);
             }
         });
 
@@ -182,6 +187,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         spinner.setAdapter(adapter);
 
         motorCalibrateButton = (Button) findViewById(R.id.calibrate);
+        motorScheduleTriggerButton = (Button) findViewById(R.id.scheduleTrigger);
         calibrateButtonState = ((globalData)activity.getApplication()).getAquaMotorChar("motormode");
 
         Log.w(TAG, "calibrateButtonState "+calibrateButtonState);
@@ -211,8 +217,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             }
         });
 
-        motorScheduleTriggerButton = (Button) findViewById(R.id.scheduleTrigger);
-
+        // Check calibration state
         if (calibrateButtonState != 6)
         {
             motorScheduleTriggerButton.setEnabled(false);
@@ -221,11 +226,13 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         motorScheduleTriggerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                calibrationState = ((globalData)activity.getApplication()).getAquaMotorChar("motormode");
+                /* Update the display area*/
+                displaySchedule();
                 updateGlobalSpace("motormode",(byte) 1);
                 /* Write data to the custom characteristics*/
                 sendMotorCustomCharacteristicDatafromGlobalStructure();
-                /* Update the display area*/
-                displaySchedule();
+                updateGlobalSpace("motormode", calibrationState);
             }
         });
     }
@@ -248,10 +255,11 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                     ByteBuffer scheduleBuffer = ByteBuffer.wrap(scheduleMotorData);
                     Log.w(TAG, "broadcastUpdate: MOTORSchedule Buffer Length "+ scheduleMotorData.length);
                     ((globalData) activity.getApplication()).setAquaMotorChar("motormode", (scheduleBuffer.get(0)));
-                    if(scheduleBuffer.get(1) == 6) {
+                    if(scheduleBuffer.get(0) == 6) {
                         motorCalibrateButton.setText("Calibration Start");
                         motorCalibrateButton.setEnabled(true);
                         motorScheduleTriggerButton.setEnabled(true);
+                        updateGlobalSpace("motormode",(byte) 6);
                         displaySchedule();
                     }
 
@@ -376,6 +384,8 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             // the date and time that the user has selected.
             Log.e(TAG, "onDateTimeSet:" +date.get(Calendar.DAY_OF_MONTH));
             Log.e(TAG, "onDateTimeSet:" +date.get(Calendar.DAY_OF_WEEK));
+            motorScheduleDayOfMonth = date.get(Calendar.DAY_OF_MONTH);
+            updateGlobalSpace("motordom",(byte)motorScheduleDayOfMonth);
             motorScheduleDayOfWeek = date.get(Calendar.DAY_OF_WEEK);
             updateGlobalSpace("motordow",(byte)motorScheduleDayOfWeek);
             Log.e(TAG, "onDateTimeSet:" +date.get(Calendar.HOUR_OF_DAY));
@@ -457,17 +467,18 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                         if (date.get(Calendar.DAY_OF_WEEK) == (int)((globalData) activity.getApplication()).getAquaMotorChar("motordow")) {
                             col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + time + time_mode );
                         } else {
-                            col.setText("\n00:00\n00:00");
+                            col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00");
                         }
+                        break;
                     case 3:
                         if (date.get(Calendar.DAY_OF_MONTH) == (int)((globalData) activity.getApplication()).getAquaMotorChar("motordom")) {
                             col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + time + time_mode);
                         } else {
-                            col.setText("\n00:00\n00:00");
+                            col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00");
                         }
                         break;
                     default:
-                        col.setText("\n00:00\n00:00");
+                        col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00");
                         break;
                 }
                     date.add(Calendar.DAY_OF_MONTH, 1);

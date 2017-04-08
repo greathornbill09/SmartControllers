@@ -310,17 +310,18 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
                         if (date.get(Calendar.DAY_OF_WEEK) == (int)((globalData) activity.getApplication()).getAquaLightChar("lightdow")) {
                             col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + time + time_mode + "\n" + duration);
                         } else {
-                            col.setText("\n00:00\n00:00");
+                            col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00\n00:00");
                         }
+                        break;
                     case 3:
                         if (date.get(Calendar.DAY_OF_MONTH) == (int)((globalData) activity.getApplication()).getAquaLightChar("lightdom")) {
                             col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + time + time_mode + "\n" + duration);
                         } else {
-                            col.setText("\n00:00\n00:00");
+                            col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00\n00:00");
                         }
                         break;
                     default:
-                        col.setText("\n00:00\n00:00");
+                        col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00\n00:00");
                         break;
                 }
                 date.add(Calendar.DAY_OF_MONTH, 1);

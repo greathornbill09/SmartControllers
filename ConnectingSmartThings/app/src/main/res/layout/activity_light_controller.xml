@@ -8,6 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/home_screen"
     tools:context="com.hornbill.great.connectingsmartthings.LightController">
 
     <TextView
@@ -15,6 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Aqua Light On/Off"
+        android:textColor="@color/White"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_alignBottom="@+id/mySwitch"
         android:layout_alignParentLeft="true"
@@ -26,6 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/FrequencyOflighting"
+        android:textColor="@color/White"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_alignTop="@+id/spinSelect"
         android:layout_alignParentLeft="true"
@@ -37,46 +40,29 @@
         android:text="Select Date/Time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="40dp"
         android:id="@+id/ScheduleLighting"
+        android:textColor="@color/White"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_below="@+id/switchStatus"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <Button
-        android:text="Date_Time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/mySchedule"
-        android:layout_alignBaseline="@+id/ScheduleLighting"
-        android:layout_alignBottom="@+id/ScheduleLighting"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
     <TextView
         android:text="Set Duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="40dp"
         android:id="@+id/DurationOflighting"
+        android:textColor="@color/White"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_below="@+id/mySchedule"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <Button
-        android:text="Hours_Min"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/myScheduleDuration"
-        android:layout_alignBaseline="@+id/DurationOflighting"
-        android:layout_alignBottom="@+id/DurationOflighting"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
     <Switch
         android:id="@+id/mySwitch"
+        android:textColor="@color/White"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -88,6 +74,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/spinSelect"
+        android:textColor="@color/White"
         android:entries="@array/repeat"
         android:layout_centerVertical="true"
         android:layout_alignLeft="@+id/myScheduleDuration"
@@ -99,6 +86,7 @@
         android:text="Schedule"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/White"
         android:id="@+id/scheduleTrigger"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
@@ -109,7 +97,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/FrequencyOflighting"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="15dp"
         android:layout_above="@+id/scheduleTrigger">
 
         <TableRow
@@ -230,5 +218,27 @@
         </TableRow>
 
     </TableLayout>
+
+    <Button
+        android:text="Hours_Min"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/myScheduleDuration"
+        android:textColor="@color/White"
+        android:layout_alignBaseline="@+id/DurationOflighting"
+        android:layout_alignBottom="@+id/DurationOflighting"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="Date_Time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/mySchedule"
+        android:textColor="@color/White"
+        android:layout_alignBaseline="@+id/ScheduleLighting"
+        android:layout_alignBottom="@+id/ScheduleLighting"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

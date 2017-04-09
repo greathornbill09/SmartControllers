@@ -59,7 +59,6 @@ public class ControlCentre extends Activity {
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
-
         }
 
         @Override
@@ -89,14 +88,11 @@ public class ControlCentre extends Activity {
         }
     }
 
-
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         mBluetoothLeService.disconnect();
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
-
     }
 }

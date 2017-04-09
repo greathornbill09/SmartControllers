@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Ivory">
+    android:background="@drawable/home_screen">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -11,6 +11,7 @@
             android:layout_height="match_parent"
             android:textSize="30sp"
             android:id="@+id/calibheading"
+            android:textColor="@color/White"
             android:layout_gravity="center"
             android:gravity="center_horizontal"
             android:text="@string/calib_introduction"
@@ -23,6 +24,7 @@
             android:id="@+id/paragraph"
             android:layout_gravity="center_vertical|right"
             android:text="@string/calib_note2"
+            android:textColor="@color/White"
             android:layout_marginTop="80dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"

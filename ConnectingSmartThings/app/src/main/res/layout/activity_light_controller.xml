@@ -24,7 +24,7 @@
 
 
     <TextView
-        android:text="Frequency"
+        android:text="Recurrence"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/FrequencyOflighting"
@@ -64,11 +64,11 @@
         android:id="@+id/mySwitch"
         android:textColor="@color/White"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="13dp" />
+        android:layout_marginTop="13dp"
+        android:layout_height="38dp" />
 
     <Spinner
         android:layout_width="wrap_content"
@@ -85,7 +85,7 @@
     <Button
         android:text="Schedule"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="38dp"
         android:textColor="@color/White"
         android:id="@+id/scheduleTrigger"
         android:layout_alignParentBottom="true"
@@ -97,7 +97,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/FrequencyOflighting"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="30dp"
         android:layout_above="@+id/scheduleTrigger">
 
         <TableRow
@@ -222,23 +222,23 @@
     <Button
         android:text="Hours_Min"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/myScheduleDuration"
         android:textColor="@color/White"
         android:layout_alignBaseline="@+id/DurationOflighting"
         android:layout_alignBottom="@+id/DurationOflighting"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_height="38dp" />
 
     <Button
         android:text="Date_Time"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/mySchedule"
         android:textColor="@color/White"
         android:layout_alignBaseline="@+id/ScheduleLighting"
         android:layout_alignBottom="@+id/ScheduleLighting"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_height="38dp" />
 
 </RelativeLayout>

@@ -14,11 +14,12 @@
     <Switch
         android:id="@+id/myMotorSwitch"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:textColor="@color/White"
+        android:layout_marginTop="13dp"
         android:layout_alignLeft="@+id/myValveSwitch"
-        android:layout_alignStart="@+id/myValveSwitch" />
+        android:layout_alignStart="@+id/myValveSwitch"
+        android:layout_height="38dp" />
 
     <TextView
         android:text="Recurrence"
@@ -33,12 +34,12 @@
     <Switch
         android:id="@+id/myValveSwitch"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:textColor="@color/White"
         android:layout_below="@+id/myMotorSwitch"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="20dp"
+        android:layout_height="38dp" />
 
     <TextView
         android:text="Select Date/Time"
@@ -56,22 +57,22 @@
     <Button
         android:text="Date_Time"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/myMotorSchedule"
         android:textColor="@color/White"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/myValveSwitch"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_height="38dp" />
 
     <Button
         android:text="Calibration Start"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="38dp"
         android:id="@+id/calibrate"
         android:textColor="@color/White"
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/spinSelect"
+        android:layout_marginTop="17dp"
+        android:layout_below="@+id/FrequencyOfMotor"
         android:layout_centerHorizontal="true" />
 
     <Spinner
@@ -241,7 +242,7 @@
     <Button
         android:text="Schedule"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="38dp"
         android:textColor="@color/White"
         android:id="@+id/scheduleTrigger"
         android:layout_alignParentBottom="true"

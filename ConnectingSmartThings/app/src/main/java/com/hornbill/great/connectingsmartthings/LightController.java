@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -71,8 +72,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
         /*Displaying in the Light switch*/
         lightSwitch = (Switch) findViewById(R.id.mySwitch);
         statusLight = ((globalData)activity.getApplication()).getAquaLightChar("lightstatus");
-        if(statusLight == 1)
-        {
+        if(statusLight == 1) {
             lightSwitch.setChecked(true);
         }
 
@@ -81,7 +81,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
-            byte[]data = new byte[8];
+            byte[]data = new byte[9];
             if (isChecked){
                 Log.w(TAG,"Write On");
                 data[1]= 1;
@@ -108,7 +108,6 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             @Override
             public void onClick(View v) {
                 Log.w(TAG,"Schedule Button Clicked");
-
                 new SlideDateTimePicker.Builder(getSupportFragmentManager())
                         .setListener(listener)
                         .setInitialDate(new Date())
@@ -123,23 +122,22 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             public void onClick(View v) {
                 Log.w(TAG,"Schedule Duration Button Clicked");
                 showNumPicker();
-
             }
 
         });
 
         /* Select the frequency*/
         Spinner spinner = (Spinner) findViewById(R.id.spinSelect);
-// Create an ArrayAdapter using the string array and a default spinner layout
+        // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.repeat));
-// Specify the layout to use when the list of choices appears
+        // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
 
-// Apply the adapter to the spinner
+        // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
-
+        spinner.setSelection(0, true);
         lightScheduleTriggerButton = (Button) findViewById(R.id.scheduleTrigger);
 
         lightScheduleTriggerButton.setOnClickListener(new View.OnClickListener() {
@@ -151,17 +149,16 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
                 sendLightCustomCharacteristicDatafromGlobalStructure();
                 /* Update the display area*/
                 displaySchedule();
-
             }
         });
     }
 
+    @Override
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id)
     {
         Log.w(TAG,"onItemSelected"+ parent.getSelectedItem());
         switch((String)parent.getSelectedItem()){
-
             case "Daily" :
                 updateGlobalSpace("lightrecurrences",(byte)1);
                 break;
@@ -262,21 +259,22 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             int recurrence = ((globalData) activity.getApplication()).getAquaLightChar("lightrecurrences");
             switch (recurrence) {
                 case 1:
-                    scheduleRecurrence = "Daily";
+                    scheduleRecurrence = "Schedule : Daily";
                     break;
                 case 2:
-                    scheduleRecurrence = "Weekly";
+                    scheduleRecurrence = "Schedule : Weekly";
                     break;
                 case 3:
-                    scheduleRecurrence = "Monthly";
+                    scheduleRecurrence = "Schedule : Monthly";
                     break;
                 default:
+                    scheduleRecurrence = "No Schedule";
                     break;
             }
             // Display the upcoming recurrence
             TableRow row1 = (TableRow) scheduleView.getChildAt(0);
             TextView et = (TextView) row1.getChildAt(0);
-            et.setText("Schedule : " + scheduleRecurrence);
+            et.setText(scheduleRecurrence);
 
             // Display next few upcoming schedule time/duration
             TableRow row3 = (TableRow) scheduleView.getChildAt(2);
@@ -296,10 +294,13 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
                 time_mode = " pm";
             }
 
-            time = Integer.toString(ti_hh);
-            time += ":" + Integer.toString(ti_mm);
-            duration = Integer.toString(((globalData) activity.getApplication()).getAquaLightChar("lightdurationhours"));
-            duration += ":" + Integer.toString(((globalData) activity.getApplication()).getAquaLightChar("lightdurationminutes"));
+            time = Integer.toString(ti_hh) + ":";
+            if (ti_mm < 10) {
+                time += "0";
+            }
+            time += Integer.toString(ti_mm);
+            duration = Integer.toString(((globalData) activity.getApplication()).getAquaLightChar("lightdurationhours")) + "h";
+            duration += ":" + Integer.toString(((globalData) activity.getApplication()).getAquaLightChar("lightdurationminutes")) + "m";
             for (int i= 0; i < row3.getChildCount() ; i++) {
                 TextView col = (TextView)row3.getChildAt(i);
                 switch (recurrence) {
@@ -310,18 +311,18 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
                         if (date.get(Calendar.DAY_OF_WEEK) == (int)((globalData) activity.getApplication()).getAquaLightChar("lightdow")) {
                             col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + time + time_mode + "\n" + duration);
                         } else {
-                            col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00\n00:00");
+                            col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00h:00m\n00h:00m");
                         }
                         break;
                     case 3:
                         if (date.get(Calendar.DAY_OF_MONTH) == (int)((globalData) activity.getApplication()).getAquaLightChar("lightdom")) {
                             col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + time + time_mode + "\n" + duration);
                         } else {
-                            col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00\n00:00");
+                            col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00h:00m\n00h:00m");
                         }
                         break;
                     default:
-                        col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00\n00:00");
+                        col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00h:00m\n00h:00m");
                         break;
                 }
                 date.add(Calendar.DAY_OF_MONTH, 1);
@@ -333,7 +334,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             // Display the upcoming recurrence
             TableRow row1= (TableRow)scheduleView.getChildAt(0);
             TextView et = (TextView )row1.getChildAt(0);
-            et.setText("No Schedules Available yet !!!");
+            et.setText("No Schedules");
             // Display next few upcoming schedule time/duration
             TableRow row3 = (TableRow) scheduleView.getChildAt(2);
             for (int i= 0; i < row3.getChildCount() ; i++) {
@@ -349,7 +350,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
     }
 
     private void sendLightCustomCharacteristicDatafromGlobalStructure(){
-        byte[]lightScheduleData = new byte[8];
+        byte[]lightScheduleData = new byte[9];
 
         Log.w(TAG, "lightScheduleButton "+lightScheduleData[0]);
 
@@ -357,18 +358,20 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
         lightScheduleData[0] = ((globalData)activity.getApplication()).getAquaLightChar("lightmode");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightstatus"));
         lightScheduleData[1] = ((globalData)activity.getApplication()).getAquaLightChar("lightstatus");
+        Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightdom"));
+        lightScheduleData[2] = ((globalData)activity.getApplication()).getAquaLightChar("lightdom");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightdow"));
-        lightScheduleData[2] = ((globalData)activity.getApplication()).getAquaLightChar("lightdow");
+        lightScheduleData[3] = ((globalData)activity.getApplication()).getAquaLightChar("lightdow");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lighthours"));
-        lightScheduleData[3] = ((globalData)activity.getApplication()).getAquaLightChar("lighthours");
+        lightScheduleData[4] = ((globalData)activity.getApplication()).getAquaLightChar("lighthours");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightminutes"));
-        lightScheduleData[4] = ((globalData)activity.getApplication()).getAquaLightChar("lightminutes");
+        lightScheduleData[5] = ((globalData)activity.getApplication()).getAquaLightChar("lightminutes");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightrecurrences"));
-        lightScheduleData[5] = ((globalData)activity.getApplication()).getAquaLightChar("lightrecurrences");
+        lightScheduleData[6] = ((globalData)activity.getApplication()).getAquaLightChar("lightrecurrences");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightdurationhours"));
-        lightScheduleData[6] = ((globalData)activity.getApplication()).getAquaLightChar("lightdurationhours");
+        lightScheduleData[7] = ((globalData)activity.getApplication()).getAquaLightChar("lightdurationhours");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightdurationminutes"));
-        lightScheduleData[7] = ((globalData)activity.getApplication()).getAquaLightChar("lightdurationminutes");
+        lightScheduleData[8] = ((globalData)activity.getApplication()).getAquaLightChar("lightdurationminutes");
 
         Log.w(TAG," Writing Schedule details over BLE");
         mLightBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_LIGHT_CHARACTERISTIC,lightScheduleData);

@@ -599,12 +599,13 @@ public class DeviceScan extends ListActivity {
 
                         ((globalData)activity.getApplication()).setAquaLightChar("lightmode",(scheduleBuffer.get(0)));
                         ((globalData)activity.getApplication()).setAquaLightChar("lightstatus",(scheduleBuffer.get(1)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("lightdow",(scheduleBuffer.get(2)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("lighthours",(scheduleBuffer.get(3)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("lightminutes",(scheduleBuffer.get(4)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("lightrecurrences",(scheduleBuffer.get(5)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("lightdurationhours",(scheduleBuffer.get(6)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("lightdurationminutes",(scheduleBuffer.get(7)));
+                        ((globalData)activity.getApplication()).setAquaLightChar("lightdom",(scheduleBuffer.get(2)));
+                        ((globalData)activity.getApplication()).setAquaLightChar("lightdow",(scheduleBuffer.get(3)));
+                        ((globalData)activity.getApplication()).setAquaLightChar("lighthours",(scheduleBuffer.get(4)));
+                        ((globalData)activity.getApplication()).setAquaLightChar("lightminutes",(scheduleBuffer.get(5)));
+                        ((globalData)activity.getApplication()).setAquaLightChar("lightrecurrences",(scheduleBuffer.get(6)));
+                        ((globalData)activity.getApplication()).setAquaLightChar("lightdurationhours",(scheduleBuffer.get(7)));
+                        ((globalData)activity.getApplication()).setAquaLightChar("lightdurationminutes",(scheduleBuffer.get(8)));
                         Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightmode"));
                         Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightstatus"));
                         Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightdow"));
@@ -615,24 +616,22 @@ public class DeviceScan extends ListActivity {
                         Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightdurationminutes"));
                     }
 
-                }else if (BluetoothLeService.ACTION_AQUA_MOTOR_CHAR_AVAILABLE.equals(action)) {
+                } else if (BluetoothLeService.ACTION_AQUA_MOTOR_CHAR_AVAILABLE.equals(action)) {
                     final byte[]scheduleMotorData;
                     if ((scheduleMotorData = intent.getExtras().getByteArray("MOTORSchedule")) != null) {
                         Log.w(TAG,"mGattDataUpdateReceiver : Got the Light Schedule data in App");
                         ByteBuffer scheduleBuffer = ByteBuffer.wrap(scheduleMotorData);
                         Log.w(TAG, "broadcastUpdate: MOTORSchedule Buffer Length "+ scheduleMotorData.length);
-                        {
-                            ((globalData) activity.getApplication()).setAquaMotorChar("motormode", (scheduleBuffer.get(0)));
-                        }
-
+                        ((globalData) activity.getApplication()).setAquaMotorChar("motormode", (scheduleBuffer.get(0)));
                         ((globalData)activity.getApplication()).setAquaMotorChar("motorpump",(scheduleBuffer.get(1)));
                         ((globalData)activity.getApplication()).setAquaMotorChar("motorvalve",(scheduleBuffer.get(2)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motordow",(scheduleBuffer.get(3)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motorhours",(scheduleBuffer.get(4)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motorminutes",(scheduleBuffer.get(5)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motorrecurrence",(scheduleBuffer.get(6)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motordurationhours",(scheduleBuffer.get(7)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motordurationminutes",(scheduleBuffer.get(8)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motordom",(scheduleBuffer.get(3)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motordow",(scheduleBuffer.get(4)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motorhours",(scheduleBuffer.get(5)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motorminutes",(scheduleBuffer.get(6)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motorrecurrence",(scheduleBuffer.get(7)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motordurationhours",(scheduleBuffer.get(8)));
+                        ((globalData)activity.getApplication()).setAquaMotorChar("motordurationminutes",(scheduleBuffer.get(9)));
 
                         Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motormode"));
                         Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motorpump"));

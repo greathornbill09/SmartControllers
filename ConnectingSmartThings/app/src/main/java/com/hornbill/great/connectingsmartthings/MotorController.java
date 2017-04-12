@@ -225,13 +225,15 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         motorScheduleTriggerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calibrationState = ((globalData)activity.getApplication()).getAquaMotorChar("motormode");
-                /* Update the display area*/
-                displaySchedule();
-                updateGlobalSpace("motormode",(byte) 1);
+            calibrationState = ((globalData)activity.getApplication()).getAquaMotorChar("motormode");
+            /* Update the display area*/
+            displaySchedule();
+            if (calibrationState == 6) {
+                updateGlobalSpace("motormode", (byte) 1);
                 /* Write data to the custom characteristics*/
                 sendMotorCustomCharacteristicDatafromGlobalStructure();
                 updateGlobalSpace("motormode", calibrationState);
+            }
             }
         });
     }
@@ -290,7 +292,6 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                                int pos, long id)
     {
         Log.w(TAG,"onItemSelected"+ parent.getSelectedItem());
-
         switch((String)parent.getSelectedItem()){
 
             case "Daily" :

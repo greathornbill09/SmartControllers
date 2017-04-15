@@ -17,8 +17,8 @@ public class CalibrateHelpActivity extends AppIntro{
         super.onCreate(savedInstanceState);
         addSlide(SampleSlide.newInstance(R.layout.calibrateslide1));
         addSlide(SampleSlide.newInstance(R.layout.calibrateslide2));
-        setBarColor(Color.parseColor("#5F9EA0"));
-        setSeparatorColor(Color.parseColor("#5F9EA0"));
+        setBarColor(Color.parseColor("#87CEFA"));
+        setSeparatorColor(Color.parseColor("#87CEFA"));
     }
     @Override
     public void onSkipPressed(@Nullable Fragment currentFragment) {

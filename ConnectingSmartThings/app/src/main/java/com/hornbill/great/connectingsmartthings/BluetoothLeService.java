@@ -198,7 +198,7 @@ public class BluetoothLeService extends Service {
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
             if (characteristic.getUuid().compareTo(UUID_AQUA_RTC_CHARACTERISTIC) == 0){
-                Log.w(TAG, "onCharacteristicChanged: ACTION_AQUA_RTC_CHAR_AVAILABLE" );
+                //Log.w(TAG, "onCharacteristicChanged: ACTION_AQUA_RTC_CHAR_AVAILABLE" );
                 broadcastUpdate(ACTION_AQUA_RTC_CHAR_AVAILABLE, characteristic);
             } else if (characteristic.getUuid().compareTo(UUID_AQUA_MOTOR_CHARACTERISTIC) == 0){
                 Log.w(TAG, "onCharacteristicChanged: ACTION_AQUA_MOTOR_CHAR_AVAILABLE" );
@@ -280,7 +280,7 @@ public class BluetoothLeService extends Service {
     public boolean syncRTCOnDevice(byte month, byte day,byte hour,byte minute,byte dayofweek,
                                 final BluetoothGattCharacteristic characteristic){
         boolean isSyncCompleted = false;
-        Log.w(TAG, "syncRTCOnDevice: Checking for the host time and date");
+        //Log.w(TAG, "syncRTCOnDevice: Checking for the host time and date");
         if (characteristic.getUuid().compareTo(UUID_AQUA_RTC_CHARACTERISTIC) == 0) {
             int hostyear, hostMonth, hostDay, hostHour, hostMinute, hostSeconds, hostDayOfWeek;
             final byte[] data = new byte[8];
@@ -307,7 +307,7 @@ public class BluetoothLeService extends Service {
                 characteristic.setValue(data);
                 mBluetoothGatt.writeCharacteristic(characteristic);
             } else {
-                Log.w(TAG, "syncRTCOnDevice: Sync not required");
+                //Log.w(TAG, "syncRTCOnDevice: Sync not required");
                 isSyncCompleted = true;
             }
         }

@@ -13,7 +13,7 @@
     </style>
 
     <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">@color/CadetBlue</item>
+        <item name="android:background">@color/LightSkyBlue</item>
     </style>
     <style name="MyActionBarButtonOverflow" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
         <item name="android:src">@drawable/settings_slider</item>
@@ -21,6 +21,6 @@
 
     <style name="IntroTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/CadetBlue</item>
+        <item name="colorPrimary">@color/LightSkyBlue</item>
     </style>
 </resources>

@@ -13,8 +13,8 @@
 
     <Button
         android:id="@+id/lightButton"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:background="@drawable/lightbutton"
         android:visibility="visible"
         android:layout_alignParentTop="true"
@@ -25,15 +25,15 @@
 
     <Button
         android:id="@+id/MotorButton"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:background="@drawable/motorbutton"
         android:visibility="visible"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/lightButton"
-        android:layout_toEndOf="@+id/lightButton"
-        android:layout_marginLeft="18dp"
-        android:layout_marginStart="18dp" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="28dp"
+        android:layout_marginEnd="28dp" />
 
 
 </RelativeLayout>

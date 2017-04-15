@@ -52,6 +52,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     public Button motorCalibrateButton;
     public Button motorScheduleTriggerButton;
     private boolean productFlavor;
+    boolean isRecieverRgistered = false;
 
     private Activity activity = this;
     private TableLayout scheduleView;
@@ -80,6 +81,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
 
         /* Register the calibration update receiver*/
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        isRecieverRgistered = true;
 
         scheduleView = (TableLayout) findViewById(R.id.scheduleDetails);
         /* Update the display area*/
@@ -192,7 +194,6 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         calibrateButtonState = ((globalData)activity.getApplication()).getAquaMotorChar("motormode");
 
         Log.w(TAG, "calibrateButtonState "+calibrateButtonState);
-
         if((calibrateButtonState == 2) || (calibrateButtonState == 6)) {
             motorCalibrateButton.setText("Calibration Start");
         } else if (calibrateButtonState == 3) {
@@ -594,6 +595,17 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public void onBackPressed(){
+        if(isRecieverRgistered == true) {
+            unregisterReceiver(mGattUpdateReceiver);
+            isRecieverRgistered = false;
+        }
+        super.onBackPressed();
+    }
+
+
 
     @Override
     protected void onDestroy() {

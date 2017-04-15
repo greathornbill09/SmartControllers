@@ -86,10 +86,11 @@
         android:text="Schedule"
         android:layout_width="wrap_content"
         android:layout_height="38dp"
-        android:textColor="@color/White"
+        android:textColor="@color/black_overlay"
         android:id="@+id/scheduleTrigger"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:background="@android:drawable/btn_default"/>
 
     <TableLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -121,7 +122,7 @@
                 android:id="@+id/image1"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="85dp"
+                android:layout_height="65dp"
                 android:scaleType="center"
                 android:background="@layout/cell_layout"
                 android:src="@drawable/lightbutton" />
@@ -130,7 +131,7 @@
                 android:id="@+id/image1"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="85dp"
+                android:layout_height="65dp"
                 android:scaleType="center"
                 android:background="@layout/cell_layout"
                 android:src="@drawable/lightbutton" />
@@ -139,7 +140,7 @@
                 android:id="@+id/image1"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="85dp"
+                android:layout_height="65dp"
                 android:scaleType="center"
                 android:background="@layout/cell_layout"
                 android:src="@drawable/lightbutton" />
@@ -148,7 +149,7 @@
                 android:id="@+id/image1"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="85dp"
+                android:layout_height="65dp"
                 android:scaleType="center"
                 android:background="@layout/cell_layout"
                 android:src="@drawable/lightbutton" />
@@ -157,7 +158,7 @@
                 android:id="@+id/image1"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="85dp"
+                android:layout_height="65dp"
                 android:scaleType="center"
                 android:background="@layout/cell_layout"
                 android:src="@drawable/lightbutton" />
@@ -166,11 +167,11 @@
 
         <TableRow
             android:id="@+id/tableRow3"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_width="match_parent">
 
             <TextView
-                android:id="@+id/TextView01" android:text="SUN\n9:30pm\n01:10"
+                android:id="@+id/TextView01" android:text="SUN\n9:30pm\n01:10\n"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
@@ -179,7 +180,7 @@
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView02" android:text="MON\n9:30pm\n01:10"
+                android:id="@+id/TextView02" android:text="MON\n9:30pm\n01:10\n"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
@@ -188,7 +189,7 @@
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView03" android:text="TUE\n9:30pm\n01:10"
+                android:id="@+id/TextView03" android:text="TUE\n9:30pm\n01:10\n"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
@@ -197,7 +198,7 @@
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView04" android:text="WED\n9:30pm\n01:10"
+                android:id="@+id/TextView04" android:text="WED\n9:30pm\n01:10\n"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
@@ -206,7 +207,7 @@
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView05" android:text="THU\n9:30pm\n01:10"
+                android:id="@+id/TextView05" android:text="THU\n9:30pm\n01:10\n"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
@@ -215,7 +216,7 @@
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView06" android:text="FRI\n9:30pm\n01:10"
+                android:id="@+id/TextView06" android:text="FRI\n9:30pm\n01:10\n"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
@@ -224,7 +225,7 @@
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView07" android:text="SAT\n9:30pm\n01:10"
+                android:id="@+id/TextView07" android:text="SAT\n9:30pm\n01:10\n"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
@@ -241,22 +242,24 @@
         android:text="Hours_Min"
         android:layout_width="wrap_content"
         android:id="@+id/myScheduleDuration"
-        android:textColor="@color/White"
+        android:textColor="@color/black_overlay"
         android:layout_alignBaseline="@+id/DurationOflighting"
         android:layout_alignBottom="@+id/DurationOflighting"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_height="38dp" />
+        android:layout_height="38dp"
+        android:background="@android:drawable/btn_default"/>
 
     <Button
         android:text="Date_Time"
         android:layout_width="wrap_content"
         android:id="@+id/mySchedule"
-        android:textColor="@color/White"
+        android:textColor="@color/black_overlay"
         android:layout_alignBaseline="@+id/ScheduleLighting"
         android:layout_alignBottom="@+id/ScheduleLighting"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_height="38dp" />
+        android:layout_height="38dp"
+        android:background="@android:drawable/btn_default"/>
 
 </RelativeLayout>

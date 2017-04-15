@@ -15,6 +15,7 @@ public class globalData extends Application {
 
     /* RTC Sync Details*/
     private boolean rtcSyncNotified = false;
+    private boolean productFlavor = true; /*true for full version and false for demo version*/
 
     /* Light Char*/
     private byte lightMode = 0;
@@ -48,6 +49,12 @@ public class globalData extends Application {
 
         rtcSyncNotified = val;
     }
+
+    public boolean getProductFlavor(){
+        return productFlavor;
+    }
+
+
 
     public byte getAquaLightChar(String returnString) {
 

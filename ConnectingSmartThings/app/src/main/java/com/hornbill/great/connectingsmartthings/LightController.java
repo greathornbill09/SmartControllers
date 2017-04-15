@@ -1,8 +1,10 @@
 package com.hornbill.great.connectingsmartthings;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -46,6 +48,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
     private Button lightScheduleDurationButton;
     private Button lightScheduleTriggerButton;
     private Byte statusLight;
+    private boolean productFlavor;
     private final static String TAG = LightController.class.getSimpleName();
     private BluetoothLeService mLightBluetoothService;
 
@@ -72,6 +75,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
         /*Displaying in the Light switch*/
         lightSwitch = (Switch) findViewById(R.id.mySwitch);
         statusLight = ((globalData)activity.getApplication()).getAquaLightChar("lightstatus");
+        productFlavor = ((globalData)activity.getApplication()).getProductFlavor();
         if(statusLight == 1) {
             lightSwitch.setChecked(true);
         }
@@ -144,13 +148,33 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             @Override
             public void onClick(View v) {
 
-                updateGlobalSpace("lightmode",(byte) 1);
+                if(productFlavor == true) {
+                    updateGlobalSpace("lightmode", (byte) 1);
                  /* Write data to the custom characteristics*/
-                sendLightCustomCharacteristicDatafromGlobalStructure();
+                    sendLightCustomCharacteristicDatafromGlobalStructure();
                 /* Update the display area*/
-                displaySchedule();
+                    displaySchedule();
+                }
+                else
+                {
+                    AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(activity);
+
+                    dlgAlert.setMessage("This is a Demo Version.Please Purchase the Full Version for Scheduling Functionality");
+                    dlgAlert.setTitle("Warning...");
+                    dlgAlert.setPositiveButton("OK", null);
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.create().show();
+
+                    dlgAlert.setPositiveButton("Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                }
             }
         });
+
     }
 
     @Override

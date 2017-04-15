@@ -51,6 +51,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     private Byte statusValve;
     public Button motorCalibrateButton;
     public Button motorScheduleTriggerButton;
+    private boolean productFlavor;
 
     private Activity activity = this;
     private TableLayout scheduleView;
@@ -87,6 +88,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         /*Displaying in the Motor switch*/
         motorSwitch = (Switch) findViewById(R.id.myMotorSwitch);
         statusMotor = ((globalData)activity.getApplication()).getAquaMotorChar("motorpump");
+        productFlavor = ((globalData)activity.getApplication()).getProductFlavor();
         if(statusMotor == 0x11)
         {
             motorSwitch.setChecked(true);
@@ -202,17 +204,37 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         motorCalibrateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            calibrateButtonState = ((globalData)activity.getApplication()).getAquaMotorChar("motormode");
-            if((calibrateButtonState == 2) || (calibrateButtonState == 6) || (calibrateButtonState == 0)) {
-               motorCalibrateButton.setText("Calibration Stop");
-               updateGlobalSpace("motormode",(byte)3);
-            } else if (calibrateButtonState == 3) {
-               motorCalibrateButton.setText("Calibration Start");
-               updateGlobalSpace("motormode",(byte)4);
-               motorCalibrateButton.setEnabled(false);
-            }
 
-            sendMotorCustomCharacteristicDatafromGlobalStructure();
+                if(productFlavor == true) {
+                    calibrateButtonState = ((globalData) activity.getApplication()).getAquaMotorChar("motormode");
+                    if ((calibrateButtonState == 2) || (calibrateButtonState == 6) || (calibrateButtonState == 0)) {
+                        motorCalibrateButton.setText("Calibration Stop");
+                        updateGlobalSpace("motormode", (byte) 3);
+                    } else if (calibrateButtonState == 3) {
+                        motorCalibrateButton.setText("Calibration Start");
+                        updateGlobalSpace("motormode", (byte) 4);
+                        motorCalibrateButton.setEnabled(false);
+                    }
+
+                    sendMotorCustomCharacteristicDatafromGlobalStructure();
+                }
+                else
+                {
+                    AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(activity);
+
+                    dlgAlert.setMessage("This is a Demo Version.Please Purchase the Full Version for Calibration");
+                    dlgAlert.setTitle("Warning...");
+                    dlgAlert.setPositiveButton("OK", null);
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.create().show();
+
+                    dlgAlert.setPositiveButton("Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                }
             }
         });
 
@@ -225,15 +247,35 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         motorScheduleTriggerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            calibrationState = ((globalData)activity.getApplication()).getAquaMotorChar("motormode");
+
+                if(productFlavor == true) {
+                    calibrationState = ((globalData) activity.getApplication()).getAquaMotorChar("motormode");
             /* Update the display area*/
-            displaySchedule();
-            if (calibrationState == 6) {
-                updateGlobalSpace("motormode", (byte) 1);
+                    displaySchedule();
+                    if (calibrationState == 6) {
+                        updateGlobalSpace("motormode", (byte) 1);
                 /* Write data to the custom characteristics*/
-                sendMotorCustomCharacteristicDatafromGlobalStructure();
-                updateGlobalSpace("motormode", calibrationState);
-            }
+                        sendMotorCustomCharacteristicDatafromGlobalStructure();
+                        updateGlobalSpace("motormode", calibrationState);
+                    }
+                }
+                else
+                {
+                    AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(activity);
+
+                    dlgAlert.setMessage("This is a Demo Version.Please Purchase the Full Version for Scheduling Functionality");
+                    dlgAlert.setTitle("Warning...");
+                    dlgAlert.setPositiveButton("OK", null);
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.create().show();
+
+                    dlgAlert.setPositiveButton("Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                }
             }
         });
     }

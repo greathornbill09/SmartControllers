@@ -300,12 +300,13 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                     Log.w(TAG, "broadcastUpdate: MOTORSchedule Buffer Length "+ scheduleMotorData.length);
                     ((globalData) activity.getApplication()).setAquaMotorChar("motormode", (scheduleBuffer.get(0)));
                     if(scheduleBuffer.get(0) == 6) {
-                        motorCalibrateButton.setText("Calibration Start");
-                        motorCalibrateButton.setEnabled(true);
                         motorScheduleTriggerButton.setEnabled(true);
-                        updateGlobalSpace("motormode",(byte) 6);
-                        displaySchedule();
                     }
+
+                    motorCalibrateButton.setText("Calibration Start");
+                    motorCalibrateButton.setEnabled(true);
+                    updateGlobalSpace("motormode",(byte) scheduleBuffer.get(0));
+                    displaySchedule();
 
                     ((globalData)activity.getApplication()).setAquaMotorChar("motorpump",(scheduleBuffer.get(1)));
                     ((globalData)activity.getApplication()).setAquaMotorChar("motorvalve",(scheduleBuffer.get(2)));

@@ -68,17 +68,30 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             Log.w(TAG,"Could not fetch the bluetooth service");
         }
 
+        productFlavor = ((globalData)activity.getApplication()).getProductFlavor();
+
         /* Displaying the next schedule*/
         scheduleView = (TableLayout) findViewById(R.id.scheduleDetails);
-        displaySchedule();
-
         /*Displaying in the Light switch*/
         lightSwitch = (Switch) findViewById(R.id.mySwitch);
-        statusLight = ((globalData)activity.getApplication()).getAquaLightChar("lightstatus");
-        productFlavor = ((globalData)activity.getApplication()).getProductFlavor();
-        if(statusLight == 1) {
-            lightSwitch.setChecked(true);
-        }
+        /* Displaying the Date and time Picker*/
+        lightScheduleButton = (Button) findViewById(R.id.mySchedule);
+        /*Displaying schedule duration button */
+        lightScheduleDurationButton = (Button) findViewById(R.id.myScheduleDuration);
+        /*Displaying light schedule trigger */
+        lightScheduleTriggerButton = (Button) findViewById(R.id.scheduleTrigger);
+         /* Select the frequency*/
+        Spinner spinner = (Spinner) findViewById(R.id.spinSelect);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.repeat));
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+        spinner.setSelection(0, true);
+
+        displaySchedule();
 
         lightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
@@ -106,8 +119,6 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             }
         });
 
-        /* Displaying the Date and time Picker*/
-        lightScheduleButton = (Button) findViewById(R.id.mySchedule);
         lightScheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,7 +131,6 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             }
         });
 
-        lightScheduleDurationButton = (Button) findViewById(R.id.myScheduleDuration);
         lightScheduleDurationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,20 +139,6 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             }
 
         });
-
-        /* Select the frequency*/
-        Spinner spinner = (Spinner) findViewById(R.id.spinSelect);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.repeat));
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
-
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-        spinner.setSelection(0, true);
-        lightScheduleTriggerButton = (Button) findViewById(R.id.scheduleTrigger);
 
         lightScheduleTriggerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,7 +170,6 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
                 }
             }
         });
-
     }
 
     @Override
@@ -277,6 +272,11 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
     };
 
     private void displaySchedule(){
+        statusLight = ((globalData)activity.getApplication()).getAquaLightChar("lightstatus");
+        if(statusLight == 1) {
+            lightSwitch.setChecked(true);
+        }
+
         if((((globalData)activity.getApplication()).getAquaLightChar("lightrecurrences")!= 0)) {
             Log.w(TAG, "displaySchedule : Schedule Available ");
             String scheduleRecurrence = null;

@@ -83,18 +83,32 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         isRecieverRgistered = true;
 
+        /* Displaying schedule view */
         scheduleView = (TableLayout) findViewById(R.id.scheduleDetails);
-        /* Update the display area*/
-        displaySchedule();
-
+        /*Displaying in the Valve switch*/
+        valveSwitch = (Switch) findViewById(R.id.myValveSwitch);
         /*Displaying in the Motor switch*/
         motorSwitch = (Switch) findViewById(R.id.myMotorSwitch);
-        statusMotor = ((globalData)activity.getApplication()).getAquaMotorChar("motorpump");
+        /* Displaying the Date and time Picker*/
+        motorScheduleButton = (Button) findViewById(R.id.myMotorSchedule);
+        /* Displaying Calibrate button */
+        motorCalibrateButton = (Button) findViewById(R.id.calibrate);
+        /* Displaying schedule button */
+        motorScheduleTriggerButton = (Button) findViewById(R.id.scheduleTrigger);
+        /* Select the frequency*/
+        Spinner spinner = (Spinner) findViewById(R.id.spinSelect);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.repeat));
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setSelection(0, true);
+        spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+
+        /* Update the display area*/
+        displaySchedule();
         productFlavor = ((globalData)activity.getApplication()).getProductFlavor();
-        if(statusMotor == 0x11)
-        {
-            motorSwitch.setChecked(true);
-        }
 
         motorSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
@@ -129,13 +143,6 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             }
         });
 
-        /*Displaying in the Motor switch*/
-        valveSwitch = (Switch) findViewById(R.id.myValveSwitch);
-        statusValve = ((globalData)activity.getApplication()).getAquaMotorChar("motorvalve");
-        if(statusValve == 0x11) {
-            valveSwitch.setChecked(true);
-        }
-
         valveSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override
@@ -163,8 +170,6 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             }
         });
 
-        /* Displaying the Date and time Picker*/
-        motorScheduleButton = (Button) findViewById(R.id.myMotorSchedule);
         motorScheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -178,19 +183,6 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             }
         });
 
-        /* Select the frequency*/
-        Spinner spinner = (Spinner) findViewById(R.id.spinSelect);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.repeat));
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setSelection(0, true);
-        spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-
-        motorCalibrateButton = (Button) findViewById(R.id.calibrate);
-        motorScheduleTriggerButton = (Button) findViewById(R.id.scheduleTrigger);
         calibrateButtonState = ((globalData)activity.getApplication()).getAquaMotorChar("motormode");
 
         Log.w(TAG, "calibrateButtonState "+calibrateButtonState);
@@ -205,37 +197,32 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         motorCalibrateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(productFlavor == true) {
-                    calibrateButtonState = ((globalData) activity.getApplication()).getAquaMotorChar("motormode");
-                    if ((calibrateButtonState == 2) || (calibrateButtonState == 6) || (calibrateButtonState == 0)) {
-                        motorCalibrateButton.setText("Calibration Stop");
+             if(productFlavor == true) {
+                 calibrateButtonState = ((globalData) activity.getApplication()).getAquaMotorChar("motormode");
+                 if ((calibrateButtonState == 2) || (calibrateButtonState == 6) || (calibrateButtonState == 0)) {
+                     motorCalibrateButton.setText("Calibration Stop");
                         updateGlobalSpace("motormode", (byte) 3);
-                    } else if (calibrateButtonState == 3) {
-                        motorCalibrateButton.setText("Calibration Start");
-                        updateGlobalSpace("motormode", (byte) 4);
-                        motorCalibrateButton.setEnabled(false);
-                    }
+                 } else if (calibrateButtonState == 3) {
+                     motorCalibrateButton.setText("Calibration Start");
+                     updateGlobalSpace("motormode", (byte) 4);
+                     motorCalibrateButton.setEnabled(false);
+                 }
 
-                    sendMotorCustomCharacteristicDatafromGlobalStructure();
-                }
-                else
-                {
-                    AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(activity);
+                 sendMotorCustomCharacteristicDatafromGlobalStructure();
+             } else {
+                 AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(activity);
+                 dlgAlert.setMessage("This is a Demo Version.Please Purchase the Full Version for Calibration");
+                 dlgAlert.setTitle("Warning...");
+                 dlgAlert.setPositiveButton("OK", null);
+                 dlgAlert.setCancelable(true);
+                 dlgAlert.create().show();
 
-                    dlgAlert.setMessage("This is a Demo Version.Please Purchase the Full Version for Calibration");
-                    dlgAlert.setTitle("Warning...");
-                    dlgAlert.setPositiveButton("OK", null);
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.create().show();
-
-                    dlgAlert.setPositiveButton("Ok",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-
+                 dlgAlert.setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
                                 }
                             });
-                }
+             }
             }
         });
 
@@ -303,19 +290,20 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                         motorScheduleTriggerButton.setEnabled(true);
                     }
 
-                    motorCalibrateButton.setText("Calibration Start");
-                    motorCalibrateButton.setEnabled(true);
+                    if (scheduleBuffer.get(0) == 2 || scheduleBuffer.get(0) == 6) {
+                        motorCalibrateButton.setText("Calibration Start");
+                        motorCalibrateButton.setEnabled(true);
+                    }
                     updateGlobalSpace("motormode",(byte) scheduleBuffer.get(0));
+                    updateGlobalSpace("motorpump",(scheduleBuffer.get(1)));
+                    updateGlobalSpace("motorvalve",(scheduleBuffer.get(2)));
+                    updateGlobalSpace("motordow",(scheduleBuffer.get(3)));
+                    updateGlobalSpace("motorhours",(scheduleBuffer.get(4)));
+                    updateGlobalSpace("motorminutes",(scheduleBuffer.get(5)));
+                    updateGlobalSpace("motorrecurrence",(scheduleBuffer.get(6)));
+                    updateGlobalSpace("motordurationhours",(scheduleBuffer.get(7)));
+                    updateGlobalSpace("motordurationminutes",(scheduleBuffer.get(8)));
                     displaySchedule();
-
-                    ((globalData)activity.getApplication()).setAquaMotorChar("motorpump",(scheduleBuffer.get(1)));
-                    ((globalData)activity.getApplication()).setAquaMotorChar("motorvalve",(scheduleBuffer.get(2)));
-                    ((globalData)activity.getApplication()).setAquaMotorChar("motordow",(scheduleBuffer.get(3)));
-                    ((globalData)activity.getApplication()).setAquaMotorChar("motorhours",(scheduleBuffer.get(4)));
-                    ((globalData)activity.getApplication()).setAquaMotorChar("motorminutes",(scheduleBuffer.get(5)));
-                    ((globalData)activity.getApplication()).setAquaMotorChar("motorrecurrence",(scheduleBuffer.get(6)));
-                    ((globalData)activity.getApplication()).setAquaMotorChar("motordurationhours",(scheduleBuffer.get(7)));
-                    ((globalData)activity.getApplication()).setAquaMotorChar("motordurationminutes",(scheduleBuffer.get(8)));
 
                     Log.w(TAG, "Calibration Notification"+((globalData)activity.getApplication()).getAquaMotorChar("motormode"));
                     Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motorpump"));
@@ -451,6 +439,22 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     };
 
     private void displaySchedule(){
+        /*Displaying in the Motor switch*/
+        statusMotor = ((globalData)activity.getApplication()).getAquaMotorChar("motorpump");
+        if(statusMotor == 0x11) {
+            motorSwitch.setChecked(true);
+        } else {
+            motorSwitch.setChecked(false);
+        }
+
+        /*Displaying in the Valve switch*/
+        statusValve = ((globalData)activity.getApplication()).getAquaMotorChar("motorvalve");
+        if(statusValve == 0x11) {
+            valveSwitch.setChecked(true);
+        } else {
+            valveSwitch.setChecked(false);
+        }
+
         if((((globalData)activity.getApplication()).getAquaMotorChar("motormode")) == 6){
             Log.w(TAG, "displaySchedule : Motor Schedule Available ");
             String scheduleRecurrence = null;

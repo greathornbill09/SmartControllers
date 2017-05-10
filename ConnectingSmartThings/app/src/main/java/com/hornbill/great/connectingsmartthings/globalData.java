@@ -15,7 +15,7 @@ public class globalData extends Application {
 
     /* RTC Sync Details*/
     private boolean rtcSyncNotified = false;
-    private boolean productFlavor = false; /*true for full version and false for demo version*/
+    private boolean productFlavor = true; /*true for full version and false for demo version*/
 
     /* Light Char*/
     private byte lightMode = 0;

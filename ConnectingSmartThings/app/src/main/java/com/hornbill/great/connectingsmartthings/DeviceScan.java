@@ -47,7 +47,7 @@ public class DeviceScan extends ListActivity {
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int PERMISSION_COARSE_LOACTION_REQUEST = 2;
     private static final int LOCATION_SERVICE_ENABLED = 3;
-    private static final long SCAN_PERIOD = 10000;
+    private static final long SCAN_PERIOD = 20000;
     boolean doubleBackToExitPressedOnce = false;
     boolean isRecieverRgistered = false;
     private Activity activity;

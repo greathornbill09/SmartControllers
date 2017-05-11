@@ -152,6 +152,7 @@ public class BluetoothLeService extends Service {
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
+            Log.w(TAG, "onCharacteristicRead: status<==>"+status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.w(TAG, "onCharacteristicRead: GATT_SUCCESS <==>");
                 if (characteristic.getUuid().compareTo(UUID_AQUA_RTC_CHARACTERISTIC) == 0){
@@ -401,7 +402,7 @@ public class BluetoothLeService extends Service {
             return false;
         }
 
-        /* Previously connected device.  Try to reconnect.
+        /* Previously connected device.  Try to reconnect.*/
         if (mBluetoothDeviceAddress != null && address.equals(mBluetoothDeviceAddress)
                 && mBluetoothGatt != null) {
             Log.d(TAG, "Trying to use an existing mBluetoothGatt for connection.");
@@ -411,7 +412,7 @@ public class BluetoothLeService extends Service {
             } else {
                 return false;
             }
-        }*/
+        }
 
         final BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         if (device == null) {

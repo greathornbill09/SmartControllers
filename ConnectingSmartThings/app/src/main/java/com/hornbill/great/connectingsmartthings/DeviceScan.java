@@ -47,7 +47,7 @@ public class DeviceScan extends ListActivity {
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int PERMISSION_COARSE_LOACTION_REQUEST = 2;
     private static final int LOCATION_SERVICE_ENABLED = 3;
-    private static final long SCAN_PERIOD = 10000;
+    private static final long SCAN_PERIOD = 20000;
     boolean doubleBackToExitPressedOnce = false;
     boolean isRecieverRgistered = false;
     private Activity activity;
@@ -334,13 +334,13 @@ public class DeviceScan extends ListActivity {
             // Start the discovery just popup the pairing dialog to foreground
             // Give it some time before cancelling the discovery
             // Then do the LeScan and connect to the device
-            BluetoothAdapter.getDefaultAdapter().startDiscovery();
+            /*BluetoothAdapter.getDefaultAdapter().startDiscovery();
             try {
                 Thread.sleep(200);
             }catch(Exception ex){
                 //do nothing...
             }
-            BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+            BluetoothAdapter.getDefaultAdapter().cancelDiscovery();*/
 
             // Stops scanning after a pre-defined scan period.
             mHandler.postDelayed(new Runnable() {
@@ -360,7 +360,7 @@ public class DeviceScan extends ListActivity {
                 public void run() {
                     mySwipeRefreshLayout.setRefreshing(false);
                 }
-            }, SCAN_PERIOD+10);
+            }, SCAN_PERIOD+5);
         } else {
             mScanning = false;
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
@@ -497,6 +497,9 @@ public class DeviceScan extends ListActivity {
             //super.onBackPressed();
             if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()){
                 mBluetoothLeService.disconnect();
+                /* Clear off the RTC sync flag*/
+                ((globalData) this.getApplication()).setRtcSyncDone(false);
+                unbindService(mServiceConnection);
                 mBluetoothAdapter.disable();
                 if(isRecieverRgistered == true) {
                     unregisterReceiver(mGattUpdateReceiver);

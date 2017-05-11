@@ -58,7 +58,7 @@
         android:text="Date_Time"
         android:layout_width="wrap_content"
         android:id="@+id/myMotorSchedule"
-        android:textColor="@color/black_overlay"
+        android:textColor="@color/Black"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/myValveSwitch"
         android:layout_alignParentRight="true"
@@ -72,21 +72,69 @@
         android:id="@+id/spinSelect"
         android:entries="@array/repeat"
         android:layout_marginTop="10dp"
+        android:layout_centerVertical="true"
         android:textColor="@color/White"
         android:layout_below="@+id/myMotorSchedule"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignLeft="@+id/myMotorSchedule"
+        android:layout_alignStart="@+id/myMotorSchedule"
+        style="@style/SpinnerTheme"/>
+
+    <TextView
+        android:id="@+id/valveSwitchStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aqua Valve On/Off"
+        android:layout_marginTop="40dp"
+        android:textColor="@color/White"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_above="@+id/myMotorSchedule"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/motorSwitchStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aqua Motor On/Off"
+        android:textColor="@color/White"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_above="@+id/myValveSwitch"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="Schedule"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
+        android:textColor="@color/Black"
+        android:id="@+id/scheduleTrigger"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@android:drawable/btn_default"/>
+
+    <Button
+        android:text="Calibration Start"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
+        android:id="@+id/calibrate"
+        android:textColor="@color/Black"
+        android:layout_below="@+id/spinSelect"
+        android:layout_centerHorizontal="true"
+        android:background="@android:drawable/btn_default"
+        />
 
     <TableLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/scheduleDetails"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="67dp"
         android:layout_below="@+id/calibrate"
-        android:layout_above="@+id/scheduleTrigger"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp">
 
         <TableRow
             android:id="@+id/tableRow1"
@@ -141,6 +189,22 @@
                 android:background="@layout/cell_layout"
                 android:src="@drawable/motorbutton" />
 
+            <ImageView
+                android:id="@+id/image1"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="65dp"
+                android:scaleType="center"
+                android:background="@layout/cell_layout"
+                android:src="@drawable/motorbutton" />
+            <ImageView
+                android:id="@+id/image1"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="65dp"
+                android:scaleType="center"
+                android:background="@layout/cell_layout"
+                android:src="@drawable/motorbutton" />
             <ImageView
                 android:id="@+id/image1"
                 android:layout_weight="1"
@@ -224,49 +288,5 @@
         </TableRow>
 
     </TableLayout>
-
-    <TextView
-        android:id="@+id/valveSwitchStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Aqua Valve On/Off"
-        android:layout_marginTop="40dp"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_above="@+id/myMotorSchedule"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:id="@+id/motorSwitchStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Aqua Motor On/Off"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_above="@+id/myValveSwitch"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:text="Schedule"
-        android:layout_width="wrap_content"
-        android:layout_height="38dp"
-        android:textColor="@color/black_overlay"
-        android:id="@+id/scheduleTrigger"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="@android:drawable/btn_default"/>
-
-    <Button
-        android:text="Calibration Start"
-        android:layout_width="wrap_content"
-        android:layout_height="38dp"
-        android:id="@+id/calibrate"
-        android:textColor="@color/black_overlay"
-        android:layout_below="@+id/spinSelect"
-        android:layout_centerHorizontal="true"
-        android:background="@android:drawable/btn_default"
-        />
 
 </RelativeLayout>

@@ -143,31 +143,11 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
         lightScheduleTriggerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(productFlavor == true) {
-                    updateGlobalSpace("lightmode", (byte) 1);
-                 /* Write data to the custom characteristics*/
-                    sendLightCustomCharacteristicDatafromGlobalStructure();
-                /* Update the display area*/
-                    displaySchedule();
-                }
-                else
-                {
-                    AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(activity);
-
-                    dlgAlert.setMessage("This is a Demo Version.Please Purchase the Full Version for Scheduling Functionality");
-                    dlgAlert.setTitle("Warning...");
-                    dlgAlert.setPositiveButton("OK", null);
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.create().show();
-
-                    dlgAlert.setPositiveButton("Ok",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                }
+            updateGlobalSpace("lightmode", (byte) 1);
+            /* Write data to the custom characteristics*/
+            sendLightCustomCharacteristicDatafromGlobalStructure();
+           /* Update the display area*/
+            displaySchedule();
             }
         });
     }

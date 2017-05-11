@@ -207,7 +207,6 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                      updateGlobalSpace("motormode", (byte) 4);
                      motorCalibrateButton.setEnabled(false);
                  }
-
                  sendMotorCustomCharacteristicDatafromGlobalStructure();
              } else {
                  AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(activity);
@@ -218,17 +217,16 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                  dlgAlert.create().show();
 
                  dlgAlert.setPositiveButton("Ok",
-                        new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                                }
-                            });
+                     new DialogInterface.OnClickListener() {
+                     public void onClick(DialogInterface dialog, int which) {
+                         }
+                     });
              }
             }
         });
 
         // Check calibration state
-        if (calibrateButtonState != 6)
-        {
+        if (calibrateButtonState != 6) {
             motorScheduleTriggerButton.setEnabled(false);
         }
 
@@ -294,6 +292,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                         motorCalibrateButton.setText("Calibration Start");
                         motorCalibrateButton.setEnabled(true);
                     }
+
                     updateGlobalSpace("motormode",(byte) scheduleBuffer.get(0));
                     updateGlobalSpace("motorpump",(scheduleBuffer.get(1)));
                     updateGlobalSpace("motorvalve",(scheduleBuffer.get(2)));
@@ -609,8 +608,6 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         }
         super.onBackPressed();
     }
-
-
 
     @Override
     protected void onDestroy() {

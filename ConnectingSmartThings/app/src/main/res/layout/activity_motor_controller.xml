@@ -11,16 +11,6 @@
     android:background="@drawable/home_screen"
     tools:context="com.hornbill.great.connectingsmartthings.MotorController">
 
-    <Switch
-        android:id="@+id/myMotorSwitch"
-        android:layout_width="wrap_content"
-        android:layout_alignParentRight="true"
-        android:textColor="@color/White"
-        android:layout_marginTop="13dp"
-        android:layout_alignLeft="@+id/myValveSwitch"
-        android:layout_alignStart="@+id/myValveSwitch"
-        android:layout_height="38dp" />
-
     <TextView
         android:text="Recurrence"
         android:layout_width="wrap_content"
@@ -30,16 +20,6 @@
         android:textColor="@color/White"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_alignBottom="@+id/spinSelect" />
-
-    <Switch
-        android:id="@+id/myValveSwitch"
-        android:layout_width="wrap_content"
-        android:textColor="@color/White"
-        android:layout_below="@+id/myMotorSwitch"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="20dp"
-        android:layout_height="38dp" />
 
     <TextView
         android:text="Select Date/Time"
@@ -53,18 +33,6 @@
         android:layout_alignBottom="@+id/myMotorSchedule"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
-
-    <Button
-        android:text="Date_Time"
-        android:layout_width="wrap_content"
-        android:id="@+id/myMotorSchedule"
-        android:textColor="@color/Black"
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/myValveSwitch"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_height="38dp"
-        android:background="@android:drawable/btn_default"/>
 
     <Spinner
         android:layout_width="wrap_content"
@@ -105,19 +73,9 @@
         android:layout_alignParentStart="true" />
 
     <Button
-        android:text="Schedule"
-        android:layout_width="wrap_content"
-        android:layout_height="38dp"
-        android:textColor="@color/Black"
-        android:id="@+id/scheduleTrigger"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="@android:drawable/btn_default"/>
-
-    <Button
         android:text="Calibration Start"
         android:layout_width="wrap_content"
-        android:layout_height="38dp"
+        android:layout_height="wrap_content"
         android:id="@+id/calibrate"
         android:textColor="@color/Black"
         android:layout_below="@+id/spinSelect"
@@ -129,7 +87,7 @@
         android:id="@+id/scheduleDetails"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginTop="67dp"
+        android:layout_marginTop="5dp"
         android:layout_below="@+id/calibrate"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -218,8 +176,8 @@
 
         <TableRow
             android:id="@+id/tableRow3"
-            android:layout_height="fill_parent"
-            android:layout_width="wrap_content">
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
 
             <TextView
                 android:id="@+id/TextView01" android:text="SUN\n9:30pm"
@@ -288,5 +246,44 @@
         </TableRow>
 
     </TableLayout>
+
+    <Button
+        android:text="Date_Time"
+        android:layout_width="wrap_content"
+        android:id="@+id/myMotorSchedule"
+        android:textColor="@color/Black"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/btn_default"
+        android:layout_below="@+id/myValveSwitch"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Switch
+        android:id="@+id/myValveSwitch"
+        android:layout_width="wrap_content"
+        android:textColor="@color/White"
+        android:layout_height="38dp"
+        android:layout_below="@+id/myMotorSwitch"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="Schedule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/Black"
+        android:id="@+id/scheduleTrigger"
+        android:background="@android:drawable/btn_default"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true" />
+
+    <Switch
+        android:id="@+id/myMotorSwitch"
+        android:layout_width="wrap_content"
+        android:textColor="@color/White"
+        android:layout_height="38dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

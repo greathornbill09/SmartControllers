@@ -542,8 +542,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             // Display the upcoming recurrence
             TableRow row1= (TableRow)scheduleView.getChildAt(0);
             TextView et = (TextView )row1.getChildAt(0);
-            et.setText("Not yet calibrated. In order to schedule water maintenance," +
-                                "Calibrate the motor atleast once please");
+            et.setText("Not yet calibrated.To schedule water maintenance,Calibrate the motor atleast once please");
             // Display next few upcoming schedule time/duration
             TableRow row3 = (TableRow) scheduleView.getChildAt(2);
             for (int i= 0; i < row3.getChildCount() ; i++) {

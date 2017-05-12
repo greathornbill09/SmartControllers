@@ -23,7 +23,7 @@
     <string name="unknown_device">Unknown device</string>
 
     <string-array name="repeat">
-        <item>Select Option...</item>
+        <item>Options</item>
         <item>Daily</item>
         <item>Weekly</item>
         <item>Monthly</item>

@@ -129,7 +129,7 @@
             android:layout_width="match_parent">
 
             <TextView
-                android:id="@+id/TextView01" android:text="SUN\n9:30pm\n01:10\n"
+                android:id="@+id/TextView01" android:text="SUN\n9:30pm\n01:10"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
@@ -138,7 +138,7 @@
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView02" android:text="MON\n9:30pm\n01:10\n"
+                android:id="@+id/TextView02" android:text="MON\n9:30pm\n01:10"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
@@ -147,7 +147,7 @@
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView03" android:text="TUE\n9:30pm\n01:10\n"
+                android:id="@+id/TextView03" android:text="TUE\n9:30pm\n01:10"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
@@ -156,7 +156,7 @@
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView04" android:text="WED\n9:30pm\n01:10\n"
+                android:id="@+id/TextView04" android:text="WED\n9:30pm\n01:10"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
@@ -165,7 +165,7 @@
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView05" android:text="THU\n9:30pm\n01:10\n"
+                android:id="@+id/TextView05" android:text="THU\n9:30pm\n01:10"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
@@ -174,7 +174,7 @@
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView06" android:text="FRI\n9:30pm\n01:10\n"
+                android:id="@+id/TextView06" android:text="FRI\n9:30pm\n01:10"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
@@ -183,7 +183,7 @@
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView07" android:text="SAT\n9:30pm\n01:10\n"
+                android:id="@+id/TextView07" android:text="SAT\n9:30pm\n01:10"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
@@ -264,10 +264,10 @@
         android:layout_alignParentEnd="true" />
 
     <Spinner
+        android:id="@+id/spinSelect"
         android:layout_width="160dp"
         android:layout_height="30dp"
         android:textSize="12pt"
-        android:id="@+id/spinSelect"
         android:textColor="@color/White"
         android:entries="@array/repeat"
         style="@style/SpinnerTheme"

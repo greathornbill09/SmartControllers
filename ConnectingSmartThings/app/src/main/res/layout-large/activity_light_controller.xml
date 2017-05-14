@@ -28,7 +28,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/FrequencyOflighting"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="65dp"
         android:layout_above="@+id/scheduleTrigger">
 
         <TableRow
@@ -185,42 +185,15 @@
 
     </TableLayout>
 
-    <Spinner
-        android:id="@+id/spinSelect"
+    <Button
+        android:text="Schedule"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12pt"
-        android:textColor="@color/White"
-        android:entries="@array/repeat"
-        style="@style/SpinnerTheme"
-        android:layout_below="@+id/myScheduleDuration"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="11dp"
-        android:layout_alignLeft="@+id/myScheduleDuration"
-        android:layout_alignStart="@+id/myScheduleDuration" />
-
-    <Button
-        android:text="Hours_Min"
-        android:layout_width="110dp"
-        android:id="@+id/myScheduleDuration"
         android:textColor="@color/Black"
-        android:layout_height="wrap_content"
+        android:id="@+id/scheduleTrigger"
         android:background="@android:drawable/btn_default"
-        android:layout_below="@+id/mySchedule"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        android:text="Date_Time"
-        android:layout_width="110dp"
-        android:id="@+id/mySchedule"
-        android:textColor="@color/Black"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_default"
-        android:layout_below="@+id/mySwitch"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:text="Select Date/Time"
@@ -233,6 +206,44 @@
         android:layout_alignBottom="@+id/mySchedule"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="Date_Time"
+        android:layout_width="110dp"
+        android:id="@+id/mySchedule"
+        android:textColor="@color/Black"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/btn_default"
+        android:layout_below="@+id/mySwitch"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Spinner
+        android:id="@+id/spinSelect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12pt"
+        android:textColor="@color/White"
+        android:entries="@array/repeat"
+        style="@style/SpinnerTheme"
+        android:layout_marginRight="11dp"
+        android:layout_marginEnd="11dp"
+        android:layout_below="@+id/myScheduleDuration"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:text="Hours_Min"
+        android:layout_width="110dp"
+        android:id="@+id/myScheduleDuration"
+        android:textColor="@color/Black"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/btn_default"
+        android:layout_below="@+id/mySchedule"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="11dp" />
 
     <TextView
         android:text="Recurrence"
@@ -269,15 +280,5 @@
         android:layout_alignBottom="@+id/mySwitch"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
-
-    <Button
-        android:text="Schedule"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/Black"
-        android:id="@+id/scheduleTrigger"
-        android:background="@android:drawable/btn_default"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

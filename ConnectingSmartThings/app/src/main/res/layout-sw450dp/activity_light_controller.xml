@@ -28,7 +28,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/FrequencyOflighting"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
         android:layout_above="@+id/scheduleTrigger">
 
         <TableRow
@@ -185,6 +185,16 @@
 
     </TableLayout>
 
+    <Button
+        android:text="Schedule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/Black"
+        android:id="@+id/scheduleTrigger"
+        android:background="@android:drawable/btn_default"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
     <Spinner
         android:id="@+id/spinSelect"
         android:layout_width="wrap_content"
@@ -196,7 +206,7 @@
         android:layout_below="@+id/myScheduleDuration"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="11dp"
+        android:layout_marginTop="28dp"
         android:layout_alignLeft="@+id/myScheduleDuration"
         android:layout_alignStart="@+id/myScheduleDuration" />
 
@@ -207,7 +217,8 @@
         android:textColor="@color/Black"
         android:layout_height="wrap_content"
         android:background="@android:drawable/btn_default"
-        android:layout_below="@+id/mySchedule"
+        android:layout_alignBaseline="@+id/DurationOflighting"
+        android:layout_alignBottom="@+id/DurationOflighting"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
@@ -218,19 +229,20 @@
         android:textColor="@color/Black"
         android:layout_height="wrap_content"
         android:background="@android:drawable/btn_default"
+        android:layout_marginTop="20dp"
         android:layout_below="@+id/mySwitch"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
     <TextView
-        android:text="Select Date/Time"
+        android:text="Set Duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ScheduleLighting"
+        android:id="@+id/DurationOflighting"
         android:textColor="@color/White"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_alignBaseline="@+id/mySchedule"
-        android:layout_alignBottom="@+id/mySchedule"
+        android:layout_marginTop="28dp"
+        android:layout_below="@+id/mySchedule"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -247,16 +259,16 @@
         android:layout_alignParentStart="true" />
 
     <TextView
-        android:text="Set Duration"
+        android:text="Select Date/Time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/DurationOflighting"
+        android:id="@+id/ScheduleLighting"
         android:textColor="@color/White"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_alignBaseline="@+id/myScheduleDuration"
-        android:layout_alignBottom="@+id/myScheduleDuration"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignBaseline="@+id/mySchedule"
+        android:layout_alignBottom="@+id/mySchedule"
+        android:layout_alignRight="@+id/switchStatus"
+        android:layout_alignEnd="@+id/switchStatus" />
 
     <TextView
         android:id="@+id/switchStatus"
@@ -269,15 +281,5 @@
         android:layout_alignBottom="@+id/mySwitch"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
-
-    <Button
-        android:text="Schedule"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/Black"
-        android:id="@+id/scheduleTrigger"
-        android:background="@android:drawable/btn_default"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

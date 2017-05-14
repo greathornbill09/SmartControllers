@@ -32,7 +32,7 @@
         android:theme="@style/AppTheme"
         android:textSize="20dp"
         android:textColor="#e9ede9"
-        android:layout_marginBottom="402dp"
+        android:gravity="bottom"
         android:textStyle="normal|bold"
         android:textAlignment="center"
         android:layout_alignParentBottom="true"

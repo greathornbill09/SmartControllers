@@ -11,17 +11,6 @@
     android:background="@drawable/home_screen"
     tools:context="com.hornbill.great.connectingsmartthings.LightController">
 
-    <TextView
-        android:id="@+id/switchStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Aqua Light On/Off"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_alignBottom="@+id/mySwitch"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
 
     <Switch
         android:id="@+id/mySwitch"
@@ -208,8 +197,8 @@
 
     <Spinner
         android:id="@+id/spinSelect"
-        android:layout_width="160dp"
-        android:layout_height="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:textSize="12pt"
         android:textColor="@color/White"
         android:entries="@array/repeat"
@@ -220,30 +209,6 @@
         android:layout_marginTop="11dp"
         android:layout_alignLeft="@+id/myScheduleDuration"
         android:layout_alignStart="@+id/myScheduleDuration" />
-
-    <TextView
-        android:text="Recurrence"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/FrequencyOflighting"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginTop="16dp"
-        android:layout_below="@+id/DurationOflighting"
-        android:layout_alignRight="@+id/DurationOflighting"
-        android:layout_alignEnd="@+id/DurationOflighting" />
-
-    <TextView
-        android:text="Set Duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/DurationOflighting"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginTop="18dp"
-        android:layout_below="@+id/mySchedule"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
     <Button
         android:text="Hours_Min"
@@ -276,6 +241,42 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_alignBaseline="@+id/mySchedule"
         android:layout_alignBottom="@+id/mySchedule"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Recurrence"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/FrequencyOflighting"
+        android:textColor="@color/White"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignBaseline="@+id/spinSelect"
+        android:layout_alignBottom="@+id/spinSelect"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Set Duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/DurationOflighting"
+        android:textColor="@color/White"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignBaseline="@+id/myScheduleDuration"
+        android:layout_alignBottom="@+id/myScheduleDuration"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/switchStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aqua Light On/Off"
+        android:textColor="@color/White"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignBaseline="@+id/mySwitch"
+        android:layout_alignBottom="@+id/mySwitch"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 

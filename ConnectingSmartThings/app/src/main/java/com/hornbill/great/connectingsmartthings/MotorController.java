@@ -296,12 +296,13 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                     updateGlobalSpace("motormode",(byte) scheduleBuffer.get(0));
                     updateGlobalSpace("motorpump",(scheduleBuffer.get(1)));
                     updateGlobalSpace("motorvalve",(scheduleBuffer.get(2)));
-                    updateGlobalSpace("motordow",(scheduleBuffer.get(3)));
-                    updateGlobalSpace("motorhours",(scheduleBuffer.get(4)));
-                    updateGlobalSpace("motorminutes",(scheduleBuffer.get(5)));
-                    updateGlobalSpace("motorrecurrence",(scheduleBuffer.get(6)));
-                    updateGlobalSpace("motordurationhours",(scheduleBuffer.get(7)));
-                    updateGlobalSpace("motordurationminutes",(scheduleBuffer.get(8)));
+                    updateGlobalSpace("motordom",(scheduleBuffer.get(3)));
+                    updateGlobalSpace("motordow",(scheduleBuffer.get(4)));
+                    updateGlobalSpace("motorhours",(scheduleBuffer.get(5)));
+                    updateGlobalSpace("motorminutes",(scheduleBuffer.get(6)));
+                    updateGlobalSpace("motorrecurrence",(scheduleBuffer.get(7)));
+                    updateGlobalSpace("motordurationhours",(scheduleBuffer.get(8)));
+                    updateGlobalSpace("motordurationminutes",(scheduleBuffer.get(9)));
                     displaySchedule();
 
                     Log.w(TAG, "Calibration Notification"+((globalData)activity.getApplication()).getAquaMotorChar("motormode"));

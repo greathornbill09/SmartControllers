@@ -256,7 +256,6 @@ public class DeviceScan extends ListActivity {
 
         public void clear() {
             mLeDevices.clear();
-
         }
 
         @Override

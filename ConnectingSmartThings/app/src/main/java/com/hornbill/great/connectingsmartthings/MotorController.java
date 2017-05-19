@@ -298,17 +298,19 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                     updateGlobalSpace("motorvalve",(scheduleBuffer.get(2)));
                     updateGlobalSpace("motordom",(scheduleBuffer.get(3)));
                     updateGlobalSpace("motordow",(scheduleBuffer.get(4)));
-                    updateGlobalSpace("motorhours",(scheduleBuffer.get(5)));
-                    updateGlobalSpace("motorminutes",(scheduleBuffer.get(6)));
-                    updateGlobalSpace("motorrecurrence",(scheduleBuffer.get(7)));
-                    updateGlobalSpace("motordurationhours",(scheduleBuffer.get(8)));
-                    updateGlobalSpace("motordurationminutes",(scheduleBuffer.get(9)));
+                    updateGlobalSpace("hourly",(scheduleBuffer.get(5)));
+                    updateGlobalSpace("motorhours",(scheduleBuffer.get(6)));
+                    updateGlobalSpace("motorminutes",(scheduleBuffer.get(7)));
+                    updateGlobalSpace("motorrecurrence",(scheduleBuffer.get(8)));
+                    updateGlobalSpace("motordurationhours",(scheduleBuffer.get(9)));
+                    updateGlobalSpace("motordurationminutes",(scheduleBuffer.get(10)));
                     displaySchedule();
 
                     Log.w(TAG, "Calibration Notification"+((globalData)activity.getApplication()).getAquaMotorChar("motormode"));
                     Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motorpump"));
                     Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motorvalve"));
                     Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motordow"));
+                    Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("hourly"));
                     Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motorhours"));
                     Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motorminutes"));
                     Log.w(TAG, "Calibration Notification "+((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence"));
@@ -325,7 +327,9 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     {
         Log.w(TAG,"onItemSelected"+ parent.getSelectedItem());
         switch((String)parent.getSelectedItem()){
-
+            case "Not Scheduled" :
+                updateGlobalSpace("lightrecurrences",(byte)0);
+                break;
             case "Daily" :
                 updateGlobalSpace("motorrecurrence",(byte)1);
                 break;
@@ -334,6 +338,11 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                 break;
             case "Monthly" :
                 updateGlobalSpace("motorrecurrence",(byte)3);
+                break;
+            case "Hourly" :
+                // TODO : pop numberpicker to get hourly data, validate as well
+                updateGlobalSpace("hourly",(byte)4);
+                updateGlobalSpace("motorrecurrence",(byte)4);
                 break;
             default:
                 break;
@@ -469,18 +478,12 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                 case 3:
                     scheduleRecurrence = "Schedule : Monthly";
                     break;
+                case 4:
+                    scheduleRecurrence = "Schedule : Hourly";
+                    break;
                 default:
                     // Display the upcoming recurrence
-                    TableRow row1= (TableRow)scheduleView.getChildAt(0);
-                    TextView et = (TextView )row1.getChildAt(0);
-                    et.setText("No Schedule");
-                    // Display next few upcoming schedule time/duration
-                    TableRow row3 = (TableRow) scheduleView.getChildAt(2);
-                    for (int i= 0; i < row3.getChildCount() ; i++) {
-                        TextView col = (TextView)row3.getChildAt(i);
-                        col.setText("\n00:00\n00:00");
-                    }
-                    return;
+                    scheduleRecurrence = "No Schedule";
             }
 
             // Display the upcoming recurrence
@@ -492,25 +495,13 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             TableRow row3 = (TableRow) scheduleView.getChildAt(2);
             SimpleDateFormat displayDate = new SimpleDateFormat("EEE dd/MMM/yyyyy");
             Calendar date = Calendar.getInstance();
-            int ti_hh, ti_mm;
+            int ti_hh, ti_mm, hourly, incr_mnth = 1;
             String time, duration, time_mode = " am";
             ti_hh = ((globalData) activity.getApplication()).getAquaMotorChar("motorhours");
             ti_mm = ((globalData) activity.getApplication()).getAquaMotorChar("motorminutes");
-
-            if (ti_hh == 0) {
-                ti_hh = 12;
-            } else if (ti_hh == 12) {
-                time_mode = " pm";
-            } else if (ti_hh >= 12) {
-                ti_hh -= 12;
-                time_mode = " pm";
-            }
-
-            time = Integer.toString(ti_hh) + ":";
-            if (ti_mm < 10) {
-                time += "0";
-            }
-            time += Integer.toString(ti_mm);
+            hourly = ((globalData) activity.getApplication()).getAquaLightChar("hourly");
+            time = time_int_string(ti_hh, ti_mm);
+            time_mode = time_mode_int_string(ti_hh, ti_mm);
 
             for (int i= 0; i < row3.getChildCount() ; i++) {
                 TextView col = (TextView)row3.getChildAt(i);
@@ -532,11 +523,18 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                             col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00h:00m");
                         }
                         break;
+                    case 4:
+                        col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + time + time_mode);
+                        ti_hh += hourly;
+                        time = time_int_string(ti_hh, ti_mm);
+                        time_mode = time_mode_int_string(ti_hh, ti_mm);
+                        incr_mnth = 0;
+                        break;
                     default:
                         col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00h:00m");
                         break;
                 }
-                    date.add(Calendar.DAY_OF_MONTH, 1);
+                    date.add(Calendar.DAY_OF_MONTH, incr_mnth);
             }
         } else {
             // Display the upcoming recurrence
@@ -552,6 +550,30 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         }
     }
 
+    private String time_int_string(int ti_hh, int ti_mm) {
+        String time;
+
+        time = Integer.toString(ti_hh) + ":";
+        if (ti_mm < 10) {
+            time += "0";
+        }
+        time += Integer.toString(ti_mm);
+
+        return time;
+    }
+
+    private String time_mode_int_string(int ti_hh, int ti_mm) {
+        String time_mode = " am";
+        if (ti_hh == 0) {
+            ti_hh = 12;
+        } else if (ti_hh >= 12) {
+            ti_hh = ti_hh == 12 ? 12 : ti_hh - 12;
+            time_mode = " pm";
+        }
+
+        return time_mode;
+    }
+
     private void sendMotorCustomCharacteristicDatafromGlobalStructure()
     {
         byte[]motorScheduleData = new byte[10];
@@ -565,16 +587,18 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         motorScheduleData[3] = ((globalData)activity.getApplication()).getAquaMotorChar("motordom");
         Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motordow"));
         motorScheduleData[4] = ((globalData)activity.getApplication()).getAquaMotorChar("motordow");
+        Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("hourly"));
+        motorScheduleData[5] = ((globalData)activity.getApplication()).getAquaMotorChar("hourly");
         Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorhours"));
-        motorScheduleData[5] = ((globalData)activity.getApplication()).getAquaMotorChar("motorhours");
+        motorScheduleData[6] = ((globalData)activity.getApplication()).getAquaMotorChar("motorhours");
         Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorminutes"));
-        motorScheduleData[6] = ((globalData)activity.getApplication()).getAquaMotorChar("motorminutes");
+        motorScheduleData[7] = ((globalData)activity.getApplication()).getAquaMotorChar("motorminutes");
         Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence"));
-        motorScheduleData[7] = ((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence");
+        motorScheduleData[8] = ((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence");
         Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours"));
-        motorScheduleData[8] = ((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours");
+        motorScheduleData[9] = ((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours");
         Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes"));
-        motorScheduleData[9] = ((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes");
+        motorScheduleData[10] = ((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes");
 
         Log.w(TAG," Writing Schedule details over BLE");
         motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,motorScheduleData);

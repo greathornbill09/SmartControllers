@@ -24,6 +24,8 @@
 
     <string-array name="repeat">
         <item>Options</item>
+        <item>Not Scheduled</item>
+        <item>Hourly</item>
         <item>Daily</item>
         <item>Weekly</item>
         <item>Monthly</item>

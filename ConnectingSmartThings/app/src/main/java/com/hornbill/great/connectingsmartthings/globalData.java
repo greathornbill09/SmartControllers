@@ -22,6 +22,7 @@ public class globalData extends Application {
     private byte lightStatus = 0;
     private byte lightDow = 0;
     private byte lightDom = 0;
+    private byte lighthourly = 0;
     private byte lightHours = 0;
     private byte lightMinutes = 0;
     private byte lightRecurrences = 0;
@@ -34,6 +35,7 @@ public class globalData extends Application {
     private byte motorValve= 0;
     private byte motorDow = 0;
     private byte motorDom = 0;
+    private byte motorhourly = 0;
     private byte motorHours = 0;
     private byte motorMinutes = 0;
     private byte motorRecurrence = 0;
@@ -72,6 +74,9 @@ public class globalData extends Application {
             case "lightdom":
                 returnVal = this.lightDom;
                 break;
+            case "hourly":
+                returnVal = this.lighthourly;
+                break;
             case "lighthours":
                 returnVal = this.lightHours;
                 break;
@@ -108,6 +113,9 @@ public class globalData extends Application {
             case "lightdom":
                 this.lightDom = value;
                 break;
+            case "hourly":
+                this.lighthourly = value;
+                break;
             case "lighthours":
                 this.lightHours = value;
                 break;
@@ -127,12 +135,10 @@ public class globalData extends Application {
                 Log.w(TAG, "setAquaLightChar: No Matching case ");
                 break;
         }
-
     }
 
 
     public byte getAquaMotorChar(String returnString) {
-
         byte returnVal=0;
         switch (returnString){
             case "motormode":
@@ -149,6 +155,9 @@ public class globalData extends Application {
                 break;
             case "motordom":
                 returnVal = this.motorDom;
+                break;
+            case "hourly":
+                returnVal = this.motorhourly;
                 break;
             case "motorhours":
                 returnVal = this.motorHours;
@@ -172,7 +181,6 @@ public class globalData extends Application {
         return returnVal;
     }
     public void setAquaMotorChar(String caseVal,byte value) {
-
         switch (caseVal){
             case "motormode":
                 this.motorMode = value;
@@ -188,6 +196,9 @@ public class globalData extends Application {
                 break;
             case "motordom":
                 this.motorDom = value;
+                break;
+            case "hourly":
+                this.motorhourly = value;
                 break;
             case "motorhours":
                 this.motorHours = value;
@@ -208,7 +219,5 @@ public class globalData extends Application {
                 Log.w(TAG, "setAquaMotorChar: No Matching case ");
                 break;
         }
-
     }
-
 }

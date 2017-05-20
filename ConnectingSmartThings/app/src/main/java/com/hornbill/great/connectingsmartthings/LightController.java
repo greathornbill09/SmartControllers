@@ -256,7 +256,6 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
     }
 
     public void showHourPicker(){
-
         final Dialog d = new Dialog(LightController.this);
         d.setTitle("Choose Hourly Duration");
         d.setContentView(R.layout.dailoghour);
@@ -264,7 +263,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
         Button b2 = (Button) d.findViewById(R.id.set);
         final NumberPicker hp = (NumberPicker) d.findViewById(R.id.HourPicker);
         hp.setMaxValue(12); // max value 12
-        hp.setMinValue(0);   // min value 0
+        hp.setMinValue(1);   // min value 1
         hp.setWrapSelectorWheel(false);
         hp.setOnValueChangedListener(this);
          b1.setOnClickListener(new View.OnClickListener()
@@ -338,95 +337,80 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
 
     private void displaySchedule(){
         statusLight = ((globalData)activity.getApplication()).getAquaLightChar("lightstatus");
+        SimpleDateFormat displayDate = new SimpleDateFormat("EEE dd/MMM/yyyyy");
+        Calendar date = Calendar.getInstance();
+        int hourly, incr_mnth = 1;
+        String duration;
+
         if(statusLight == 1) {
             lightSwitch.setChecked(true);
         }
 
-        if((((globalData)activity.getApplication()).getAquaLightChar("lightrecurrences")!= 0)) {
-            Log.w(TAG, "displaySchedule : Schedule Available ");
-            String scheduleRecurrence = null;
-            int recurrence = ((globalData) activity.getApplication()).getAquaLightChar("lightrecurrences");
+        Log.w(TAG, "displaySchedule : Schedule Available ");
+        String scheduleRecurrence = null;
+        int recurrence = ((globalData) activity.getApplication()).getAquaLightChar("lightrecurrences");
+        switch (recurrence) {
+            case 1:
+                scheduleRecurrence = "Schedule : Daily";
+                break;
+            case 2:
+                scheduleRecurrence = "Schedule : Weekly";
+                break;
+            case 3:
+                scheduleRecurrence = "Schedule : Monthly";
+                break;
+            case 4:
+                scheduleRecurrence = "Schedule : Hourly";
+                break;
+            default:
+                scheduleRecurrence = "No Schedules";
+                break;
+        }
+        // Display the upcoming recurrence
+        TableRow row1 = (TableRow) scheduleView.getChildAt(0);
+        TextView et = (TextView) row1.getChildAt(0);
+        et.setText(scheduleRecurrence);
+
+        // Display next few upcoming schedule time/duration
+        TableRow row3 = (TableRow) scheduleView.getChildAt(2);
+        this.ti_hh = ((globalData) activity.getApplication()).getAquaLightChar("lighthours");
+        this.ti_mm = ((globalData) activity.getApplication()).getAquaLightChar("lightminutes");
+        hourly = ((globalData) activity.getApplication()).getAquaLightChar("hourly");
+        time_int_string();
+
+        duration = Integer.toString(((globalData) activity.getApplication()).getAquaLightChar("lightdurationhours")) + "h";
+        duration += ":" + Integer.toString(((globalData) activity.getApplication()).getAquaLightChar("lightdurationminutes")) + "m";
+        for (int i = 0; i < row3.getChildCount(); i++) {
+            TextView col = (TextView)row3.getChildAt(i);
             switch (recurrence) {
                 case 1:
-                    scheduleRecurrence = "Schedule : Daily";
+                    col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + this.time + this.time_mode + "\n" + duration);
                     break;
                 case 2:
-                    scheduleRecurrence = "Schedule : Weekly";
+                    if (date.get(Calendar.DAY_OF_WEEK) == (int)((globalData) activity.getApplication()).getAquaLightChar("lightdow")) {
+                        col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + this.time + this.time_mode + "\n" + duration);
+                    } else {
+                        col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00\n\n00:00");
+                    }
                     break;
                 case 3:
-                    scheduleRecurrence = "Schedule : Monthly";
+                    if (date.get(Calendar.DAY_OF_MONTH) == (int)((globalData) activity.getApplication()).getAquaLightChar("lightdom")) {
+                        col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + this.time + this.time_mode + "\n" + duration);
+                    } else {
+                        col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00\n\n00:00");
+                    }
                     break;
                 case 4:
-                    scheduleRecurrence = "Schedule : Hourly";
+                    col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + this.time + this.time_mode + "\n" + duration);
+                    this.ti_hh += hourly;
+                    incr_mnth = this.ti_hh / 24;
+                    time_int_string();
                     break;
                 default:
-                    scheduleRecurrence = "No Schedule";
+                    col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00\n\n00:00");
                     break;
             }
-            // Display the upcoming recurrence
-            TableRow row1 = (TableRow) scheduleView.getChildAt(0);
-            TextView et = (TextView) row1.getChildAt(0);
-            et.setText(scheduleRecurrence);
-
-            // Display next few upcoming schedule time/duration
-            TableRow row3 = (TableRow) scheduleView.getChildAt(2);
-            SimpleDateFormat displayDate = new SimpleDateFormat("EEE dd/MMM/yyyyy");
-            Calendar date = Calendar.getInstance();
-            int hourly, incr_mnth = 1;
-            String duration;
-            this.ti_hh = ((globalData) activity.getApplication()).getAquaLightChar("lighthours");
-            this.ti_mm = ((globalData) activity.getApplication()).getAquaLightChar("lightminutes");
-            hourly = ((globalData) activity.getApplication()).getAquaLightChar("hourly");
-            time_int_string();
-
-            duration = Integer.toString(((globalData) activity.getApplication()).getAquaLightChar("lightdurationhours")) + "h";
-            duration += ":" + Integer.toString(((globalData) activity.getApplication()).getAquaLightChar("lightdurationminutes")) + "m";
-            for (int i = 0; i < row3.getChildCount(); i++) {
-                TextView col = (TextView)row3.getChildAt(i);
-                switch (recurrence) {
-                    case 1:
-                        col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + this.time + this.time_mode + "\n" + duration);
-                        break;
-                    case 2:
-                        if (date.get(Calendar.DAY_OF_WEEK) == (int)((globalData) activity.getApplication()).getAquaLightChar("lightdow")) {
-                            col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + this.time + this.time_mode + "\n" + duration);
-                        } else {
-                            col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00h:00m\n00h:00m");
-                        }
-                        break;
-                    case 3:
-                        if (date.get(Calendar.DAY_OF_MONTH) == (int)((globalData) activity.getApplication()).getAquaLightChar("lightdom")) {
-                            col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + this.time + this.time_mode + "\n" + duration);
-                        } else {
-                            col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00h:00m\n00h:00m");
-                        }
-                        break;
-                    case 4:
-                        col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + this.time + this.time_mode + "\n" + duration);
-                        this.ti_hh += hourly;
-                        incr_mnth = this.ti_hh / 24;
-                        time_int_string();
-                        break;
-                    default:
-                        col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00h:00m\n00h:00m");
-                        break;
-                }
-                date.add(Calendar.DAY_OF_MONTH, incr_mnth);
-            }
-        }
-        else
-        {
-            Log.w(TAG, "displaySchedule : Schedule Not Available ");
-            // Display the upcoming recurrence
-            TableRow row1= (TableRow)scheduleView.getChildAt(0);
-            TextView et = (TextView )row1.getChildAt(0);
-            et.setText("No Schedules");
-            // Display next few upcoming schedule time/duration
-            TableRow row3 = (TableRow) scheduleView.getChildAt(2);
-            for (int i= 0; i < row3.getChildCount() ; i++) {
-                TextView col = (TextView)row3.getChildAt(i);
-                col.setText("\n00:00\n00:00");
-            }
+            date.add(Calendar.DAY_OF_MONTH, incr_mnth);
         }
     }
 
@@ -444,7 +428,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             this.time_mode = " am";
         }
 
-        if (this.ti_hh > 24) {
+        if (this.ti_hh >= 24) {
             this.ti_hh -= 24;
             this.time_mode = " am";
         }

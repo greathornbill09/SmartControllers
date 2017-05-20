@@ -452,6 +452,10 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     private void displaySchedule(){
         /*Displaying in the Motor switch*/
         statusMotor = ((globalData)activity.getApplication()).getAquaMotorChar("motorpump");
+        SimpleDateFormat displayDate = new SimpleDateFormat("EEE dd/MMM/yyyyy");
+        Calendar date = Calendar.getInstance();
+        int hourly, incr_mnth = 1;
+
         if(statusMotor == 0x11) {
             motorSwitch.setChecked(true);
         } else {
@@ -495,10 +499,6 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
 
             // Display next few upcoming schedule time/duration
             TableRow row3 = (TableRow) scheduleView.getChildAt(2);
-            SimpleDateFormat displayDate = new SimpleDateFormat("EEE dd/MMM/yyyyy");
-            Calendar date = Calendar.getInstance();
-            int ti_hh, ti_mm, hourly, incr_mnth = 1;
-            String time, duration, time_mode = " am";
             this.ti_hh = ((globalData) activity.getApplication()).getAquaMotorChar("motorhours");
             this.ti_mm = ((globalData) activity.getApplication()).getAquaMotorChar("motorminutes");
             hourly = ((globalData) activity.getApplication()).getAquaMotorChar("hourly");
@@ -514,14 +514,14 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                         if (date.get(Calendar.DAY_OF_WEEK) == (int)((globalData) activity.getApplication()).getAquaMotorChar("motordow")) {
                             col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + this.time + this.time_mode );
                         } else {
-                            col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00h:00m");
+                            col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00\n");
                         }
                         break;
                     case 3:
                         if (date.get(Calendar.DAY_OF_MONTH) == (int)((globalData) activity.getApplication()).getAquaMotorChar("motordom")) {
                             col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + this.time + this.time_mode);
                         } else {
-                            col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00h:00m");
+                            col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00\n");
                         }
                         break;
                     case 4:
@@ -531,7 +531,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                         time_int_string();
                         break;
                     default:
-                        col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00h:00m");
+                        col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00\n");
                         break;
                 }
                     date.add(Calendar.DAY_OF_MONTH, incr_mnth);
@@ -544,8 +544,9 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             // Display next few upcoming schedule time/duration
             TableRow row3 = (TableRow) scheduleView.getChildAt(2);
             for (int i= 0; i < row3.getChildCount() ; i++) {
-                 TextView col = (TextView)row3.getChildAt(i);
-                 col.setText("\n00:00\n00:00");
+                TextView col = (TextView)row3.getChildAt(i);
+                col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00:00\n");
+                date.add(Calendar.DAY_OF_MONTH, incr_mnth);
             }
         }
     }
@@ -564,7 +565,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             this.time_mode = " am";
         }
 
-        if (this.ti_hh > 24) {
+        if (this.ti_hh >= 24) {
             this.ti_hh -= 24;
             this.time_mode = " am";
         }

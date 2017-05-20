@@ -207,7 +207,7 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:text="Select Date/Time"
+        android:text="Date/Time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ScheduleLighting"
@@ -229,7 +229,7 @@
         android:layout_alignParentEnd="true" />
 
     <TextView
-        android:text="Set Duration"
+        android:text="Duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/DurationOflighting"

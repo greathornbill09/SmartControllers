@@ -39,6 +39,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
     public int lightScheduleHour = 0;
     public int lightScheduleMin = 0;
     public int lightScheduleDurHour = 0;
+    public int lightScheduleWindow = 0;
     public int lightScheduleDurMin = 0;
 
     private Activity activity = this;
@@ -137,7 +138,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             @Override
             public void onClick(View v) {
                 Log.w(TAG,"Schedule Duration Button Clicked");
-                showNumPicker();
+                showHourMinPicker();
             }
 
         });
@@ -174,7 +175,28 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
                 break;
             case "Hourly" :
                 // TODO : pop numberpicker to get hourly data, validate as well
-                updateGlobalSpace("hourly",(byte)4);
+                //updateGlobalSpace("hourly",(byte)4);
+                lightScheduleDurHour = ((globalData)activity.getApplication()).getAquaLightChar("lightdurationhours");
+                Log.w(TAG,"lightScheduleDurHour"+lightScheduleDurHour );
+                if(lightScheduleDurHour == 0)
+                {
+                    AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(activity);
+
+                    dlgAlert.setMessage("Please Configure the duration!");
+                    dlgAlert.setTitle("Error Message...");
+                    dlgAlert.setPositiveButton("OK", null);
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.create().show();
+
+                    dlgAlert.setPositiveButton("Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    break;
+                }
+                showHourPicker();
                 updateGlobalSpace("lightrecurrences",(byte)4);
                 break;
             default:
@@ -193,7 +215,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
         Log.i("value is",""+newVal);
     }
 
-    public void showNumPicker(){
+    public void showHourMinPicker(){
         final Dialog d = new Dialog(LightController.this);
         d.setTitle("Choose Duration");
         d.setContentView(R.layout.dialog);
@@ -220,6 +242,58 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
                 Log.w(TAG,"Min Chosen : "+ mp.getValue() );
                 lightScheduleDurMin = mp.getValue();
                 updateGlobalSpace("lightdurationminutes",(byte)lightScheduleDurMin);
+                d.dismiss();
+            }
+        });
+        b2.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                d.dismiss(); // dismiss the dialog
+            }
+        });
+        d.show();
+    }
+
+    public void showHourPicker(){
+
+        final Dialog d = new Dialog(LightController.this);
+        d.setContentView(R.layout.dailoghour);
+        Button b1 = (Button) d.findViewById(R.id.cancel);
+        Button b2 = (Button) d.findViewById(R.id.set);
+        final NumberPicker hp = (NumberPicker) d.findViewById(R.id.HourPicker);
+        hp.setMaxValue(12); // max value 12
+        hp.setMinValue(0);   // min value 0
+        hp.setWrapSelectorWheel(false);
+        hp.setOnValueChangedListener(this);
+         b1.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                //tv.setText(String.valueOf(np.getValue())); //set the value to textview
+                Log.w(TAG,"Hour Window Chosen : "+ hp.getValue() );
+                lightScheduleWindow = hp.getValue();
+                lightScheduleDurHour = ((globalData)activity.getApplication()).getAquaLightChar("lightdurationhours");
+                if(lightScheduleDurHour > lightScheduleWindow){
+                    AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(activity);
+
+                    dlgAlert.setMessage("Duration can not be greater than hourly recurrence!");
+                    dlgAlert.setTitle("Error Message...");
+                    dlgAlert.setPositiveButton("OK", null);
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.create().show();
+
+                    dlgAlert.setPositiveButton("Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                }else{
+                    Log.w(TAG,"All good updating the hourly duration");
+                    updateGlobalSpace("hourly",(byte)lightScheduleWindow);
+                }
+
                 d.dismiss();
             }
         });

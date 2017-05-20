@@ -235,7 +235,7 @@
         android:layout_alignParentEnd="true" />
 
     <TextView
-        android:text="Set Duration"
+        android:text="Duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/DurationOflighting"
@@ -259,18 +259,6 @@
         android:layout_alignParentStart="true" />
 
     <TextView
-        android:text="Select Date/Time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ScheduleLighting"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_alignBaseline="@+id/mySchedule"
-        android:layout_alignBottom="@+id/mySchedule"
-        android:layout_alignRight="@+id/switchStatus"
-        android:layout_alignEnd="@+id/switchStatus" />
-
-    <TextView
         android:id="@+id/switchStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -281,5 +269,17 @@
         android:layout_alignBottom="@+id/mySwitch"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Date/Time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ScheduleLighting"
+        android:textColor="@color/White"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignBaseline="@+id/mySchedule"
+        android:layout_alignBottom="@+id/mySchedule"
+        android:layout_alignRight="@+id/DurationOflighting"
+        android:layout_alignEnd="@+id/DurationOflighting" />
 
 </RelativeLayout>

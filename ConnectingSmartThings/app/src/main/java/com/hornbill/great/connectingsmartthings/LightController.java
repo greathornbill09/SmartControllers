@@ -258,6 +258,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
     public void showHourPicker(){
 
         final Dialog d = new Dialog(LightController.this);
+        d.setTitle("Choose Hourly Duration");
         d.setContentView(R.layout.dailoghour);
         Button b1 = (Button) d.findViewById(R.id.cancel);
         Button b2 = (Button) d.findViewById(R.id.set);

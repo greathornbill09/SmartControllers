@@ -62,6 +62,8 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     private byte calibrateButtonState;
     private final static String TAG = MotorController.class.getSimpleName();
     private BluetoothLeService motorBluetoothService;
+    private int ti_hh, ti_mm;
+    private String time, time_mode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -327,7 +329,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     {
         Log.w(TAG,"onItemSelected"+ parent.getSelectedItem());
         switch((String)parent.getSelectedItem()){
-            case "Not Scheduled" :
+            case "Disable Schedule" :
                 updateGlobalSpace("lightrecurrences",(byte)0);
                 break;
             case "Daily" :
@@ -497,38 +499,36 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
             Calendar date = Calendar.getInstance();
             int ti_hh, ti_mm, hourly, incr_mnth = 1;
             String time, duration, time_mode = " am";
-            ti_hh = ((globalData) activity.getApplication()).getAquaMotorChar("motorhours");
-            ti_mm = ((globalData) activity.getApplication()).getAquaMotorChar("motorminutes");
-            hourly = ((globalData) activity.getApplication()).getAquaLightChar("hourly");
-            time = time_int_string(ti_hh, ti_mm);
-            time_mode = time_mode_int_string(ti_hh, ti_mm);
+            this.ti_hh = ((globalData) activity.getApplication()).getAquaMotorChar("motorhours");
+            this.ti_mm = ((globalData) activity.getApplication()).getAquaMotorChar("motorminutes");
+            hourly = ((globalData) activity.getApplication()).getAquaMotorChar("hourly");
+            time_int_string();
 
             for (int i= 0; i < row3.getChildCount() ; i++) {
                 TextView col = (TextView)row3.getChildAt(i);
                 switch (recurrence) {
                     case 1:
-                        col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + time + time_mode);
+                        col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" +this. time + this.time_mode);
                         break;
                     case 2:
                         if (date.get(Calendar.DAY_OF_WEEK) == (int)((globalData) activity.getApplication()).getAquaMotorChar("motordow")) {
-                            col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + time + time_mode );
+                            col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + this.time + this.time_mode );
                         } else {
                             col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00h:00m");
                         }
                         break;
                     case 3:
                         if (date.get(Calendar.DAY_OF_MONTH) == (int)((globalData) activity.getApplication()).getAquaMotorChar("motordom")) {
-                            col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + time + time_mode);
+                            col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + this.time + this.time_mode);
                         } else {
                             col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00h:00m");
                         }
                         break;
                     case 4:
-                        col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + time + time_mode);
-                        ti_hh += hourly;
-                        time = time_int_string(ti_hh, ti_mm);
-                        time_mode = time_mode_int_string(ti_hh, ti_mm);
-                        incr_mnth = 0;
+                        col.setText(displayDate.format(date.getTime()).substring(0, 3) + "\n" + this.time + this.time_mode);
+                        this.ti_hh += hourly;
+                        incr_mnth = this.ti_hh / 24;
+                        time_int_string();
                         break;
                     default:
                         col.setText(displayDate.format(date.getTime()).substring(0, 3) +"\n00h:00m");
@@ -550,33 +550,35 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         }
     }
 
-    private String time_int_string(int ti_hh, int ti_mm) {
-        String time;
+    private void time_int_string() {
+        int ti_hh = this.ti_hh;
+        this.time_mode = " am";
 
-        time = Integer.toString(ti_hh) + ":";
-        if (ti_mm < 10) {
-            time += "0";
+        if (this.ti_hh >= 12) {
+            ti_hh = this. ti_hh == 12 ? 12 : this.ti_hh % 12;
+            this.time_mode = " pm";
         }
-        time += Integer.toString(ti_mm);
 
-        return time;
-    }
-
-    private String time_mode_int_string(int ti_hh, int ti_mm) {
-        String time_mode = " am";
         if (ti_hh == 0) {
             ti_hh = 12;
-        } else if (ti_hh >= 12) {
-            ti_hh = ti_hh == 12 ? 12 : ti_hh - 12;
-            time_mode = " pm";
+            this.time_mode = " am";
         }
 
-        return time_mode;
+        if (this.ti_hh > 24) {
+            this.ti_hh -= 24;
+            this.time_mode = " am";
+        }
+
+        this.time = Integer.toString(ti_hh) + ":";
+        if (this.ti_mm < 10) {
+            this.time += "0";
+        }
+        this.time += Integer.toString(this.ti_mm);
     }
 
     private void sendMotorCustomCharacteristicDatafromGlobalStructure()
     {
-        byte[]motorScheduleData = new byte[10];
+        byte[]motorScheduleData = new byte[11];
         Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motormode"));
         motorScheduleData[0] = ((globalData)activity.getApplication()).getAquaMotorChar("motormode");
         Log.w(TAG, "motorScheduleButton "+((globalData)activity.getApplication()).getAquaMotorChar("motorpump"));

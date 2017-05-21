@@ -137,7 +137,6 @@ public class globalData extends Application {
         }
     }
 
-
     public byte getAquaMotorChar(String returnString) {
         byte returnVal=0;
         switch (returnString){

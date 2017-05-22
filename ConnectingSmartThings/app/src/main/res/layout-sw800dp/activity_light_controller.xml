@@ -196,12 +196,11 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:text="Date_Time"
-        android:layout_width="110dp"
+        android:layout_width="130dp"
         android:id="@+id/mySchedule"
         android:textColor="@color/Black"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_default"
+        android:layout_height="130dp"
+        android:background="@drawable/calendar"
         android:layout_below="@+id/switchStatus"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"

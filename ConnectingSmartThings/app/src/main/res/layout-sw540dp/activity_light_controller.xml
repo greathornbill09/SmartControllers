@@ -206,17 +206,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:text="Date/Time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ScheduleLighting"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_alignBottom="@+id/mySchedule"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
     <Button
         android:text="Hours_Min"
         android:layout_width="110dp"
@@ -227,18 +216,6 @@
         android:layout_alignBottom="@+id/DurationOflighting"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:text="Duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/DurationOflighting"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_below="@+id/ScheduleLighting"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="27dp" />
 
     <TextView
         android:text="Recurrence"
@@ -253,12 +230,11 @@
         android:layout_marginTop="18dp" />
 
     <Button
-        android:text="Date_Time"
         android:layout_width="110dp"
         android:id="@+id/mySchedule"
         android:textColor="@color/Black"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_default"
+        android:layout_height="110dp"
+        android:background="@drawable/calendar"
         android:layout_below="@+id/mySwitch"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
@@ -276,5 +252,29 @@
         android:layout_alignParentEnd="true"
         android:layout_alignLeft="@+id/myScheduleDuration"
         android:layout_alignStart="@+id/myScheduleDuration" />
+
+    <TextView
+        android:text="Date/Time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ScheduleLighting"
+        android:textColor="@color/White"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignBaseline="@+id/mySchedule"
+        android:layout_alignBottom="@+id/mySchedule"
+        android:layout_alignRight="@+id/FrequencyOflighting"
+        android:layout_alignEnd="@+id/FrequencyOflighting" />
+
+    <TextView
+        android:text="Duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/DurationOflighting"
+        android:textColor="@color/White"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@+id/mySchedule"
+        android:layout_alignLeft="@+id/ScheduleLighting"
+        android:layout_alignStart="@+id/ScheduleLighting"
+        android:layout_marginTop="16dp" />
 
 </RelativeLayout>

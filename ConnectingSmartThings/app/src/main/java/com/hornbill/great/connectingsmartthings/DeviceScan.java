@@ -8,6 +8,11 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,9 +23,11 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.ParcelUuid;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -39,6 +46,7 @@ import android.widget.Toast;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.hornbill.great.connectingsmartthings.R.color.PowderBlue;
 import static com.hornbill.great.connectingsmartthings.R.style.MyActionBar;
@@ -63,6 +71,12 @@ public class DeviceScan extends ListActivity {
     private String mDeviceAddress;
     private String mDeviceName;
     ProgressDialog showProgress;
+
+    private BluetoothLeScanner mLEScanner;
+    private ScanSettings settings;
+    private List<ScanFilter> filters;
+
+
 
     // Internal state machine.
     public enum ConnectionState
@@ -323,6 +337,28 @@ public class DeviceScan extends ListActivity {
         TextView deviceAddress;
     }
 
+    private ScanCallback mScanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            Log.i("callbackType", String.valueOf(callbackType));
+            Log.i("result", result.toString());
+            BluetoothDevice btDevice = result.getDevice();
+            mLeDeviceListAdapter.addDevice(btDevice);
+        }
+
+        @Override
+        public void onBatchScanResults(List<ScanResult> results) {
+            for (ScanResult sr : results) {
+                Log.i("ScanResult - Results", sr.toString());
+            }
+        }
+
+        @Override
+        public void onScanFailed(int errorCode) {
+            Log.e("Scan Failed", "Error Code: " + errorCode);
+        }
+    };
+
 
 
     private void scanLeDevice(final boolean enable) {
@@ -346,13 +382,20 @@ public class DeviceScan extends ListActivity {
                 @Override
                 public void run() {
                     mScanning = false;
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    invalidateOptionsMenu();
+                    if (Build.VERSION.SDK_INT < 21) {
+                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    } else {
+                        mLEScanner.stopScan(mScanCallback);
+                    }
                 }
             }, SCAN_PERIOD);
 
             mScanning = true;
-            mBluetoothAdapter.startLeScan(mLeScanCallback);
+            if (Build.VERSION.SDK_INT < 21) {
+                mBluetoothAdapter.startLeScan(mLeScanCallback);
+            } else {
+                mLEScanner.startScan(filters, settings, mScanCallback);
+            }
             new Handler().postDelayed(new Runnable() {
 
                 @Override
@@ -362,7 +405,11 @@ public class DeviceScan extends ListActivity {
             }, SCAN_PERIOD+5);
         } else {
             mScanning = false;
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            if (Build.VERSION.SDK_INT < 21) {
+                mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            } else {
+                mLEScanner.stopScan(mScanCallback);
+            }
 
         }
         invalidateOptionsMenu();
@@ -394,6 +441,20 @@ public class DeviceScan extends ListActivity {
             mySwipeRefreshLayout.setRefreshing(true);
             //mLeDeviceListAdapter.notifyDataSetChanged();
             mLeDeviceListAdapter.clear();
+
+            if (Build.VERSION.SDK_INT >= 21) {
+                mLEScanner = mBluetoothAdapter.getBluetoothLeScanner();
+                settings = new ScanSettings.Builder()
+                         .build();
+                ScanFilter scanFilter =
+                        new ScanFilter.Builder()
+                                .setServiceUuid(ParcelUuid.fromString((BluetoothLeService.UUID_AQUA_SERVICE).toString()))
+                                .build();
+                Log.e(TAG, "scanFilter -->"+scanFilter);
+                filters = new ArrayList<ScanFilter>();
+                filters.add(scanFilter);
+            }
+
             scanLeDevice(true);
         }
     }

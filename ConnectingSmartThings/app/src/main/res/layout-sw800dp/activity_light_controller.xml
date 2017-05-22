@@ -206,18 +206,6 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="12dp" />
 
-    <Button
-        android:text="Hours_Min"
-        android:layout_width="110dp"
-        android:id="@+id/myScheduleDuration"
-        android:textColor="@color/Black"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_default"
-        android:layout_marginTop="37dp"
-        android:layout_below="@+id/mySchedule"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
     <Spinner
         android:id="@+id/spinSelect"
         android:layout_width="wrap_content"
@@ -229,7 +217,9 @@
         android:layout_marginTop="44dp"
         android:layout_below="@+id/myScheduleDuration"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignLeft="@+id/myScheduleDuration"
+        android:layout_alignStart="@+id/myScheduleDuration" />
 
     <TextView
         android:text="Recurrence"
@@ -278,5 +268,15 @@
         android:layout_alignBottom="@+id/mySchedule"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="130dp"
+        android:id="@+id/myScheduleDuration"
+        android:layout_height="130dp"
+        android:background="@drawable/clock"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/mySchedule"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

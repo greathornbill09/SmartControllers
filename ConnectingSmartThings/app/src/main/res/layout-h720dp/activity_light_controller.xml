@@ -207,29 +207,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <Button
-        android:layout_width="100dp"
-        android:id="@+id/mySchedule"
-        android:textColor="@color/Black"
-        android:layout_height="100dp"
-        android:background="@drawable/calendar"
-        android:layout_marginTop="15dp"
-        android:layout_below="@+id/mySwitch"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        android:text="Hours_Min"
-        android:layout_width="110dp"
-        android:id="@+id/myScheduleDuration"
-        android:textColor="@color/Black"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_default"
-        android:layout_marginTop="14dp"
-        android:layout_below="@+id/mySchedule"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
     <Spinner
         android:id="@+id/spinSelect"
         android:layout_width="wrap_content"
@@ -278,5 +255,27 @@
         android:layout_alignBottom="@+id/mySwitch"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="100dp"
+        android:id="@+id/mySchedule"
+        android:textColor="@color/Black"
+        android:layout_height="100dp"
+        android:background="@drawable/calendar"
+        android:layout_alignTop="@+id/switchStatus"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="13dp" />
+
+    <Button
+        android:layout_width="110dp"
+        android:id="@+id/myScheduleDuration"
+        android:textColor="@color/Black"
+        android:layout_height="110dp"
+        android:background="@drawable/clock"
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/ScheduleLighting"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

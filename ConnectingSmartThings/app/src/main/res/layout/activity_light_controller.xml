@@ -12,24 +12,60 @@
     tools:context="com.hornbill.great.connectingsmartthings.LightController">
 
 
-    <Switch
-        android:id="@+id/mySwitch"
+    <TextView
+        android:text="Date/Time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ScheduleLighting"
         android:textColor="@color/White"
-        android:layout_width="110dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="13dp"
-        android:layout_height="38dp" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignBaseline="@+id/mySchedule"
+        android:layout_alignBottom="@+id/mySchedule"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/DurationOflighting"
+        android:textColor="@color/White"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignBaseline="@+id/myScheduleDuration"
+        android:layout_alignBottom="@+id/myScheduleDuration"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/switchStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aqua Light On/Off"
+        android:textColor="@color/White"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignBaseline="@+id/mySwitch"
+        android:layout_alignBottom="@+id/mySwitch"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="Schedule"
+        android:textSize="12sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/Black"
+        android:id="@+id/scheduleTrigger"
+        android:background="@android:drawable/btn_default"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
     <TableLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/scheduleDetails"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/FrequencyOflighting"
-        android:layout_marginTop="25dp"
-        android:layout_above="@+id/scheduleTrigger">
+        android:layout_above="@+id/scheduleTrigger"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <TableRow
             android:id="@+id/tableRow1"
@@ -185,54 +221,6 @@
 
     </TableLayout>
 
-    <Spinner
-        android:id="@+id/spinSelect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12pt"
-        android:textColor="@color/White"
-        android:entries="@array/repeat"
-        style="@style/SpinnerTheme"
-        android:layout_below="@+id/myScheduleDuration"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="11dp"
-        android:layout_alignLeft="@+id/myScheduleDuration"
-        android:layout_alignStart="@+id/myScheduleDuration" />
-
-    <Button
-        android:text="Hours_Min"
-        android:layout_width="110dp"
-        android:id="@+id/myScheduleDuration"
-        android:textColor="@color/Black"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_default"
-        android:layout_below="@+id/mySchedule"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:id="@+id/mySchedule"
-        android:textColor="@color/Black"
-        android:background="@drawable/calendar"
-        android:layout_below="@+id/mySwitch"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:text="Date/Time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ScheduleLighting"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_alignBaseline="@+id/mySchedule"
-        android:layout_alignBottom="@+id/mySchedule"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
     <TextView
         android:text="Recurrence"
         android:layout_width="wrap_content"
@@ -245,38 +233,45 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <TextView
-        android:text="Duration"
+    <Spinner
+        android:id="@+id/spinSelect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/DurationOflighting"
+        android:textSize="12pt"
         android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_alignBaseline="@+id/myScheduleDuration"
-        android:layout_alignBottom="@+id/myScheduleDuration"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:entries="@array/repeat"
+        style="@style/SpinnerTheme"
+        android:layout_below="@+id/myScheduleDuration"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Switch
+        android:id="@+id/mySwitch"
+        android:textColor="@color/White"
+        android:layout_width="110dp"
+        android:layout_height="38dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/scheduleTrigger"
+        android:layout_toEndOf="@+id/scheduleTrigger" />
 
     <Button
-        android:text="Schedule"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:id="@+id/mySchedule"
         android:textColor="@color/Black"
-        android:id="@+id/scheduleTrigger"
-        android:background="@android:drawable/btn_default"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:background="@drawable/calendar"
+        android:layout_below="@+id/switchStatus"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
-    <TextView
-        android:id="@+id/switchStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Aqua Light On/Off"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_alignBaseline="@+id/mySwitch"
-        android:layout_alignBottom="@+id/mySwitch"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+    <Button
+        android:layout_width="90dp"
+        android:id="@+id/myScheduleDuration"
+        android:textColor="@color/Black"
+        android:layout_height="90dp"
+        android:background="@drawable/clock"
+        android:layout_below="@+id/ScheduleLighting"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

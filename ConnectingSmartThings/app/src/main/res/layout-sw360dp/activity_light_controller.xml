@@ -195,32 +195,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
-    <Spinner
-        android:id="@+id/spinSelect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12pt"
-        android:textColor="@color/White"
-        android:entries="@array/repeat"
-        style="@style/SpinnerTheme"
-        android:layout_below="@+id/myScheduleDuration"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="11dp"
-        android:layout_alignLeft="@+id/myScheduleDuration"
-        android:layout_alignStart="@+id/myScheduleDuration" />
-
-    <Button
-        android:text="Hours_Min"
-        android:layout_width="110dp"
-        android:id="@+id/myScheduleDuration"
-        android:textColor="@color/Black"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_default"
-        android:layout_below="@+id/mySchedule"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
     <TextView
         android:text="Date/Time"
         android:layout_width="wrap_content"
@@ -275,8 +249,34 @@
         android:textColor="@color/Black"
         android:layout_height="90dp"
         android:background="@drawable/calendar"
-        android:layout_below="@+id/mySwitch"
-        android:layout_alignLeft="@+id/spinSelect"
-        android:layout_alignStart="@+id/spinSelect" />
+        android:layout_marginTop="13dp"
+        android:layout_alignTop="@+id/switchStatus"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="90dp"
+        android:id="@+id/myScheduleDuration"
+        android:textColor="@color/Black"
+        android:layout_height="90dp"
+        android:background="@drawable/clock"
+        android:layout_below="@+id/ScheduleLighting"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="8dp" />
+
+    <Spinner
+        android:id="@+id/spinSelect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12pt"
+        android:textColor="@color/White"
+        android:entries="@array/repeat"
+        style="@style/SpinnerTheme"
+        android:layout_below="@+id/myScheduleDuration"
+        android:layout_alignLeft="@+id/myScheduleDuration"
+        android:layout_alignStart="@+id/myScheduleDuration"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp" />
 
 </RelativeLayout>

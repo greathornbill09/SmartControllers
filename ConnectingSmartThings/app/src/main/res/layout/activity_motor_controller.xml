@@ -39,7 +39,7 @@
         android:id="@+id/scheduleDetails"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
         android:layout_below="@+id/calibrate"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -197,17 +197,6 @@
 
     </TableLayout>
 
-    <Button
-        android:text="Date_Time"
-        android:layout_width="wrap_content"
-        android:id="@+id/myMotorSchedule"
-        android:textColor="@color/Black"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_default"
-        android:layout_below="@+id/myValveSwitch"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
     <Switch
         android:id="@+id/myValveSwitch"
         android:layout_width="wrap_content"
@@ -233,19 +222,6 @@
         android:textColor="@color/White"
         android:layout_height="38dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/spinSelect"
-        android:entries="@array/repeat"
-        android:textSize="12pt"
-        android:layout_marginTop="15dp"
-        android:textColor="@color/White"
-        style="@style/SpinnerTheme"
-        android:layout_below="@+id/myMotorSchedule"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
@@ -283,5 +259,28 @@
         android:layout_alignTop="@+id/spinSelect"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="90dp"
+        android:id="@+id/myMotorSchedule"
+        android:textColor="@color/Black"
+        android:layout_height="90dp"
+        android:background="@drawable/calendar"
+        android:layout_alignTop="@+id/valveSwitchStatus"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="14dp" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinSelect"
+        android:entries="@array/repeat"
+        android:textSize="12pt"
+        android:textColor="@color/White"
+        style="@style/SpinnerTheme"
+        android:layout_below="@+id/myMotorSchedule"
+        android:layout_toRightOf="@+id/calibrate"
+        android:layout_toEndOf="@+id/calibrate" />
 
 </RelativeLayout>

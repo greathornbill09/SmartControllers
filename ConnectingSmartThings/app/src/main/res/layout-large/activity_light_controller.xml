@@ -220,19 +220,9 @@
         android:layout_below="@+id/myScheduleDuration"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp" />
-
-    <Button
-        android:text="Hours_Min"
-        android:layout_width="110dp"
-        android:id="@+id/myScheduleDuration"
-        android:textColor="@color/Black"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_default"
-        android:layout_below="@+id/mySchedule"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="11dp" />
+        android:layout_marginTop="16dp"
+        android:layout_alignLeft="@+id/mySwitch"
+        android:layout_alignStart="@+id/mySwitch" />
 
     <TextView
         android:text="Recurrence"
@@ -280,6 +270,17 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/mySwitch"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="140dp"
+        android:id="@+id/myScheduleDuration"
+        android:textColor="@color/Black"
+        android:layout_height="140dp"
+        android:background="@drawable/clock"
+        android:layout_marginTop="46dp"
+        android:layout_below="@+id/ScheduleLighting"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 

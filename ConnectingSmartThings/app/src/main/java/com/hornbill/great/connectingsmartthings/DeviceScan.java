@@ -73,7 +73,7 @@ public class DeviceScan extends ListActivity {
     ProgressDialog showProgress;
 
     private BluetoothLeScanner mLEScanner;
-    private ScanSettings settings;
+    private ScanSettings scansetting;
     private List<ScanFilter> filters;
 
 
@@ -344,6 +344,8 @@ public class DeviceScan extends ListActivity {
             Log.i("result", result.toString());
             BluetoothDevice btDevice = result.getDevice();
             mLeDeviceListAdapter.addDevice(btDevice);
+            mLeDeviceListAdapter.notifyDataSetChanged();
+            mySwipeRefreshLayout.setRefreshing(false);
         }
 
         @Override
@@ -394,7 +396,9 @@ public class DeviceScan extends ListActivity {
             if (Build.VERSION.SDK_INT < 21) {
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
             } else {
-                mLEScanner.startScan(filters, settings, mScanCallback);
+                if(mLEScanner != null) {
+                    mLEScanner.startScan(filters, scansetting, mScanCallback);
+                }
             }
             new Handler().postDelayed(new Runnable() {
 
@@ -408,7 +412,9 @@ public class DeviceScan extends ListActivity {
             if (Build.VERSION.SDK_INT < 21) {
                 mBluetoothAdapter.stopLeScan(mLeScanCallback);
             } else {
-                mLEScanner.stopScan(mScanCallback);
+                if(mLEScanner != null) {
+                    mLEScanner.stopScan(mScanCallback);
+                }
             }
 
         }
@@ -426,9 +432,10 @@ public class DeviceScan extends ListActivity {
         // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
         // fire an intent to display a dialog asking the user to grant permission to enable it.
         if (mBluetoothAdapter != null && !mBluetoothAdapter.isEnabled()) {
+            Log.e(TAG, "Request for BT ON");
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
+          }
 
         if(mState != ConnectionState.READ_CHARACTERISTIC) {
 
@@ -444,13 +451,15 @@ public class DeviceScan extends ListActivity {
 
             if (Build.VERSION.SDK_INT >= 21) {
                 mLEScanner = mBluetoothAdapter.getBluetoothLeScanner();
-                settings = new ScanSettings.Builder()
+                scansetting = new ScanSettings.Builder()
+                         .setScanMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
                          .build();
                 ScanFilter scanFilter =
                         new ScanFilter.Builder()
                                 .setServiceUuid(ParcelUuid.fromString((BluetoothLeService.UUID_AQUA_SERVICE).toString()))
                                 .build();
                 Log.e(TAG, "scanFilter -->"+scanFilter);
+                Log.e(TAG, "scanSettings -->"+scansetting);
                 filters = new ArrayList<ScanFilter>();
                 filters.add(scanFilter);
             }

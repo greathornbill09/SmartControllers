@@ -18,6 +18,7 @@ public class ControlCentre extends Activity {
     private final static String TAG = ControlCentre.class.getSimpleName();
     private Button light_btn;
     private Button motor_btn;
+    private Button dummy_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,14 +29,24 @@ public class ControlCentre extends Activity {
         getActionBar().setTitle(R.string.control_centre);
         light_btn = (Button) findViewById(R.id.lightButton);
         motor_btn = (Button) findViewById(R.id.MotorButton);
+        dummy_btn = (Button) findViewById(R.id.dummy);
         light_btn.setVisibility(View.VISIBLE);
         motor_btn.setVisibility(View.VISIBLE);
+        dummy_btn.setVisibility(View.VISIBLE);
         final Intent onLightClickIntent = new Intent(this,LightController.class);
         final Intent onMotorClickIntent = new Intent(this,MotorController.class);
+        final Intent onDummyClickIntent = new Intent(this,LightControllerTab.class);
         light_btn.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 Log.e(TAG, "Light Button On Click");
                 startActivity(onLightClickIntent);
+            }
+        });
+
+        dummy_btn.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                Log.e(TAG, "Light Button On Click");
+                startActivity(onDummyClickIntent);
             }
         });
 

@@ -47,10 +47,13 @@
         <activity
             android:name=".MotorController"
             android:theme="@style/MyTheme" />
-        <activity android:name=".IntroActivity"
+        <activity
+            android:name=".IntroActivity"
             android:theme="@style/IntroTheme" />
-
-
+        <activity
+            android:name=".LightControllerTab"
+            android:label="@string/title_activity_light_controller_tab"
+            android:theme="@style/LightControlTheme"></activity>
     </application>
 
 </manifest>

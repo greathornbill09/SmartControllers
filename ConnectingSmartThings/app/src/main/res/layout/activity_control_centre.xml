@@ -35,5 +35,17 @@
         android:layout_marginRight="28dp"
         android:layout_marginEnd="28dp" />
 
+    <Button
+        android:text="DUMMY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dummy"
+        android:textColor="@color/Black"
+        android:background="@android:drawable/btn_default"
+        android:layout_below="@+id/lightButton"
+        android:layout_alignLeft="@+id/lightButton"
+        android:layout_alignStart="@+id/lightButton"
+        android:layout_marginTop="47dp" />
+
 
 </RelativeLayout>

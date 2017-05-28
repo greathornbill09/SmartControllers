@@ -1,0 +1,107 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".schedulePage">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/hello_blank_fragment" />
+
+    <TableLayout
+        android:id="@+id/scheduleDetails"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/scheduleTrigger"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <TextView
+                android:id="@+id/TextView01" android:text="Schedule: Daily"
+                android:layout_weight="1" android:background="@color/NavajoWhite"
+                android:textColor="#000000"
+                android:padding="5dip" android:gravity="center"/>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <TextView
+                android:id="@+id/TextView01" android:text="SUN"
+                android:layout_weight="1" android:background="@color/Black"
+                android:textColor="@color/White"
+                android:padding="3dip"
+                android:textSize="13dp"
+                android:gravity="center"
+                android:layout_width="0dp" />
+
+            <TextView
+                android:id="@+id/TextView02" android:text="MON"
+                android:layout_weight="1" android:background="@color/Black"
+                android:textColor="@color/White"
+                android:padding="3dip"
+                android:textSize="13dp"
+                android:gravity="center"
+                android:layout_width="0dp" />
+
+            <TextView
+                android:id="@+id/TextView03" android:text="TUE"
+                android:layout_weight="1" android:background="@color/Black"
+                android:textColor="@color/White"
+                android:padding="3dip"
+                android:textSize="13dp"
+                android:gravity="center"
+                android:layout_width="0dp" />
+
+            <TextView
+                android:id="@+id/TextView04" android:text="WED"
+                android:layout_weight="1" android:background="@color/Black"
+                android:textColor="@color/White"
+                android:padding="3dip"
+                android:textSize="13dp"
+                android:gravity="center"
+                android:layout_width="0dp" />
+
+            <TextView
+                android:id="@+id/TextView05" android:text="THU"
+                android:layout_weight="1" android:background="@color/Black"
+                android:textColor="@color/White"
+                android:padding="3dip"
+                android:textSize="13dp"
+                android:gravity="center"
+                android:layout_width="0dp" />
+
+            <TextView
+                android:id="@+id/TextView06" android:text="FRI"
+                android:layout_weight="1" android:background="@color/Black"
+                android:textColor="@color/White"
+                android:padding="3dip"
+                android:textSize="13dp"
+                android:gravity="center"
+                android:layout_width="0dp" />
+
+            <TextView
+                android:id="@+id/TextView07" android:text="SAT"
+                android:layout_weight="1" android:background="@color/Black"
+                android:textColor="@color/White"
+                android:padding="3dip"
+                android:textSize="13dp"
+                android:gravity="center"
+                android:layout_width="0dp" />
+
+
+        </TableRow>
+
+    </TableLayout>
+
+
+</FrameLayout>

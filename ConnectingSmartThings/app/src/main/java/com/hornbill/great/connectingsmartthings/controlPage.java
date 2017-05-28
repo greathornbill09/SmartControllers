@@ -1,7 +1,10 @@
 package com.hornbill.great.connectingsmartthings;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
@@ -15,20 +18,36 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.NumberPicker;
+import android.widget.Spinner;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link controlPage.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link controlPage#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class controlPage extends Fragment {
+import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
+import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
+
+import java.util.Calendar;
+import java.util.Date;
+
+public class controlPage extends Fragment implements AdapterView.OnItemSelectedListener,NumberPicker.OnValueChangeListener{
+
+
+    public int lightScheduleDayOfMonth = 0;
+    public int lightScheduleDayOfWeek = 0;
+    public int lightScheduleHour = 0;
+    public int lightScheduleMin = 0;
+    public int lightScheduleDurHour = 0;
+    public int lightScheduleWindow = 0;
+    public int lightScheduleDurMin = 0;
 
     private BluetoothLeService mLightBluetoothService;
     private final static String TAG = controlPage.class.getSimpleName();
+    private Button deviceScheduleButton;
+    private Button deviceScheduleDurationButton;
+    private Button deviceScheduleTriggerButton;
+    private Byte statusLight;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,11 +70,18 @@ public class controlPage extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView;
+
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_control_page, container, false);
 
-
+        /* ON/OFF Switch Functionality*/
         SwitchCompat switchCompat = (SwitchCompat) rootView.findViewById(R.id.switch_compat);
+        statusLight = ((globalData)getActivity().getApplication()).getAquaLightChar("lightstatus");
+
+        if(statusLight == 1)
+        {
+            switchCompat.setChecked(true);
+        }
 
         switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -84,8 +110,243 @@ public class controlPage extends Fragment {
                 sendLightCustomCharacteristicDatafromGlobalStructure();
             }
         });
+
+
+        /* DATE/TIME Picker functionality*/
+        deviceScheduleButton = (Button) rootView.findViewById(R.id.mySchedule);
+        deviceScheduleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.w(TAG,"Schedule Button Clicked");
+                new SlideDateTimePicker.Builder(getActivity().getSupportFragmentManager())
+                        .setListener(listener)
+                        .setInitialDate(new Date())
+                        .build()
+                        .show();
+            }
+        });
+
+
+        /*Displaying schedule duration button */
+        deviceScheduleDurationButton = (Button) rootView.findViewById(R.id.myScheduleDuration);
+        deviceScheduleDurationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.w(TAG,"Schedule Duration Button Clicked");
+                showHourMinPicker();
+            }
+
+        });
+
+
+        /* Select the frequency*/
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.spinSelect);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.repeat));
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+        spinner.setSelection(0, true);
+
+
+        /* Write the schedule */
+        deviceScheduleTriggerButton = (Button) rootView.findViewById(R.id.scheduleTrigger);
+        deviceScheduleTriggerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateGlobalSpace("lightmode", (byte) 1);
+            /* Write data to the custom characteristics*/
+                sendLightCustomCharacteristicDatafromGlobalStructure();
+            }
+        });
+
+
+
         return rootView;
     }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view,
+                               int pos, long id)
+    {
+        Log.w(TAG,"onItemSelected"+ parent.getSelectedItem());
+        switch((String)parent.getSelectedItem()){
+            case "Disable Schedule" :
+                updateGlobalSpace("lightrecurrences",(byte)0);
+                break;
+            case "Daily" :
+                updateGlobalSpace("lightrecurrences",(byte)1);
+                break;
+            case "Weekly" :
+                updateGlobalSpace("lightrecurrences",(byte)2);
+                break;
+            case "Monthly" :
+                updateGlobalSpace("lightrecurrences",(byte)3);
+                break;
+            case "Hourly" :
+                // TODO : pop numberpicker to get hourly data, validate as well
+                //updateGlobalSpace("hourly",(byte)4);
+                lightScheduleDurHour = ((globalData)getActivity().getApplication()).getAquaLightChar("lightdurationhours");
+                Log.w(TAG,"lightScheduleDurHour"+lightScheduleDurHour );
+                if(lightScheduleDurHour == 0)
+                {
+                    AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getActivity());
+
+                    dlgAlert.setMessage("Please Configure the duration!");
+                    dlgAlert.setTitle("Error Message...");
+                    dlgAlert.setPositiveButton("OK", null);
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.create().show();
+
+                    dlgAlert.setPositiveButton("Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    break;
+                }
+                showHourPicker();
+                updateGlobalSpace("lightrecurrences",(byte)4);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+
+        Log.i("value is",""+newVal);
+    }
+
+    public void showHourMinPicker(){
+        final Dialog d = new Dialog(getContext());
+        d.setTitle("Choose Duration");
+        d.setContentView(R.layout.dialog);
+        Button b1 = (Button) d.findViewById(R.id.cancel);
+        Button b2 = (Button) d.findViewById(R.id.set);
+        final NumberPicker hp = (NumberPicker) d.findViewById(R.id.HourPicker);
+        hp.setMaxValue(12); // max value 12
+        hp.setMinValue(0);   // min value 0
+        hp.setWrapSelectorWheel(false);
+        final NumberPicker mp = (NumberPicker) d.findViewById(R.id.MinPicker);
+        mp.setMaxValue(60); // max value 60
+        mp.setMinValue(0);   // min value 0
+        mp.setWrapSelectorWheel(false);
+        hp.setOnValueChangedListener(this);
+        mp.setOnValueChangedListener(this);
+        b1.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                //tv.setText(String.valueOf(np.getValue())); //set the value to textview
+                Log.w(TAG,"Hour Chosen : "+ hp.getValue() );
+                lightScheduleDurHour = hp.getValue();
+                updateGlobalSpace("lightdurationhours",(byte)lightScheduleDurHour);
+                Log.w(TAG,"Min Chosen : "+ mp.getValue() );
+                lightScheduleDurMin = mp.getValue();
+                updateGlobalSpace("lightdurationminutes",(byte)lightScheduleDurMin);
+                d.dismiss();
+            }
+        });
+        b2.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                d.dismiss(); // dismiss the dialog
+            }
+        });
+        d.show();
+    }
+
+
+    public void showHourPicker(){
+        final Dialog d = new Dialog(getContext());
+        d.setTitle("Choose Hourly Duration");
+        d.setContentView(R.layout.dailoghour);
+        Button b1 = (Button) d.findViewById(R.id.cancel);
+        Button b2 = (Button) d.findViewById(R.id.set);
+        final NumberPicker hp = (NumberPicker) d.findViewById(R.id.HourPicker);
+        hp.setMaxValue(12); // max value 12
+        hp.setMinValue(1);   // min value 1
+        hp.setWrapSelectorWheel(false);
+        hp.setOnValueChangedListener(this);
+        b1.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                //tv.setText(String.valueOf(np.getValue())); //set the value to textview
+                Log.w(TAG,"Hour Window Chosen : "+ hp.getValue() );
+                lightScheduleWindow = hp.getValue();
+                lightScheduleDurHour = ((globalData)getActivity().getApplication()).getAquaLightChar("lightdurationhours");
+                if(lightScheduleDurHour > lightScheduleWindow){
+                    AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getActivity());
+
+                    dlgAlert.setMessage("Duration can not be greater than hourly recurrence!");
+                    dlgAlert.setTitle("Error Message...");
+                    dlgAlert.setPositiveButton("OK", null);
+                    dlgAlert.setCancelable(true);
+                    dlgAlert.create().show();
+
+                    dlgAlert.setPositiveButton("Ok",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                }else{
+                    Log.w(TAG,"All good updating the hourly duration");
+                    updateGlobalSpace("hourly",(byte)lightScheduleWindow);
+                }
+
+                d.dismiss();
+            }
+        });
+        b2.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                d.dismiss(); // dismiss the dialog
+            }
+        });
+        d.show();
+    }
+
+    private SlideDateTimeListener listener = new SlideDateTimeListener() {
+        @Override
+        public void onDateTimeSet(Calendar date)
+        {
+            // Do something with the date. This Date object contains
+            // the date and time that the user has selected.
+            Log.e(TAG, "onDateTimeSet:" +date.get(Calendar.DAY_OF_MONTH));
+            Log.e(TAG, "onDateTimeSet:" +date.get(Calendar.DAY_OF_WEEK));
+            lightScheduleDayOfMonth = date.get(Calendar.DAY_OF_MONTH);
+            updateGlobalSpace("lightdom",(byte)lightScheduleDayOfMonth);
+            lightScheduleDayOfWeek = date.get(Calendar.DAY_OF_WEEK);
+            updateGlobalSpace("lightdow",(byte)lightScheduleDayOfWeek);
+            Log.e(TAG, "onDateTimeSet:" +date.get(Calendar.HOUR_OF_DAY));
+            lightScheduleHour = date.get(Calendar.HOUR_OF_DAY);
+            updateGlobalSpace("lighthours",(byte)lightScheduleHour);
+            Log.e(TAG, "onDateTimeSet:" +date.get(Calendar.MINUTE));
+            lightScheduleMin = date.get(Calendar.MINUTE);
+            updateGlobalSpace("lightminutes",(byte)lightScheduleMin);
+        }
+
+        @Override
+        public void onDateTimeCancel()
+        {
+            // Overriding onDateTimeCancel() is optional.
+            Log.e(TAG, "onDateTimeCancel");
+        }
+    };
 
 
     // Code to manage Service lifecycle.

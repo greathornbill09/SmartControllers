@@ -86,7 +86,7 @@
         android:id="@+id/spinSelect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12pt"
+        android:textSize="10pt"
         android:textColor="@color/White"
         android:entries="@array/repeat"
         style="@style/SpinnerTheme"

@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".controlPage">
 
     <!-- TODO: Update blank fragment layout -->
@@ -18,6 +19,7 @@
 
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/switch_compat"
+        app:theme ="@style/Switch.control"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checked="false"
@@ -25,7 +27,8 @@
         android:textOn="ON"
         android:layout_gravity="end"
         android:layout_marginTop="60dp"
-        android:layout_marginRight="35dp"/>
+        android:layout_marginRight="35dp"
+        />
 
     <TextView
         android:text="Date/Time"

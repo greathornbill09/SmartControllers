@@ -118,7 +118,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
                 updateGlobalSpace("lightstatus",data[1]);
             }
             Log.w(TAG," Writing Light Switch Status BLE");
-            sendLightCustomCharacteristicDatafromGlobalStructure();
+                sendLightCustomCharacteristicDatafromGlobalStructure();
             }
         });
 

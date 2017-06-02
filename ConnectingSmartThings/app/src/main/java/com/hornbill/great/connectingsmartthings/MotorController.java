@@ -46,6 +46,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     public int motorScheduleMin = 0;
     public int motorScheduleDurHour = 0;
     public int motorScheduleDurMin = 0;
+    public int motorScheduleWindow = 0;
     private Byte statusMotor;
     private Byte calibrationState;
     private Byte statusValve;
@@ -330,7 +331,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         Log.w(TAG,"onItemSelected"+ parent.getSelectedItem());
         switch((String)parent.getSelectedItem()){
             case "Disable Schedule" :
-                updateGlobalSpace("lightrecurrences",(byte)0);
+                updateGlobalSpace("motorrecurrence",(byte)0);
                 break;
             case "Daily" :
                 updateGlobalSpace("motorrecurrence",(byte)1);
@@ -342,8 +343,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                 updateGlobalSpace("motorrecurrence",(byte)3);
                 break;
             case "Hourly" :
-                // TODO : pop numberpicker to get hourly data, validate as well
-                updateGlobalSpace("hourly",(byte)4);
+                showHourPicker();
                 updateGlobalSpace("motorrecurrence",(byte)4);
                 break;
             default:
@@ -379,6 +379,39 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
     @Override
     public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
         Log.i("value is",""+newVal);
+    }
+
+    public void showHourPicker(){
+        final Dialog d = new Dialog(MotorController.this);
+        d.setTitle("Choose Hourly Duration");
+        d.setContentView(R.layout.dailoghour);
+        Button b1 = (Button) d.findViewById(R.id.cancel);
+        Button b2 = (Button) d.findViewById(R.id.set);
+        final NumberPicker hp = (NumberPicker) d.findViewById(R.id.HourPicker);
+        hp.setMaxValue(12); // max value 12
+        hp.setMinValue(1);   // min value 1
+        hp.setWrapSelectorWheel(false);
+        hp.setOnValueChangedListener(this);
+        b1.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                //tv.setText(String.valueOf(np.getValue())); //set the value to textview
+                Log.w(TAG,"Hour Window Chosen : "+ hp.getValue() );
+                motorScheduleWindow = hp.getValue();
+
+                updateGlobalSpace("hourly",(byte)motorScheduleWindow);
+                d.dismiss();
+            }
+        });
+        b2.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                d.dismiss(); // dismiss the dialog
+            }
+        });
+        d.show();
     }
 
     public void showNumPicker(){
@@ -489,7 +522,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
                     break;
                 default:
                     // Display the upcoming recurrence
-                    scheduleRecurrence = "No Schedule";
+                    scheduleRecurrence = "No Schedules";
             }
 
             // Display the upcoming recurrence

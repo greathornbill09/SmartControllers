@@ -177,8 +177,9 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
                 // TODO : pop numberpicker to get hourly data, validate as well
                 //updateGlobalSpace("hourly",(byte)4);
                 lightScheduleDurHour = ((globalData)activity.getApplication()).getAquaLightChar("lightdurationhours");
+                lightScheduleDurMin = ((globalData)activity.getApplication()).getAquaLightChar("lightdurationminutes");
                 Log.w(TAG,"lightScheduleDurHour"+lightScheduleDurHour );
-                if(lightScheduleDurHour == 0)
+                if(lightScheduleDurHour == 0 && lightScheduleDurMin == 0)
                 {
                     AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(activity);
 

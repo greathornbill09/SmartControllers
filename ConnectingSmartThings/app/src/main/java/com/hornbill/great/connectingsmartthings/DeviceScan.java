@@ -1,6 +1,7 @@
 package com.hornbill.great.connectingsmartthings;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -23,11 +24,13 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.ParcelUuid;
+import android.os.Process;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -42,6 +45,11 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
@@ -75,12 +83,51 @@ public class DeviceScan extends ListActivity {
     private BluetoothLeScanner mLEScanner;
     private ScanSettings scansetting;
     private List<ScanFilter> filters;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("DeviceScan Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
+    }
 
 
     // Internal state machine.
-    public enum ConnectionState
-    {
+    public enum ConnectionState {
         IDLE,
         CONNECT_GATT,
         DISCOVER_SERVICES,
@@ -94,81 +141,83 @@ public class DeviceScan extends ListActivity {
 
     private final static String TAG = DeviceScan.class.getSimpleName();
 
-   @Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
-       super.onCreate(savedInstanceState);
-       Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
-       bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-       getActionBar().setTitle(R.string.app_name);
-       activity = this;
-       mHandler = new Handler();
-       setContentView(R.layout.activity_device_scan);
-       showProgress = new ProgressDialog(this);
-       // Ask for required permission
-       //BT/BLE
-       // Use this check to determine whether BLE is supported on the device.  Then you can
-       // selectively disable BLE-related features.
-       if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-           Toast.makeText(this, R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();
-           finish();
-       }
-       // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
-       // BluetoothAdapter through BluetoothManager.
-       final BluetoothManager bluetoothManager =
-               (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-       mBluetoothAdapter = bluetoothManager.getAdapter();
-       // Checks if Bluetooth is supported on the device.
-       if (mBluetoothAdapter == null) {
-           Toast.makeText(this, R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();
-           finish();
-           return;
-       }
+        super.onCreate(savedInstanceState);
+        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+        getActionBar().setTitle(R.string.app_name);
+        activity = this;
+        mHandler = new Handler();
+        setContentView(R.layout.activity_device_scan);
+        showProgress = new ProgressDialog(this);
+        // Ask for required permission
+        //BT/BLE
+        // Use this check to determine whether BLE is supported on the device.  Then you can
+        // selectively disable BLE-related features.
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(this, R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
+        // BluetoothAdapter through BluetoothManager.
+        final BluetoothManager bluetoothManager =
+                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothAdapter = bluetoothManager.getAdapter();
+        // Checks if Bluetooth is supported on the device.
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(this, R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
-       // Location
-       if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != (int) PackageManager.PERMISSION_GRANTED)
-       {
-           // if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION))
-           {
-               final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-               builder.setTitle("This app needs location access");
-               builder.setMessage("Location access is required to discover nearby Bluetooth smart devices.");
-               builder.setPositiveButton(android.R.string.ok, null);
-               builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                   @Override
-                   public void onDismiss(DialogInterface dialog) {
-                       ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_COARSE_LOACTION_REQUEST);
-                   }
-               });
-               builder.show();
-           }
-       } else {
-           //Enable location if it is not enabled already
-           if (!isLocationServiceEnabled(activity)) {
-               Intent enableLocationIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-               startActivityForResult(enableLocationIntent, LOCATION_SERVICE_ENABLED);
-           }
-       }
+        // Location
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != (int) PackageManager.PERMISSION_GRANTED) {
+            // if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION))
+            {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("This app needs location access");
+                builder.setMessage("Location access is required to discover nearby Bluetooth smart devices.");
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_COARSE_LOACTION_REQUEST);
+                    }
+                });
+                builder.show();
+            }
+        } else {
+            //Enable location if it is not enabled already
+            if (!isLocationServiceEnabled(activity)) {
+                Intent enableLocationIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivityForResult(enableLocationIntent, LOCATION_SERVICE_ENABLED);
+            }
+        }
 
        /* Swipe to Refresh*/
        /* * Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked when the user * performs a swipe-to-refresh gesture. */
-       mySwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-       mySwipeRefreshLayout.setOnRefreshListener(
-               new SwipeRefreshLayout.OnRefreshListener() {
-                   @Override
-                   public void onRefresh() {
-                       Log.e(TAG, "onRefresh called from SwipeRefreshLayout");
-                      // This method performs the actual data-refresh operation.
-                      // This method performs the actual data-refresh operation.
-                      // The method calls setRefreshing(false) when it's finished.
+        mySwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        mySwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Log.e(TAG, "onRefresh called from SwipeRefreshLayout");
+                        // This method performs the actual data-refresh operation.
+                        // This method performs the actual data-refresh operation.
+                        // The method calls setRefreshing(false) when it's finished.
 
-                       scanLeDevice(false);
-                       mLeDeviceListAdapter.notifyDataSetChanged();
-                       mLeDeviceListAdapter.clear();
-                       scanLeDevice(true);
-                   }
-               }
-       );
+                        scanLeDevice(false);
+                        mLeDeviceListAdapter.notifyDataSetChanged();
+                        mLeDeviceListAdapter.clear();
+                        scanLeDevice(true);
+                    }
+                }
+        );
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
 
@@ -224,19 +273,19 @@ public class DeviceScan extends ListActivity {
         }
     }
 
-    public boolean isLocationServiceEnabled(Context context){
+    public boolean isLocationServiceEnabled(Context context) {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        boolean gps_enabled= false,network_enabled = false;
+        boolean gps_enabled = false, network_enabled = false;
 
-        try{
+        try {
             gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        }catch(Exception ex){
+        } catch (Exception ex) {
             //do nothing...
         }
 
-        try{
+        try {
             network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        }catch(Exception ex){
+        } catch (Exception ex) {
             //do nothing...
         }
 
@@ -259,7 +308,7 @@ public class DeviceScan extends ListActivity {
         }
 
         public void addDevice(BluetoothDevice device) {
-            if(!mLeDevices.contains(device)) {
+            if (!mLeDevices.contains(device)) {
                 mLeDevices.add(device);
             }
         }
@@ -362,10 +411,9 @@ public class DeviceScan extends ListActivity {
     };
 
 
-
     private void scanLeDevice(final boolean enable) {
 
-        Log.e(TAG, "scanLeDevice with "+enable);
+        Log.e(TAG, "scanLeDevice with " + enable);
 
         if (enable) {
             // Start the discovery just popup the pairing dialog to foreground
@@ -396,7 +444,7 @@ public class DeviceScan extends ListActivity {
             if (Build.VERSION.SDK_INT < 21) {
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
             } else {
-                if(mLEScanner != null) {
+                if (mLEScanner != null) {
                     mLEScanner.startScan(filters, scansetting, mScanCallback);
                 }
             }
@@ -406,13 +454,13 @@ public class DeviceScan extends ListActivity {
                 public void run() {
                     mySwipeRefreshLayout.setRefreshing(false);
                 }
-            }, SCAN_PERIOD+5);
+            }, SCAN_PERIOD + 5);
         } else {
             mScanning = false;
             if (Build.VERSION.SDK_INT < 21) {
                 mBluetoothAdapter.stopLeScan(mLeScanCallback);
             } else {
-                if(mLEScanner != null) {
+                if (mLEScanner != null) {
                     mLEScanner.stopScan(mScanCallback);
                 }
             }
@@ -435,9 +483,9 @@ public class DeviceScan extends ListActivity {
             Log.e(TAG, "Request for BT ON");
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-          }
+        }
 
-        if(mState != ConnectionState.READ_CHARACTERISTIC) {
+        if (mState != ConnectionState.READ_CHARACTERISTIC) {
 
             Log.e(TAG, "Initializing the list view adapter in Resume");
 
@@ -452,14 +500,14 @@ public class DeviceScan extends ListActivity {
             if (Build.VERSION.SDK_INT >= 21) {
                 mLEScanner = mBluetoothAdapter.getBluetoothLeScanner();
                 scansetting = new ScanSettings.Builder()
-                         .setScanMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
-                         .build();
+                        .setScanMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
+                        .build();
                 ScanFilter scanFilter =
                         new ScanFilter.Builder()
                                 .setServiceUuid(ParcelUuid.fromString((BluetoothLeService.UUID_AQUA_SERVICE).toString()))
                                 .build();
-                Log.e(TAG, "scanFilter -->"+scanFilter);
-                Log.e(TAG, "scanSettings -->"+scansetting);
+                Log.e(TAG, "scanFilter -->" + scanFilter);
+                Log.e(TAG, "scanSettings -->" + scansetting);
                 filters = new ArrayList<ScanFilter>();
                 filters.add(scanFilter);
             }
@@ -479,7 +527,7 @@ public class DeviceScan extends ListActivity {
         //((globalData)activity.getApplication()).setBluetoothLeService(mBluetoothLeService);
     }
 
-   @Override
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // User chose not to enable Bluetooth.
         if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
@@ -489,8 +537,7 @@ public class DeviceScan extends ListActivity {
 
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == LOCATION_SERVICE_ENABLED)
-        {
+        if (requestCode == LOCATION_SERVICE_ENABLED) {
             //Do whatever you need to
         }
     }
@@ -544,7 +591,7 @@ public class DeviceScan extends ListActivity {
         showProgress.setMessage("Please wait while we communicate with the device...");
         showProgress.setCancelable(false); // disable dismiss by tapping outside of the dialog
         showProgress.show();
-        Log.e(TAG, "Loading Status: "+showProgress.isShowing());
+        Log.e(TAG, "Loading Status: " + showProgress.isShowing());
         /* Clear off the RTC sync flag*/
         ((globalData) this.getApplication()).setRtcSyncDone(false);
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
@@ -564,19 +611,19 @@ public class DeviceScan extends ListActivity {
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
             //super.onBackPressed();
-            if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()){
+            if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
                 mBluetoothLeService.disconnect();
                 /* Clear off the RTC sync flag*/
                 ((globalData) this.getApplication()).setRtcSyncDone(false);
                 unbindService(mServiceConnection);
                 mBluetoothAdapter.disable();
-                if(isRecieverRgistered == true) {
+                if (isRecieverRgistered == true) {
                     unregisterReceiver(mGattUpdateReceiver);
                     isRecieverRgistered = false;
                 }
             }
             moveTaskToBack(true);
-            android.os.Process.killProcess(android.os.Process.myPid());
+            Process.killProcess(Process.myPid());
             System.exit(1);
         }
 
@@ -587,7 +634,7 @@ public class DeviceScan extends ListActivity {
 
             @Override
             public void run() {
-                doubleBackToExitPressedOnce=false;
+                doubleBackToExitPressedOnce = false;
             }
         }, 2000);
     }
@@ -608,157 +655,154 @@ public class DeviceScan extends ListActivity {
     }
 
     private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                final String action = intent.getAction();
-                if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
-                    mState = ConnectionState.DISCOVER_SERVICES;
-                    Log.e(TAG, "mGattUpdateReceiver : Gatt Connected");
-                } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
-                    Log.e(TAG, "mGattUpdateReceiver : Gatt DisConnected in mState = "+mState );
-                    switch (mState) {
-                        case IDLE:
-                            // Do nothing in this case.
-                            break;
-                        case CONNECT_GATT:
-                            // This can happen if the bond information is incorrect. Delete it and reconnect.
-                            deleteBondInformation(mBluetoothLeService.mBluetoothGatt.getDevice());
-                            mBluetoothLeService.connect(mDeviceAddress);
-                            break;
-                        case DISCOVER_SERVICES:
-                            // This can also happen if the bond information is incorrect. Delete it and reconnect.
-                            deleteBondInformation(mBluetoothLeService.mBluetoothGatt.getDevice());
-                            mBluetoothLeService.connect(mDeviceAddress);
-                            break;
-                        case READ_CHARACTERISTIC:
-                            // Disconnected while reading the characteristic. Probably just a link failure.
-                            mBluetoothLeService.mBluetoothGatt.close();
-                            mState = ConnectionState.FAILED;
-                            break;
-                        case FAILED:
-                        case SUCCEEDED:
-                            // Normal disconnection.
-                            mBluetoothLeService.close();
-                            break;
-                        default:
-                            //             mBluetoothLeService.mBluetoothGatt.close();
-                    }
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                mState = ConnectionState.DISCOVER_SERVICES;
+                Log.e(TAG, "mGattUpdateReceiver : Gatt Connected");
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                Log.e(TAG, "mGattUpdateReceiver : Gatt DisConnected in mState = " + mState);
+                switch (mState) {
+                    case IDLE:
+                        // Do nothing in this case.
+                        break;
+                    case CONNECT_GATT:
+                        // This can happen if the bond information is incorrect. Delete it and reconnect.
+                        deleteBondInformation(mBluetoothLeService.mBluetoothGatt.getDevice());
+                        mBluetoothLeService.connect(mDeviceAddress);
+                        break;
+                    case DISCOVER_SERVICES:
+                        // This can also happen if the bond information is incorrect. Delete it and reconnect.
+                        deleteBondInformation(mBluetoothLeService.mBluetoothGatt.getDevice());
+                        mBluetoothLeService.connect(mDeviceAddress);
+                        break;
+                    case READ_CHARACTERISTIC:
+                        // Disconnected while reading the characteristic. Probably just a link failure.
+                        mBluetoothLeService.mBluetoothGatt.close();
+                        mState = ConnectionState.FAILED;
+                        break;
+                    case FAILED:
+                    case SUCCEEDED:
+                        // Normal disconnection.
+                        mBluetoothLeService.close();
+                        break;
+                    default:
+                        //             mBluetoothLeService.mBluetoothGatt.close();
+                }
 
-                    invalidateOptionsMenu();
-                } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                    // Show all the supported services and characteristics on the user interface.
-                    //    displayGattServices(mBluetoothLeService.getSupportedGattServices());
-                    Log.w(TAG, "mGattUpdateReceiver : Service Discovery Complete");
-                    mState = ConnectionState.SUCCEEDED;
-                } else if (BluetoothLeService.ACTION_AQUA_RTC_CHAR_AVAILABLE.equals(action)) {
-                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_RTC_CHAR_AVAILABLE ");
-                    mState = ConnectionState.SUCCEEDED;
+                invalidateOptionsMenu();
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                // Show all the supported services and characteristics on the user interface.
+                //    displayGattServices(mBluetoothLeService.getSupportedGattServices());
+                Log.w(TAG, "mGattUpdateReceiver : Service Discovery Complete");
+                mState = ConnectionState.SUCCEEDED;
+            } else if (BluetoothLeService.ACTION_AQUA_RTC_CHAR_AVAILABLE.equals(action)) {
+                Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_RTC_CHAR_AVAILABLE ");
+                mState = ConnectionState.SUCCEEDED;
                     /* Now its time to move on to control centre activity*/
-                    if(showProgress.isShowing() == true)
-                    {
-                        showProgress.dismiss();
-                    }
-                    final Intent controlIntent = new Intent(activity,ControlCentre.class);
-                    startActivity(controlIntent);
+                if (showProgress.isShowing() == true) {
+                    showProgress.dismiss();
+                }
+                final Intent controlIntent = new Intent(activity, ControlCentre.class);
+                startActivity(controlIntent);
 
-                }else if (BluetoothLeService.ACTION_AQUA_LIGHT_CHAR_AVAILABLE.equals(action)) {
-                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE ");
-                    final byte[]scheduleData;
-                    if ((scheduleData = intent.getExtras().getByteArray("LIGHTSchedule")) != null) {
-                        Log.w(TAG,"mGattDataUpdateReceiver : Got the Light Schedule data in App");
-                        ByteBuffer scheduleBuffer = ByteBuffer.wrap(scheduleData);
-                        Log.w(TAG, "broadcastUpdate: LIGHTSchedule Buffer Length "+scheduleData.length);
+            } else if (BluetoothLeService.ACTION_AQUA_LIGHT_CHAR_AVAILABLE.equals(action)) {
+                Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE ");
+                final byte[] scheduleData;
+                if ((scheduleData = intent.getExtras().getByteArray("LIGHTSchedule")) != null) {
+                    Log.w(TAG, "mGattDataUpdateReceiver : Got the Light Schedule data in App");
+                    ByteBuffer scheduleBuffer = ByteBuffer.wrap(scheduleData);
+                    Log.w(TAG, "broadcastUpdate: LIGHTSchedule Buffer Length " + scheduleData.length);
 
-                        ((globalData)activity.getApplication()).setAquaLightChar("lightmode",(scheduleBuffer.get(0)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("lightstatus",(scheduleBuffer.get(1)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("lightdom",(scheduleBuffer.get(2)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("lightdow",(scheduleBuffer.get(3)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("hourly",(scheduleBuffer.get(4)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("lighthours",(scheduleBuffer.get(5)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("lightminutes",(scheduleBuffer.get(6)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("lightrecurrences",(scheduleBuffer.get(7)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("lightdurationhours",(scheduleBuffer.get(8)));
-                        ((globalData)activity.getApplication()).setAquaLightChar("lightdurationminutes",(scheduleBuffer.get(9)));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightmode"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightstatus"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightdow"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lighthours"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightminutes"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightrecurrences"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightdurationhours"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaLightChar("lightdurationminutes"));
-                    }
+                    ((globalData) activity.getApplication()).setAquaLightChar("lightmode", (scheduleBuffer.get(0)));
+                    ((globalData) activity.getApplication()).setAquaLightChar("lightstatus", (scheduleBuffer.get(1)));
+                    ((globalData) activity.getApplication()).setAquaLightChar("lightdom", (scheduleBuffer.get(2)));
+                    ((globalData) activity.getApplication()).setAquaLightChar("lightdow", (scheduleBuffer.get(3)));
+                    ((globalData) activity.getApplication()).setAquaLightChar("hourly", (scheduleBuffer.get(4)));
+                    ((globalData) activity.getApplication()).setAquaLightChar("lighthours", (scheduleBuffer.get(5)));
+                    ((globalData) activity.getApplication()).setAquaLightChar("lightminutes", (scheduleBuffer.get(6)));
+                    ((globalData) activity.getApplication()).setAquaLightChar("lightrecurrences", (scheduleBuffer.get(7)));
+                    ((globalData) activity.getApplication()).setAquaLightChar("lightdurationhours", (scheduleBuffer.get(8)));
+                    ((globalData) activity.getApplication()).setAquaLightChar("lightdurationminutes", (scheduleBuffer.get(9)));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaLightChar("lightmode"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaLightChar("lightstatus"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaLightChar("lightdow"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaLightChar("lighthours"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaLightChar("lightminutes"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaLightChar("lightrecurrences"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaLightChar("lightdurationhours"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaLightChar("lightdurationminutes"));
+                }
 
-                } else if (BluetoothLeService.ACTION_AQUA_MOTOR_CHAR_AVAILABLE.equals(action)) {
-                    final byte[]scheduleMotorData;
-                    if ((scheduleMotorData = intent.getExtras().getByteArray("MOTORSchedule")) != null) {
-                        Log.w(TAG,"mGattDataUpdateReceiver : Got the Light Schedule data in App");
-                        ByteBuffer scheduleBuffer = ByteBuffer.wrap(scheduleMotorData);
-                        Log.w(TAG, "broadcastUpdate: MOTORSchedule Buffer Length "+ scheduleMotorData.length);
-                        ((globalData) activity.getApplication()).setAquaMotorChar("motormode", (scheduleBuffer.get(0)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motorpump",(scheduleBuffer.get(1)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motorvalve",(scheduleBuffer.get(2)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motordom",(scheduleBuffer.get(3)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motordow",(scheduleBuffer.get(4)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("hourly",(scheduleBuffer.get(5)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motorhours",(scheduleBuffer.get(6)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motorminutes",(scheduleBuffer.get(7)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motorrecurrence",(scheduleBuffer.get(8)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motordurationhours",(scheduleBuffer.get(9)));
-                        ((globalData)activity.getApplication()).setAquaMotorChar("motordurationminutes",(scheduleBuffer.get(10)));
+            } else if (BluetoothLeService.ACTION_AQUA_MOTOR_CHAR_AVAILABLE.equals(action)) {
+                final byte[] scheduleMotorData;
+                if ((scheduleMotorData = intent.getExtras().getByteArray("MOTORSchedule")) != null) {
+                    Log.w(TAG, "mGattDataUpdateReceiver : Got the Light Schedule data in App");
+                    ByteBuffer scheduleBuffer = ByteBuffer.wrap(scheduleMotorData);
+                    Log.w(TAG, "broadcastUpdate: MOTORSchedule Buffer Length " + scheduleMotorData.length);
+                    ((globalData) activity.getApplication()).setAquaMotorChar("motormode", (scheduleBuffer.get(0)));
+                    ((globalData) activity.getApplication()).setAquaMotorChar("motorpump", (scheduleBuffer.get(1)));
+                    ((globalData) activity.getApplication()).setAquaMotorChar("motorvalve", (scheduleBuffer.get(2)));
+                    ((globalData) activity.getApplication()).setAquaMotorChar("motordom", (scheduleBuffer.get(3)));
+                    ((globalData) activity.getApplication()).setAquaMotorChar("motordow", (scheduleBuffer.get(4)));
+                    ((globalData) activity.getApplication()).setAquaMotorChar("hourly", (scheduleBuffer.get(5)));
+                    ((globalData) activity.getApplication()).setAquaMotorChar("motorhours", (scheduleBuffer.get(6)));
+                    ((globalData) activity.getApplication()).setAquaMotorChar("motorminutes", (scheduleBuffer.get(7)));
+                    ((globalData) activity.getApplication()).setAquaMotorChar("motorrecurrence", (scheduleBuffer.get(8)));
+                    ((globalData) activity.getApplication()).setAquaMotorChar("motordurationhours", (scheduleBuffer.get(9)));
+                    ((globalData) activity.getApplication()).setAquaMotorChar("motordurationminutes", (scheduleBuffer.get(10)));
 
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motormode"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motorpump"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motorvalve"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motordow"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motorhours"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motorminutes"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motorrecurrence"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motordurationhours"));
-                        Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE "+((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes"));
-                    }
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaMotorChar("motormode"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaMotorChar("motorpump"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaMotorChar("motorvalve"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaMotorChar("motordow"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaMotorChar("motorhours"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaMotorChar("motorminutes"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaMotorChar("motorrecurrence"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaMotorChar("motordurationhours"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaMotorChar("motordurationminutes"));
+                }
 
 
-                }else if (BluetoothLeService.ACTION_NO_CHAR_AVAILABLE.equals(action)) {
-                    if(showProgress.isShowing() == true)
-                    {
-                        showProgress.dismiss();
-                    }
-                    Log.e(TAG, "mGattUpdateReceiver : ACTION_NO_CHAR_AVAILABLE ");
+            } else if (BluetoothLeService.ACTION_NO_CHAR_AVAILABLE.equals(action)) {
+                if (showProgress.isShowing() == true) {
+                    showProgress.dismiss();
+                }
+                Log.e(TAG, "mGattUpdateReceiver : ACTION_NO_CHAR_AVAILABLE ");
                     /* Not the intended message*/
-                    AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(activity);
+                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(activity);
 
-                    dlgAlert.setMessage("This is not the right device, Please scan again");
-                    dlgAlert.setTitle("Error Message...");
-                    dlgAlert.setPositiveButton("OK", null);
-                    dlgAlert.setCancelable(true);
-                    dlgAlert.create().show();
+                dlgAlert.setMessage("This is not the right device, Please scan again");
+                dlgAlert.setTitle("Error Message...");
+                dlgAlert.setPositiveButton("OK", null);
+                dlgAlert.setCancelable(true);
+                dlgAlert.create().show();
 
-                    dlgAlert.setPositiveButton("Ok",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
+                dlgAlert.setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
 
-                                }
-                            });
-                    mState = ConnectionState.FAILED;
+                            }
+                        });
+                mState = ConnectionState.FAILED;
 
-                }else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
-                    final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
-                    final int prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
+            } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
+                final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
+                final int prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
 
-                    if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
-                        Log.w(TAG, "Paired");
-                    } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED) {
-                        Log.w(TAG, "Unpaired");
-                    }
+                if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
+                    Log.w(TAG, "Paired");
+                } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED) {
+                    Log.w(TAG, "Unpaired");
                 }
             }
+        }
     };
 
 
-    public static void deleteBondInformation(BluetoothDevice device)
-    {
-        try{
+    public static void deleteBondInformation(BluetoothDevice device) {
+        try {
             // FFS Google, just unhide the method.
             Method m = device.getClass().getMethod("removeBond", (Class[]) null);
             m.invoke(device, (Object[]) null);

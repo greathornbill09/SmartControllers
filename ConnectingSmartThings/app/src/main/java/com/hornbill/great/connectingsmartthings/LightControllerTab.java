@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.app.Activity;
 
 import android.widget.TextView;
 
@@ -31,7 +32,9 @@ public class LightControllerTab extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
+    private Activity activity = this;
+    private int hh, mm;
+    public String dur;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -58,9 +61,12 @@ public class LightControllerTab extends AppCompatActivity {
         tabLayout.setTabTextColors(getResources().getColor(R.color.black_overlay),
                 getResources().getColor(R.color.Black));
         tabLayout.setupWithViewPager(mViewPager);
-
+        this.hh = ((globalData) activity.getApplication()).getAquaLightChar("lighthours");
+        this.mm = ((globalData) activity.getApplication()).getAquaLightChar("lightminutes");
+        //hourly = ((globalData) activity.getApplication()).getAquaLightChar("hourly");
+        dur = Integer.toString(((globalData) activity.getApplication()).getAquaLightChar("lightdurationhours")) + "h";
+        dur += ":" + Integer.toString(((globalData) activity.getApplication()).getAquaLightChar("lightdurationminutes")) + "m";
     }
-
 
     /**
      * A placeholder fragment containing a simple view.
@@ -117,6 +123,10 @@ public class LightControllerTab extends AppCompatActivity {
                     return controlscreen;
                 case 1:
                     schedulePage schedulescreen = new schedulePage();
+                    schedulescreen.ti_hh = hh;
+                    schedulescreen.ti_mm = mm;
+                    schedulescreen.duration = dur;
+                    schedulescreen.recurrence = 1;
                     return schedulescreen;
             }
             return null;

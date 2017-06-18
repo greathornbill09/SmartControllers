@@ -3,9 +3,12 @@ package com.hornbill.great.connectingsmartthings;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -24,6 +27,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.EditText;
+
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
@@ -54,6 +59,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
     private BluetoothLeService mLightBluetoothService;
     private int ti_hh, ti_mm;
     private String time, time_mode;
+    boolean isRecieverRegistered = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +77,9 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             Log.w(TAG,"Could not fetch the bluetooth service");
         }
 
+        /* Register the calibration update receiver*/
+        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        isRecieverRegistered = true;
         productFlavor = ((globalData)activity.getApplication()).getProductFlavor();
 
         /* Displaying the next schedule*/
@@ -336,6 +345,42 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
         }
     };
 
+    /* Connection related methods */
+    private static IntentFilter makeGattUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothLeService.ACTION_AQUA_LIGHT_CHAR_AVAILABLE);
+        return intentFilter;
+    }
+
+    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_AQUA_LIGHT_CHAR_AVAILABLE.equals(action)) {
+                final byte[]scheduledeviceData;
+                if ((scheduledeviceData = intent.getExtras().getByteArray("LIGHTSchedule")) != null) {
+                    Log.w(TAG,"mGattDataUpdateReceiver : Got the Light Schedule data in App");
+                    ByteBuffer scheduleBuffer = ByteBuffer.wrap(scheduledeviceData);
+                    Log.w(TAG, "broadcastUpdate: DeviceSchedule Buffer Length "+ scheduledeviceData.length);
+                    ((globalData) activity.getApplication()).setAquaMotorChar("motormode", (scheduleBuffer.get(0)));
+
+                    updateGlobalSpace("maxdevices",(byte) scheduleBuffer.get(1));
+                    updateGlobalSpace("lightmode",(scheduleBuffer.get(2)));
+                    updateGlobalSpace("lightstatus",(scheduleBuffer.get(3)));
+                    updateGlobalSpace("lightdom",(scheduleBuffer.get(4)));
+                    updateGlobalSpace("lightdow",(scheduleBuffer.get(5)));
+                    updateGlobalSpace("hourly",(scheduleBuffer.get(6)));
+                    updateGlobalSpace("lighthours",(scheduleBuffer.get(7)));
+                    updateGlobalSpace("lightminutes",(scheduleBuffer.get(8)));
+                    updateGlobalSpace("lightrecurrence",(scheduleBuffer.get(9)));
+                    updateGlobalSpace("lightdurationhours",(scheduleBuffer.get(10)));
+                    updateGlobalSpace("lightdurationminutes",(scheduleBuffer.get(11)));
+                    displaySchedule();
+                }
+            }
+        }
+    };
+
     private void displaySchedule(){
         statusLight = ((globalData)activity.getApplication()).getAquaLightChar("lightstatus");
         SimpleDateFormat displayDate = new SimpleDateFormat("EEE dd/MMM/yyyyy");
@@ -343,8 +388,10 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
         int hourly, incr_mnth = 1;
         String duration;
 
-        if(statusLight == 1) {
+        if(statusLight != 0) {
             lightSwitch.setChecked(true);
+        } else {
+            lightSwitch.setChecked(false);
         }
 
         Log.w(TAG, "displaySchedule : Schedule Available ");
@@ -447,30 +494,33 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
     }
 
     private void sendLightCustomCharacteristicDatafromGlobalStructure(){
-        byte[]lightScheduleData = new byte[10];
+        byte[]lightScheduleData = new byte[12];
 
         Log.w(TAG, "lightScheduleButton "+lightScheduleData[0]);
 
+        lightScheduleData[0] = (byte)0x80;
+        Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("maxdevices"));
+        lightScheduleData[1] = ((globalData)activity.getApplication()).getAquaLightChar("maxdevices");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightmode"));
-        lightScheduleData[0] = ((globalData)activity.getApplication()).getAquaLightChar("lightmode");
+        lightScheduleData[2] = ((globalData)activity.getApplication()).getAquaLightChar("lightmode");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightstatus"));
-        lightScheduleData[1] = ((globalData)activity.getApplication()).getAquaLightChar("lightstatus");
+        lightScheduleData[3] = ((globalData)activity.getApplication()).getAquaLightChar("lightstatus");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightdom"));
-        lightScheduleData[2] = ((globalData)activity.getApplication()).getAquaLightChar("lightdom");
+        lightScheduleData[4] = ((globalData)activity.getApplication()).getAquaLightChar("lightdom");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightdow"));
-        lightScheduleData[3] = ((globalData)activity.getApplication()).getAquaLightChar("lightdow");
+        lightScheduleData[5] = ((globalData)activity.getApplication()).getAquaLightChar("lightdow");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("hourly"));
-        lightScheduleData[4] = ((globalData)activity.getApplication()).getAquaLightChar("hourly");
+        lightScheduleData[6] = ((globalData)activity.getApplication()).getAquaLightChar("hourly");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lighthours"));
-        lightScheduleData[5] = ((globalData)activity.getApplication()).getAquaLightChar("lighthours");
+        lightScheduleData[7] = ((globalData)activity.getApplication()).getAquaLightChar("lighthours");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightminutes"));
-        lightScheduleData[6] = ((globalData)activity.getApplication()).getAquaLightChar("lightminutes");
+        lightScheduleData[8] = ((globalData)activity.getApplication()).getAquaLightChar("lightminutes");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightrecurrences"));
-        lightScheduleData[7] = ((globalData)activity.getApplication()).getAquaLightChar("lightrecurrences");
+        lightScheduleData[9] = ((globalData)activity.getApplication()).getAquaLightChar("lightrecurrences");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightdurationhours"));
-        lightScheduleData[8] = ((globalData)activity.getApplication()).getAquaLightChar("lightdurationhours");
+        lightScheduleData[10] = ((globalData)activity.getApplication()).getAquaLightChar("lightdurationhours");
         Log.w(TAG, "lightScheduleButton "+((globalData)activity.getApplication()).getAquaLightChar("lightdurationminutes"));
-        lightScheduleData[9] = ((globalData)activity.getApplication()).getAquaLightChar("lightdurationminutes");
+        lightScheduleData[11] = ((globalData)activity.getApplication()).getAquaLightChar("lightdurationminutes");
 
         Log.w(TAG," Writing Schedule details over BLE");
         mLightBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_LIGHT_CHARACTERISTIC,lightScheduleData);
@@ -493,6 +543,15 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             mLightBluetoothService = null;
         }
     };
+
+    @Override
+    public void onBackPressed(){
+        if(isRecieverRegistered == true) {
+            unregisterReceiver(mGattUpdateReceiver);
+            isRecieverRegistered = false;
+        }
+        super.onBackPressed();
+    }
 
     @Override
     protected void onDestroy() {

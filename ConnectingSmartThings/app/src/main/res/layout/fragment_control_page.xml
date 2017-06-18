@@ -10,7 +10,7 @@
         android:id="@+id/switchStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Equipment On/Off"
+        android:text="On/Off"
         android:textColor="@color/White"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_alignParentLeft="true"
@@ -95,7 +95,7 @@
         />
 
     <Button
-        android:text="Schedule"
+        android:text="Apply"
         android:textSize="12sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

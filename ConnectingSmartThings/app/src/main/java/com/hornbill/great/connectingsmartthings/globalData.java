@@ -16,6 +16,8 @@ public class globalData extends Application {
     /* RTC Sync Details*/
     private boolean rtcSyncNotified = false;
     private boolean productFlavor = true; /*true for full version and false for demo version*/
+    private byte device_id;
+    private byte maxdevices;
 
     /* Light Char*/
     private byte lightMode = 0;
@@ -92,6 +94,9 @@ public class globalData extends Application {
             case "lightdurationminutes":
                 returnVal = this.lightDurationMinutes ;
                 break;
+            case "maxdevices":
+                returnVal = this.maxdevices ;
+                break;
             default:
                 Log.w(TAG, "getAquaLightChar: No Matching case ");
                 break;
@@ -130,6 +135,9 @@ public class globalData extends Application {
                 break;
             case "lightdurationminutes":
                 this.lightDurationMinutes = value;
+                break;
+            case "maxdevices":
+                this.maxdevices = value;
                 break;
             default:
                 Log.w(TAG, "setAquaLightChar: No Matching case ");

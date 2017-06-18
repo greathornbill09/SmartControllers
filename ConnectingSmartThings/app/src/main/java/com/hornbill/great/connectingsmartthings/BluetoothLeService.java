@@ -204,6 +204,9 @@ public class BluetoothLeService extends Service {
             } else if (characteristic.getUuid().compareTo(UUID_AQUA_MOTOR_CHARACTERISTIC) == 0){
                 Log.w(TAG, "onCharacteristicChanged: ACTION_AQUA_MOTOR_CHAR_AVAILABLE" );
                 broadcastUpdate(ACTION_AQUA_MOTOR_CHAR_AVAILABLE, characteristic);
+            } else if (characteristic.getUuid().compareTo(UUID_AQUA_LIGHT_CHARACTERISTIC) == 0){
+                Log.w(TAG, "onCharacteristicChanged: ACTION_AQUA_LIGHT_CHAR_AVAILABLE" );
+                broadcastUpdate(ACTION_AQUA_LIGHT_CHAR_AVAILABLE, characteristic);
             }
         }
 
@@ -213,6 +216,8 @@ public class BluetoothLeService extends Service {
                 /* Enable Pump notification */
                 if (descriptor.getCharacteristic().getUuid().compareTo(UUID_AQUA_RTC_CHARACTERISTIC) == 0) {
                     writeCustomCharacteristic(0x0001, UUID_AQUA_MOTOR_CHARACTERISTIC);
+                } else if (descriptor.getCharacteristic().getUuid().compareTo(UUID_AQUA_MOTOR_CHARACTERISTIC) == 0) {
+                    writeCustomCharacteristic(0x0001, UUID_AQUA_LIGHT_CHARACTERISTIC);
                 }
             }
         }

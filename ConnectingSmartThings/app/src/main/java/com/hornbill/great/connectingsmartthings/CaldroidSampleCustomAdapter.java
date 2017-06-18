@@ -6,6 +6,7 @@ package com.hornbill.great.connectingsmartthings;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +22,21 @@ import hirondelle.date4j.DateTime;
 
 public class CaldroidSampleCustomAdapter extends CaldroidGridAdapter {
 
+    private String time, time_mode, duration;
+    private int recurrence;
+
     public CaldroidSampleCustomAdapter(Context context, int month, int year,
                                        Map<String, Object> caldroidData,
-                                       Map<String, Object> extraData) {
+                                       Map<String, Object> extraData,
+                                       int recurrence,
+                                       String time,
+                                       String time_mode,
+                                       String duration) {
         super(context, month, year, caldroidData, extraData);
+        this.duration = duration;
+        this.recurrence = recurrence;
+        this.time = time;
+        this.time_mode = time_mode;
     }
 
     @Override
@@ -32,6 +44,7 @@ public class CaldroidSampleCustomAdapter extends CaldroidGridAdapter {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View cellView = convertView;
+        int hourly;
 
         // For reuse
         if (convertView == null) {
@@ -101,10 +114,16 @@ public class CaldroidSampleCustomAdapter extends CaldroidGridAdapter {
             }
         }
 
+        tv1.setTextSize(20);
         tv1.setText("" + dateTime.getDay());
-       // if(dateTime.gteq(getToday())) {
-            tv2.setText("Display schedules");
-        //}
+        tv2.setTextSize(9);
+        // Don't disply the schedule info for past dates
+        tv2.setText("hh:mm\nxxh:xxm");
+        // Display schedule and duration for current/future dates
+        if(dateTime.gteq(getToday())) {
+            tv2.setTextColor(Color.BLUE);
+            tv2.setText(this.time + this.time_mode + "\n" + duration);
+        }
 
         // Somehow after setBackgroundResource, the padding collapse.
         // This is to recover the padding
@@ -116,5 +135,4 @@ public class CaldroidSampleCustomAdapter extends CaldroidGridAdapter {
 
         return cellView;
     }
-
 }

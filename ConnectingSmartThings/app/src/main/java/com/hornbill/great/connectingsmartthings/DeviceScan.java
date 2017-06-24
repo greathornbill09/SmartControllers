@@ -65,7 +65,7 @@ public class DeviceScan extends ListActivity {
     private static final int LOCATION_SERVICE_ENABLED = 3;
     private static final long SCAN_PERIOD = 20000;
     boolean doubleBackToExitPressedOnce = false;
-    boolean isRecieverRgistered = false;
+    boolean isRecieverRegistered = false;
     private Activity activity;
     private BluetoothAdapter mBluetoothAdapter;
     private LeDeviceListAdapter mLeDeviceListAdapter;
@@ -73,16 +73,20 @@ public class DeviceScan extends ListActivity {
     private Handler mHandler;
     private SwipeRefreshLayout mySwipeRefreshLayout;
 
-
     /*Bluetooth related*/
     private BluetoothLeService mBluetoothLeService;
     private String mDeviceAddress;
     private String mDeviceName;
     ProgressDialog showProgress;
 
+    //For > LolliPop(>21)
+    private ScanCallback mScanCallback;
     private BluetoothLeScanner mLEScanner;
     private ScanSettings scansetting;
     private List<ScanFilter> filters;
+
+    //For Jelly Bean MR2 and Kitkat(< 21)
+    private BluetoothAdapter.LeScanCallback mLeScanCallback;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -137,7 +141,6 @@ public class DeviceScan extends ListActivity {
     }
 
     private ConnectionState mState = ConnectionState.IDLE;
-
 
     private final static String TAG = DeviceScan.class.getSimpleName();
 
@@ -220,7 +223,6 @@ public class DeviceScan extends ListActivity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
-
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -232,7 +234,6 @@ public class DeviceScan extends ListActivity {
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
             }
-
         }
 
         @Override
@@ -241,9 +242,7 @@ public class DeviceScan extends ListActivity {
         }
     };
 
-
     /*Permission related methods*/
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -291,10 +290,6 @@ public class DeviceScan extends ListActivity {
 
         return gps_enabled || network_enabled;
     }
-
-
-
-    /*Permission related methods*/
 
     /*Scan and display related methods*/
     private class LeDeviceListAdapter extends BaseAdapter {
@@ -362,58 +357,83 @@ public class DeviceScan extends ListActivity {
         }
     }
 
-
-    // Device scan callback.
-    private BluetoothAdapter.LeScanCallback mLeScanCallback =
-            new BluetoothAdapter.LeScanCallback() {
-
-                @Override
-                public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mLeDeviceListAdapter.addDevice(device);
-                            mLeDeviceListAdapter.notifyDataSetChanged();
-                            mySwipeRefreshLayout.setRefreshing(false);
-                        }
-                    });
-
-                }
-            };
-
     static class ViewHolder {
         TextView deviceName;
         TextView deviceAddress;
     }
 
-    private ScanCallback mScanCallback = new ScanCallback() {
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            Log.i("callbackType", String.valueOf(callbackType));
-            Log.i("result", result.toString());
-            BluetoothDevice btDevice = result.getDevice();
-            mLeDeviceListAdapter.addDevice(btDevice);
-            mLeDeviceListAdapter.notifyDataSetChanged();
-            mySwipeRefreshLayout.setRefreshing(false);
+    private void initScanCallback(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            initScanCallbackLollipop();
+        } else {
+            initScanCallbackwardSupport();
         }
+    }
 
-        @Override
-        public void onBatchScanResults(List<ScanResult> results) {
-            for (ScanResult sr : results) {
-                Log.i("ScanResult - Results", sr.toString());
+    // Create scan call back for API < 21 (i.e Lollipop).
+    private void initScanCallbackwardSupport() {
+        if (mLeScanCallback != null) return;
+        // Device scan callback.
+        mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
+            @Override
+            public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLeDeviceListAdapter.addDevice(device);
+                        mLeDeviceListAdapter.notifyDataSetChanged();
+                        mySwipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+            }
+        };
+    }
+
+    // Create scan call back for API >= 21 (i.e Lollipop).
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void initScanCallbackLollipop() {
+        if (mScanCallback != null) return;
+        this.mScanCallback = new ScanCallback() {
+            @Override
+            public void onScanResult(int callbackType, ScanResult result) {
+                Log.i("callbackType", String.valueOf(callbackType));
+                Log.i("result", result.toString());
+                BluetoothDevice btDevice = result.getDevice();
+                mLeDeviceListAdapter.addDevice(btDevice);
+                mLeDeviceListAdapter.notifyDataSetChanged();
+                mySwipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onBatchScanResults(List<ScanResult> results) {
+                for (ScanResult sr : results) {
+                    Log.i("ScanResult - Results", sr.toString());
+                }
+            }
+
+            @Override
+            public void onScanFailed(int errorCode) {
+                Log.e("Scan Failed", "Error Code: " + errorCode);
+            }
+        };
+    }
+
+    protected void stopScan(){
+        mScanning = false;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            mBluetoothAdapter.stopLeScan(mLeScanCallback);
+        } else {
+            if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled() && mLEScanner != null) {
+                mLEScanner.flushPendingScanResults(mScanCallback);
+                mLEScanner.stopScan(mScanCallback);
             }
         }
-
-        @Override
-        public void onScanFailed(int errorCode) {
-            Log.e("Scan Failed", "Error Code: " + errorCode);
-        }
-    };
-
+    }
 
     private void scanLeDevice(final boolean enable) {
 
         Log.e(TAG, "scanLeDevice with " + enable);
+        initScanCallback();
 
         if (enable) {
             // Start the discovery just popup the pairing dialog to foreground
@@ -431,17 +451,12 @@ public class DeviceScan extends ListActivity {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mScanning = false;
-                    if (Build.VERSION.SDK_INT < 21) {
-                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    } else {
-                        mLEScanner.stopScan(mScanCallback);
-                    }
+                    stopScan();
                 }
             }, SCAN_PERIOD);
 
             mScanning = true;
-            if (Build.VERSION.SDK_INT < 21) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 mBluetoothAdapter.startLeScan(mLeScanCallback);
             } else {
                 if (mLEScanner != null) {
@@ -454,25 +469,14 @@ public class DeviceScan extends ListActivity {
                 public void run() {
                     mySwipeRefreshLayout.setRefreshing(false);
                 }
-            }, SCAN_PERIOD + 5);
+            }, SCAN_PERIOD);
         } else {
-            mScanning = false;
-            if (Build.VERSION.SDK_INT < 21) {
-                mBluetoothAdapter.stopLeScan(mLeScanCallback);
-            } else {
-                if (mLEScanner != null) {
-                    mLEScanner.stopScan(mScanCallback);
-                }
-            }
-
+            stopScan();
         }
         invalidateOptionsMenu();
     }
 
-
     /* Scan and Display related methods*/
-
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -497,7 +501,7 @@ public class DeviceScan extends ListActivity {
             //mLeDeviceListAdapter.notifyDataSetChanged();
             mLeDeviceListAdapter.clear();
 
-            if (Build.VERSION.SDK_INT >= 21) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 mLEScanner = mBluetoothAdapter.getBluetoothLeScanner();
                 scansetting = new ScanSettings.Builder()
                         .setScanMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
@@ -548,12 +552,11 @@ public class DeviceScan extends ListActivity {
         mySwipeRefreshLayout.setRefreshing(false);
         scanLeDevice(false);
         mLeDeviceListAdapter.clear();
-        /*if(isRecieverRgistered == true) {
+        /*if(isRecieverRegistered == true) {
             unregisterReceiver(mGattUpdateReceiver);
-            isRecieverRgistered = false;
+            isRecieverRegistered = false;
         }*/
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -595,7 +598,7 @@ public class DeviceScan extends ListActivity {
         /* Clear off the RTC sync flag*/
         ((globalData) this.getApplication()).setRtcSyncDone(false);
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-        isRecieverRgistered = true;
+        isRecieverRegistered = true;
         if (mBluetoothLeService != null) {
             final boolean result = mBluetoothLeService.connect(mDeviceAddress);
             // Update state.
@@ -617,9 +620,9 @@ public class DeviceScan extends ListActivity {
                 ((globalData) this.getApplication()).setRtcSyncDone(false);
                 unbindService(mServiceConnection);
                 mBluetoothAdapter.disable();
-                if (isRecieverRgistered == true) {
+                if (isRecieverRegistered == true) {
                     unregisterReceiver(mGattUpdateReceiver);
-                    isRecieverRgistered = false;
+                    isRecieverRegistered = false;
                 }
             }
             moveTaskToBack(true);
@@ -638,7 +641,6 @@ public class DeviceScan extends ListActivity {
             }
         }, 2000);
     }
-
 
     /* Connection related methods */
     private static IntentFilter makeGattUpdateIntentFilter() {
@@ -738,7 +740,6 @@ public class DeviceScan extends ListActivity {
                     Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaLightChar("lightdurationhours"));
                     Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaLightChar("lightdurationminutes"));
                 }
-
             } else if (BluetoothLeService.ACTION_AQUA_MOTOR_CHAR_AVAILABLE.equals(action)) {
                 final byte[] scheduleMotorData;
                 if ((scheduleMotorData = intent.getExtras().getByteArray("MOTORSchedule")) != null) {
@@ -767,8 +768,6 @@ public class DeviceScan extends ListActivity {
                     Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaMotorChar("motordurationhours"));
                     Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_MOTOR_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaMotorChar("motordurationminutes"));
                 }
-
-
             } else if (BluetoothLeService.ACTION_NO_CHAR_AVAILABLE.equals(action)) {
                 if (showProgress.isShowing() == true) {
                     showProgress.dismiss();
@@ -790,7 +789,6 @@ public class DeviceScan extends ListActivity {
                             }
                         });
                 mState = ConnectionState.FAILED;
-
             } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
                 final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
                 final int prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
@@ -804,7 +802,6 @@ public class DeviceScan extends ListActivity {
         }
     };
 
-
     public static void deleteBondInformation(BluetoothDevice device) {
         try {
             // FFS Google, just unhide the method.
@@ -814,6 +811,4 @@ public class DeviceScan extends ListActivity {
             Log.e(TAG, e.getMessage());
         }
     }
-
-
 }

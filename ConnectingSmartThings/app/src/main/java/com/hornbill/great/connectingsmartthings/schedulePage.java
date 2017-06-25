@@ -14,7 +14,7 @@ import com.roomorama.caldroid.CaldroidFragment;
 
 
 public class schedulePage extends Fragment {
-    public int ti_hh, ti_mm;
+    public int ti_hh, ti_mm, dow, dom;
     public String duration, time, time_mode;
     public int recurrence;
 
@@ -35,6 +35,8 @@ public class schedulePage extends Fragment {
         args.putString("time", time);
         args.putString("time_mode", time_mode);
         args.putInt("recurrence", recurrence);
+        args.putInt("dow", dow);
+        args.putInt("dom", dom);
         args.putString("duration", duration);
 
         // Uncomment this to customize startDayOfWeek

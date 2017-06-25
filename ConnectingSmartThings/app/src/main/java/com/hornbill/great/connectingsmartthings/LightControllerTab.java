@@ -33,7 +33,7 @@ public class LightControllerTab extends AppCompatActivity {
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private Activity activity = this;
-    private int hh, mm;
+    private int hh, mm, recurrence, dom, dow;
     public String dur;
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -63,6 +63,9 @@ public class LightControllerTab extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
         this.hh = ((globalData) activity.getApplication()).getAquaLightChar("lighthours");
         this.mm = ((globalData) activity.getApplication()).getAquaLightChar("lightminutes");
+        this.recurrence = ((globalData) activity.getApplication()).getAquaLightChar("lightrecurrences");
+        this.dow = ((globalData) activity.getApplication()).getAquaLightChar("lightdow");
+        this.dom = ((globalData) activity.getApplication()).getAquaLightChar("lightdom");
         //hourly = ((globalData) activity.getApplication()).getAquaLightChar("hourly");
         dur = Integer.toString(((globalData) activity.getApplication()).getAquaLightChar("lightdurationhours")) + "h";
         dur += ":" + Integer.toString(((globalData) activity.getApplication()).getAquaLightChar("lightdurationminutes")) + "m";
@@ -126,7 +129,9 @@ public class LightControllerTab extends AppCompatActivity {
                     schedulescreen.ti_hh = hh;
                     schedulescreen.ti_mm = mm;
                     schedulescreen.duration = dur;
-                    schedulescreen.recurrence = 1;
+                    schedulescreen.recurrence = recurrence;
+                    schedulescreen.dow = dow;
+                    schedulescreen.dom = dom;
                     return schedulescreen;
             }
             return null;

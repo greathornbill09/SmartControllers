@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidGridAdapter;
 
+import java.util.Calendar;
 import java.util.Map;
 
 import hirondelle.date4j.DateTime;
@@ -23,18 +24,22 @@ import hirondelle.date4j.DateTime;
 public class CaldroidSampleCustomAdapter extends CaldroidGridAdapter {
 
     private String time, time_mode, duration;
-    private int recurrence;
+    private int recurrence, dow, dom;
 
     public CaldroidSampleCustomAdapter(Context context, int month, int year,
                                        Map<String, Object> caldroidData,
                                        Map<String, Object> extraData,
                                        int recurrence,
+                                       int dow,
+                                       int dom,
                                        String time,
                                        String time_mode,
                                        String duration) {
         super(context, month, year, caldroidData, extraData);
         this.duration = duration;
         this.recurrence = recurrence;
+        this.dow = dow;
+        this.dom = dom;
         this.time = time;
         this.time_mode = time_mode;
     }
@@ -67,72 +72,91 @@ public class CaldroidSampleCustomAdapter extends CaldroidGridAdapter {
 
         // Set color of the dates in previous / next month
         if (dateTime.getMonth() != month) {
-            tv1.setTextColor(resources
-                    .getColor(com.caldroid.R.color.caldroid_darker_gray));
-        }
-
-        boolean shouldResetDiabledView = false;
-        boolean shouldResetSelectedView = false;
-
-        // Customize for disabled dates and date outside min/max dates
-        if ((minDateTime != null && dateTime.lt(minDateTime))
-                || (maxDateTime != null && dateTime.gt(maxDateTime))
-                || (disableDates != null && disableDates.indexOf(dateTime) != -1)) {
-
-            tv1.setTextColor(CaldroidFragment.disabledTextColor);
-            if (CaldroidFragment.disabledBackgroundDrawable == -1) {
-                cellView.setBackgroundResource(com.caldroid.R.drawable.disable_cell);
-            } else {
-                cellView.setBackgroundResource(CaldroidFragment.disabledBackgroundDrawable);
-            }
-
-            if (dateTime.equals(getToday())) {
-                cellView.setBackgroundResource(com.caldroid.R.drawable.red_border_gray_bg);
-            }
-
+            tv1.setTextColor(resources.getColor(com.caldroid.R.color.caldroid_darker_gray));
         } else {
-            shouldResetDiabledView = true;
-        }
 
-        // Customize for selected dates
-        if (selectedDates != null && selectedDates.indexOf(dateTime) != -1) {
-            cellView.setBackgroundColor(resources
-                    .getColor(com.caldroid.R.color.caldroid_sky_blue));
+            boolean shouldResetDiabledView = false;
+            boolean shouldResetSelectedView = false;
 
-            tv1.setTextColor(Color.BLACK);
-
-        } else {
-            shouldResetSelectedView = true;
-        }
-
-        if (shouldResetDiabledView && shouldResetSelectedView) {
-            // Customize for today
-            if (dateTime.equals(getToday())) {
-                cellView.setBackgroundResource(com.caldroid.R.drawable.red_border);
-            } else {
-                cellView.setBackgroundResource(com.caldroid.R.drawable.cell_bg);
+            tv1.setTextSize(20);
+            tv1.setText("" + dateTime.getDay());
+            tv2.setTextSize(9);
+            // Display schedule and duration for current/future dates
+            if (dateTime.gteq(getToday())) {
+                tv2.setTextColor(Color.BLUE);
+                switch (recurrence) {
+                    case 1: //Daily
+                        tv2.setText(this.time + this.time_mode + "\n" + duration);
+                        break;
+                    case 2: //Weekly
+                        if (dateTime.getWeekDay() == dow) {
+                            tv2.setText(this.time + this.time_mode + "\n" + duration);
+                        }
+                        break;
+                    case 3: // Monthly
+                        if (dateTime.getDay() == dom) {
+                            tv2.setText(this.time + this.time_mode + "\n" + duration);
+                        }
+                        break;
+                    case 4: //Hourly
+                        if (dateTime.equals(getToday())) {
+                            tv2.setText(this.time + this.time_mode + "\n" + duration);
+                        }
+                        break;
+                    default:
+                        tv2.setText("hh:mm\nxxh:xxm");
+                        break;
+                }
             }
+
+            // Customize for disabled dates and date outside min/max dates
+            if ((minDateTime != null && dateTime.lt(minDateTime))
+                    || (maxDateTime != null && dateTime.gt(maxDateTime))
+                    || (disableDates != null && disableDates.indexOf(dateTime) != -1)) {
+
+                tv1.setTextColor(CaldroidFragment.disabledTextColor);
+                if (CaldroidFragment.disabledBackgroundDrawable == -1) {
+                    cellView.setBackgroundResource(com.caldroid.R.drawable.disable_cell);
+                } else {
+                    cellView.setBackgroundResource(CaldroidFragment.disabledBackgroundDrawable);
+                }
+
+                if (dateTime.equals(getToday())) {
+                    cellView.setBackgroundResource(com.caldroid.R.drawable.red_border_gray_bg);
+                }
+
+            } else {
+                shouldResetDiabledView = true;
+            }
+
+            // Customize for selected dates
+            if (selectedDates != null && selectedDates.indexOf(dateTime) != -1) {
+                cellView.setBackgroundColor(resources
+                        .getColor(com.caldroid.R.color.caldroid_sky_blue));
+
+                tv1.setTextColor(Color.BLACK);
+
+            } else {
+                shouldResetSelectedView = true;
+            }
+
+            if (shouldResetDiabledView && shouldResetSelectedView) {
+                // Customize for today
+                if (dateTime.equals(getToday())) {
+                    cellView.setBackgroundResource(com.caldroid.R.drawable.red_border);
+                } else {
+                    cellView.setBackgroundResource(com.caldroid.R.drawable.cell_bg);
+                }
+            }
+
+            // Somehow after setBackgroundResource, the padding collapse.
+            // This is to recover the padding
+            cellView.setPadding(leftPadding, topPadding, rightPadding,
+                    bottomPadding);
+
+            // Set custom color if required
+            setCustomResources(dateTime, cellView, tv1);
         }
-
-        tv1.setTextSize(20);
-        tv1.setText("" + dateTime.getDay());
-        tv2.setTextSize(9);
-        // Don't disply the schedule info for past dates
-        tv2.setText("hh:mm\nxxh:xxm");
-        // Display schedule and duration for current/future dates
-        if(dateTime.gteq(getToday())) {
-            tv2.setTextColor(Color.BLUE);
-            tv2.setText(this.time + this.time_mode + "\n" + duration);
-        }
-
-        // Somehow after setBackgroundResource, the padding collapse.
-        // This is to recover the padding
-        cellView.setPadding(leftPadding, topPadding, rightPadding,
-                bottomPadding);
-
-        // Set custom color if required
-        setCustomResources(dateTime, cellView, tv1);
-
         return cellView;
     }
 }

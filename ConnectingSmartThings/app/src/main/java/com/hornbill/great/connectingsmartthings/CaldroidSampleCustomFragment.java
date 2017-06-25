@@ -16,6 +16,7 @@ public class CaldroidSampleCustomFragment extends CaldroidFragment {
 
         // TODO Auto-generated method stub
         return new CaldroidSampleCustomAdapter(getActivity(), month, year,
-                getCaldroidData(), extraData, args.getInt("recurrence"), args.getString("time"), args.getString("time_mode"), args.getString("duration"));
+                getCaldroidData(), extraData, args.getInt("recurrence"),args.getInt("dow"),args.getInt("dom"),
+                args.getString("time"),args.getString("time_mode"), args.getString("duration"));
     }
 }

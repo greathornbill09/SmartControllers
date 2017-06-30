@@ -62,8 +62,6 @@ public class controlPage extends Fragment implements AdapterView.OnItemSelectedL
         } else {
             Log.w(TAG,"Could not fetch the bluetooth service");
         }
-
-
     }
 
     @Override
@@ -161,8 +159,6 @@ public class controlPage extends Fragment implements AdapterView.OnItemSelectedL
                 sendLightCustomCharacteristicDatafromGlobalStructure();
             }
         });
-
-
 
         return rootView;
     }

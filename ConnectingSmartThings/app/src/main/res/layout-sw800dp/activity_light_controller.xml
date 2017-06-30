@@ -11,37 +11,145 @@
     android:background="@drawable/home_screen"
     tools:context="com.hornbill.great.connectingsmartthings.LightController">
 
+    <TextView
+        android:id="@+id/switchStatus"
+        android:text="Light On/Off"
+        android:textSize="22dp"
+        android:textColor="@color/White"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_alignBaseline="@+id/mySwitch"
+        android:layout_alignBottom="@+id/mySwitch"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Switch
         android:id="@+id/mySwitch"
         android:textColor="@color/White"
-        android:layout_width="110dp"
-        android:layout_alignParentTop="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="0dp"
+        android:layout_toRightOf="@+id/scheduleTrigger"
+        android:layout_toEndOf="@+id/scheduleTrigger"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="13dp"
-        android:layout_height="38dp" />
+        android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:id="@+id/dispschedule"
+        android:text="Schedule: Daily"
+        android:textSize="25dp"
+        android:textColor="@color/Black"
+        android:background="@color/NavajoWhite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip"
+        android:gravity="center"
+        android:layout_below="@+id/mySwitch"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="0dp"/>
+
+    <TextView
+        android:id="@+id/ScheduleLighting"
+        android:text="Date/Time"
+        android:textSize="20dp"
+        android:textColor="@color/White"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/dispschedule"
+        android:layout_alignBaseline="@+id/mySchedule"
+        android:layout_alignBottom="@+id/mySchedule"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <Button
+        android:id="@+id/mySchedule"
+        android:textColor="@color/Black"
+        android:background="@drawable/calendar"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_below="@+id/dispschedule"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/DurationOflighting"
+        android:text="Duration"
+        android:textSize="20dp"
+        android:textColor="@color/White"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ScheduleLighting"
+        android:layout_marginTop="20dp"
+        android:layout_alignBaseline="@+id/myScheduleDuration"
+        android:layout_alignBottom="@+id/myScheduleDuration"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <Button
+        android:id="@+id/myScheduleDuration"
+        android:textColor="@color/Black"
+        android:background="@drawable/clock"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_below="@+id/mySchedule"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/FrequencyOflighting"
+        android:text="Recurrence"
+        android:textSize="20dp"
+        android:textColor="@color/White"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@+id/DurationOflighting"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:id="@+id/spinSelect"
+        android:textSize="12pt"
+        android:textColor="@color/White"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/repeat"
+        style="@style/SpinnerTheme"
+        android:layout_below="@+id/myScheduleDuration"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="0dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:id="@+id/scheduleTrigger"
+        android:text="Apply"
+        android:textSize="20sp"
+        android:textColor="@color/Black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/btn_default"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
     <TableLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/scheduleDetails"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/FrequencyOflighting"
-        android:layout_marginTop="95dp"
-        android:layout_above="@+id/scheduleTrigger">
-
-        <TableRow
-            android:id="@+id/tableRow1"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent">
-
-            <TextView
-                android:id="@+id/TextView01" android:text="Schedule: Daily"
-                android:layout_weight="1" android:background="@color/NavajoWhite"
-                android:textColor="#000000"
-                android:padding="5dip" android:gravity="center"/>
-        </TableRow>
+        android:layout_above="@+id/scheduleTrigger"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <TableRow
             android:id="@+id/tableRow2"
@@ -52,7 +160,7 @@
                 android:id="@+id/image1"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="65dp"
+                android:layout_height="115dp"
                 android:scaleType="center"
                 android:background="@layout/cell_layout"
                 android:src="@drawable/lightbutton" />
@@ -61,7 +169,7 @@
                 android:id="@+id/image1"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="65dp"
+                android:layout_height="115dp"
                 android:scaleType="center"
                 android:background="@layout/cell_layout"
                 android:src="@drawable/lightbutton" />
@@ -70,7 +178,7 @@
                 android:id="@+id/image1"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="65dp"
+                android:layout_height="115dp"
                 android:scaleType="center"
                 android:background="@layout/cell_layout"
                 android:src="@drawable/lightbutton" />
@@ -79,7 +187,7 @@
                 android:id="@+id/image1"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="65dp"
+                android:layout_height="115dp"
                 android:scaleType="center"
                 android:background="@layout/cell_layout"
                 android:src="@drawable/lightbutton" />
@@ -88,7 +196,7 @@
             android:id="@+id/image1"
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="65dp"
+            android:layout_height="115dp"
             android:scaleType="center"
             android:background="@layout/cell_layout"
             android:src="@drawable/lightbutton" />
@@ -97,15 +205,16 @@
                 android:id="@+id/image1"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="65dp"
+                android:layout_height="115dp"
                 android:scaleType="center"
                 android:background="@layout/cell_layout"
                 android:src="@drawable/lightbutton" />
+
             <ImageView
                 android:id="@+id/image1"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="65dp"
+                android:layout_height="115dp"
                 android:scaleType="center"
                 android:background="@layout/cell_layout"
                 android:src="@drawable/lightbutton" />
@@ -118,165 +227,69 @@
             android:layout_width="match_parent">
 
             <TextView
-                android:id="@+id/TextView01" android:text="SUN\n9:30pm\n01:10"
+                android:id="@+id/TextView01" android:text="SUN\n9:30\npm\n01:10"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
-                android:textSize="13dp"
+                android:textSize="20dp"
                 android:gravity="center"
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView02" android:text="MON\n9:30pm\n01:10"
+                android:id="@+id/TextView02" android:text="MON\n9:30\npm\n01:10"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
-                android:textSize="13dp"
+                android:textSize="20dp"
                 android:gravity="center"
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView03" android:text="TUE\n9:30pm\n01:10"
+                android:id="@+id/TextView03" android:text="TUE\n9:30\npm\n01:10"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
-                android:textSize="13dp"
+                android:textSize="20dp"
                 android:gravity="center"
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView04" android:text="WED\n9:30pm\n01:10"
+                android:id="@+id/TextView04" android:text="WED\n9:30\npm\n01:10"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
-                android:textSize="13dp"
+                android:textSize="20dp"
                 android:gravity="center"
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView05" android:text="THU\n9:30pm\n01:10"
+                android:id="@+id/TextView05" android:text="THU\n9:30\npm\n01:10"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
-                android:textSize="13dp"
+                android:textSize="20dp"
                 android:gravity="center"
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView06" android:text="FRI\n9:30pm\n01:10"
+                android:id="@+id/TextView06" android:text="FRI\n9:30\npm\n01:10"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
-                android:textSize="13dp"
+                android:textSize="20dp"
                 android:gravity="center"
                 android:layout_width="0dp" />
 
             <TextView
-                android:id="@+id/TextView07" android:text="SAT\n9:30pm\n01:10"
+                android:id="@+id/TextView07" android:text="SAT\n9:30\npm\n01:10"
                 android:layout_weight="1" android:background="@color/Black"
                 android:textColor="@color/White"
                 android:padding="3dip"
-                android:textSize="13dp"
+                android:textSize="20dp"
                 android:gravity="center"
                 android:layout_width="0dp" />
-
-
         </TableRow>
 
     </TableLayout>
-
-    <Button
-        android:text="Schedule"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/Black"
-        android:id="@+id/scheduleTrigger"
-        android:background="@android:drawable/btn_default"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:layout_width="130dp"
-        android:id="@+id/mySchedule"
-        android:textColor="@color/Black"
-        android:layout_height="130dp"
-        android:background="@drawable/calendar"
-        android:layout_below="@+id/switchStatus"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="12dp" />
-
-    <Spinner
-        android:id="@+id/spinSelect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12pt"
-        android:textColor="@color/White"
-        android:entries="@array/repeat"
-        style="@style/SpinnerTheme"
-        android:layout_marginTop="44dp"
-        android:layout_below="@+id/myScheduleDuration"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignLeft="@+id/myScheduleDuration"
-        android:layout_alignStart="@+id/myScheduleDuration" />
-
-    <TextView
-        android:text="Recurrence"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/FrequencyOflighting"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_alignBaseline="@+id/spinSelect"
-        android:layout_alignBottom="@+id/spinSelect"
-        android:layout_alignLeft="@+id/DurationOflighting"
-        android:layout_alignStart="@+id/DurationOflighting" />
-
-    <TextView
-        android:text="Duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/DurationOflighting"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_alignBaseline="@+id/myScheduleDuration"
-        android:layout_alignBottom="@+id/myScheduleDuration"
-        android:layout_alignLeft="@+id/ScheduleLighting"
-        android:layout_alignStart="@+id/ScheduleLighting" />
-
-    <TextView
-        android:id="@+id/switchStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Aqua Light On/Off"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_alignBaseline="@+id/mySwitch"
-        android:layout_alignBottom="@+id/mySwitch"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:text="Date/Time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ScheduleLighting"
-        android:textColor="@color/White"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_alignBaseline="@+id/mySchedule"
-        android:layout_alignBottom="@+id/mySchedule"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="130dp"
-        android:id="@+id/myScheduleDuration"
-        android:layout_height="130dp"
-        android:background="@drawable/clock"
-        android:layout_marginTop="15dp"
-        android:layout_below="@+id/mySchedule"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

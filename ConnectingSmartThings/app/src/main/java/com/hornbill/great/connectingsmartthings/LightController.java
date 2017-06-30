@@ -111,6 +111,7 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
             byte[]data = new byte[9];
+            data[0] = 0;
             if (isChecked){
                 Log.w(TAG,"Write On");
                 data[1]= 1;
@@ -415,12 +416,11 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
                 break;
         }
         // Display the upcoming recurrence
-        TableRow row1 = (TableRow) scheduleView.getChildAt(0);
-        TextView et = (TextView) row1.getChildAt(0);
+        TextView et = (TextView) findViewById(R.id.dispschedule);
         et.setText(scheduleRecurrence);
 
         // Display next few upcoming schedule time/duration
-        TableRow row3 = (TableRow) scheduleView.getChildAt(2);
+        TableRow row3 = (TableRow) scheduleView.getChildAt(1);
         this.ti_hh = ((globalData) activity.getApplication()).getAquaLightChar("lighthours");
         this.ti_mm = ((globalData) activity.getApplication()).getAquaLightChar("lightminutes");
         hourly = ((globalData) activity.getApplication()).getAquaLightChar("hourly");
@@ -464,21 +464,21 @@ public class LightController extends FragmentActivity implements AdapterView.OnI
 
     private void time_int_string() {
         int ti_hh = this.ti_hh;
-        this.time_mode = " am";
+        this.time_mode = "\n am";
 
         if (this.ti_hh >= 12) {
             ti_hh = this. ti_hh == 12 ? 12 : this.ti_hh % 12;
-            this.time_mode = " pm";
+            this.time_mode = "\n pm";
         }
 
         if (ti_hh == 0) {
             ti_hh = 12;
-            this.time_mode = " am";
+            this.time_mode = "\n am";
         }
 
         if (this.ti_hh >= 24) {
             this.ti_hh -= 24;
-            this.time_mode = " am";
+            this.time_mode = "\n am";
         }
 
         this.time = Integer.toString(ti_hh) + ":";

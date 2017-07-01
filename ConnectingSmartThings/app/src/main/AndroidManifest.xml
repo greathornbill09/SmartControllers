@@ -42,9 +42,6 @@
             android:name=".ControlCentre"
             android:theme="@style/MyTheme" />
         <activity
-            android:name=".LightController"
-            android:theme="@style/MyTheme" />
-        <activity
             android:name=".MotorController"
             android:theme="@style/MyTheme" />
         <activity

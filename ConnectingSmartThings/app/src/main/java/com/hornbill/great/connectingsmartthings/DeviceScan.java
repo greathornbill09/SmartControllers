@@ -728,7 +728,7 @@ public class DeviceScan extends ListActivity {
                     ((globalData) activity.getApplication()).setAquaLightChar("lightrecurrences", (scheduleBuffer.get(9)));
                     ((globalData) activity.getApplication()).setAquaLightChar("lightdurationhours", (scheduleBuffer.get(10)));
                     ((globalData) activity.getApplication()).setAquaLightChar("lightdurationminutes", (scheduleBuffer.get(11)));
-                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaLightChar("maxdevices"));
+                    Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE Max Devices " + ((globalData) activity.getApplication()).getAquaLightChar("maxdevices"));
                     Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaLightChar("lightmode"));
                     Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaLightChar("lightstatus"));
                     Log.w(TAG, "mGattUpdateReceiver : ACTION_AQUA_LIGHT_CHAR_AVAILABLE " + ((globalData) activity.getApplication()).getAquaLightChar("lightdom"));

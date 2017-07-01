@@ -34,6 +34,8 @@ public class LightControllerTab extends AppCompatActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private Activity activity = this;
 
+    public static int deviceId = 128;
+
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -114,6 +116,7 @@ public class LightControllerTab extends AppCompatActivity {
             switch (position){
                 case 0:
                     controlPage controlscreen = new controlPage();
+                    controlscreen.deviceIdentifier = deviceId;
                     return controlscreen;
                 case 1:
                     schedulePage schedulescreen = new schedulePage();

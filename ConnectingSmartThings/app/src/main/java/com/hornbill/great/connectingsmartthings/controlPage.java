@@ -41,6 +41,7 @@ public class controlPage extends Fragment implements AdapterView.OnItemSelectedL
     public int lightScheduleDurHour = 0;
     public int lightScheduleWindow = 0;
     public int lightScheduleDurMin = 0;
+    public int deviceIdentifier;
 
     private BluetoothLeService mLightBluetoothService;
     private final static String TAG = controlPage.class.getSimpleName();
@@ -376,6 +377,7 @@ public class controlPage extends Fragment implements AdapterView.OnItemSelectedL
         Log.w(TAG, "lightScheduleButton "+lightScheduleData[0]);
 
         lightScheduleData[0] = (byte)0x80;
+        lightScheduleData[0] |= deviceIdentifier;
         Log.w(TAG, "lightScheduleButton "+((globalData)getActivity().getApplication()).getAquaLightChar("maxdevices"));
         lightScheduleData[1] = ((globalData)getActivity().getApplication()).getAquaLightChar("maxdevices");
         Log.w(TAG, "lightScheduleButton "+((globalData)getActivity().getApplication()).getAquaLightChar("lightmode"));

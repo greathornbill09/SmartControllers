@@ -31,7 +31,8 @@ public class ControlCentre extends Activity {
         motor_btn.setVisibility(View.VISIBLE);
         dummy_btn.setVisibility(View.VISIBLE);
         final Intent onMotorClickIntent = new Intent(this,MotorController.class);
-        final Intent onDummyClickIntent = new Intent(this,LightControllerTab.class);
+        //final Intent onDummyClickIntent = new Intent(this,LightControllerTab.class);
+        final Intent onDummyClickIntent = new Intent(this,DeviceList.class);
         dummy_btn.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 Log.e(TAG, "Light Button On Click");

@@ -93,6 +93,8 @@ public class BluetoothLeService extends Service {
     public final static UUID UUID_CLIENT_CHARACTERISTIC_CONFIG =
             UUID.fromString(SampleGattAttributes.CLIENT_CHARACTERISTIC_CONFIG);
 
+    public Boolean deviceCharInRead = Boolean.FALSE;
+
     // Implements callback methods for GATT events that the app cares about.  For example,
     // connection change and services discovered.
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
@@ -126,7 +128,7 @@ public class BluetoothLeService extends Service {
                 /* Read the characteristics obtained*/
                 if (characteristic != null) {
                     Log.w(TAG, "Trying to read Aqua charatceristics==> "+characteristic);
-                    readCharacteristic(characteristic);
+                    readCharacteristic(characteristic,Boolean.FALSE);
                } else {
                     Log.w(TAG, "Failed to obtain read characteristic ");
                     broadcastUpdate(ACTION_NO_CHAR_AVAILABLE);
@@ -161,14 +163,16 @@ public class BluetoothLeService extends Service {
                     characteristic = getAquaCharacteristic(UUID_AQUA_SERVICE, UUID_AQUA_LIGHT_CHARACTERISTIC);
                     if (characteristic != null) {
                         Log.w(TAG, "onCharacteristicRead: aquaDeviceLightReadInProgress ===");
-                        readCharacteristic(characteristic);
+                        readCharacteristic(characteristic,Boolean.FALSE);
                     }
-                } else if (characteristic.getUuid().compareTo(UUID_AQUA_LIGHT_CHARACTERISTIC) == 0) {
+                } else if (characteristic.getUuid().compareTo(UUID_AQUA_LIGHT_CHARACTERISTIC) == 0)  {
                     broadcastUpdate(ACTION_AQUA_LIGHT_CHAR_AVAILABLE, characteristic);
-                    characteristic = getAquaCharacteristic(UUID_AQUA_SERVICE, UUID_AQUA_MOTOR_CHARACTERISTIC);
-                    if (characteristic != null) {
-                        Log.w(TAG, "onCharacteristicRead: aquaDeviceMotorReadInProgress ===");
-                        readCharacteristic(characteristic);
+                    if(deviceCharInRead != Boolean.TRUE){
+                        characteristic = getAquaCharacteristic(UUID_AQUA_SERVICE, UUID_AQUA_MOTOR_CHARACTERISTIC);
+                        if (characteristic != null) {
+                            Log.w(TAG, "onCharacteristicRead: aquaDeviceMotorReadInProgress ===");
+                            readCharacteristic(characteristic,Boolean.FALSE);
+                        }
                     }
                 } else if (characteristic.getUuid().compareTo(UUID_AQUA_MOTOR_CHARACTERISTIC) == 0){
                     broadcastUpdate(ACTION_AQUA_MOTOR_CHAR_AVAILABLE, characteristic);
@@ -466,11 +470,16 @@ public class BluetoothLeService extends Service {
      *
      * @param characteristic The characteristic to read from.
      */
-    public void readCharacteristic(BluetoothGattCharacteristic characteristic) {
+    public void readCharacteristic(BluetoothGattCharacteristic characteristic,Boolean isDeviceCharacteristicRead) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return;
         }
+        if(isDeviceCharacteristicRead == Boolean.TRUE)
+        {
+            deviceCharInRead = Boolean.TRUE;
+        }
+        Log.w(TAG, "readCharacteristic");
         mBluetoothGatt.readCharacteristic(characteristic);
     }
 

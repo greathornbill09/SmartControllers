@@ -371,30 +371,33 @@ public class controlPage extends Fragment implements AdapterView.OnItemSelectedL
 
 
     private void sendLightCustomCharacteristicDatafromGlobalStructure(){
-        byte[]lightScheduleData = new byte[10];
+        byte[]lightScheduleData = new byte[12];
 
         Log.w(TAG, "lightScheduleButton "+lightScheduleData[0]);
 
+        lightScheduleData[0] = (byte)0x80;
+        Log.w(TAG, "lightScheduleButton "+((globalData)getActivity().getApplication()).getAquaLightChar("maxdevices"));
+        lightScheduleData[1] = ((globalData)getActivity().getApplication()).getAquaLightChar("maxdevices");
         Log.w(TAG, "lightScheduleButton "+((globalData)getActivity().getApplication()).getAquaLightChar("lightmode"));
-        lightScheduleData[0] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightmode");
+        lightScheduleData[2] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightmode");
         Log.w(TAG, "lightScheduleButton "+((globalData)getActivity().getApplication()).getAquaLightChar("lightstatus"));
-        lightScheduleData[1] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightstatus");
+        lightScheduleData[3] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightstatus");
         Log.w(TAG, "lightScheduleButton "+((globalData)getActivity().getApplication()).getAquaLightChar("lightdom"));
-        lightScheduleData[2] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightdom");
+        lightScheduleData[4] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightdom");
         Log.w(TAG, "lightScheduleButton "+((globalData)getActivity().getApplication()).getAquaLightChar("lightdow"));
-        lightScheduleData[3] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightdow");
+        lightScheduleData[5] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightdow");
         Log.w(TAG, "lightScheduleButton "+((globalData)getActivity().getApplication()).getAquaLightChar("hourly"));
-        lightScheduleData[4] = ((globalData)getActivity().getApplication()).getAquaLightChar("hourly");
+        lightScheduleData[6] = ((globalData)getActivity().getApplication()).getAquaLightChar("hourly");
         Log.w(TAG, "lightScheduleButton "+((globalData)getActivity().getApplication()).getAquaLightChar("lighthours"));
-        lightScheduleData[5] = ((globalData)getActivity().getApplication()).getAquaLightChar("lighthours");
+        lightScheduleData[7] = ((globalData)getActivity().getApplication()).getAquaLightChar("lighthours");
         Log.w(TAG, "lightScheduleButton "+((globalData)getActivity().getApplication()).getAquaLightChar("lightminutes"));
-        lightScheduleData[6] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightminutes");
+        lightScheduleData[8] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightminutes");
         Log.w(TAG, "lightScheduleButton "+((globalData)getActivity().getApplication()).getAquaLightChar("lightrecurrences"));
-        lightScheduleData[7] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightrecurrences");
+        lightScheduleData[9] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightrecurrences");
         Log.w(TAG, "lightScheduleButton "+((globalData)getActivity().getApplication()).getAquaLightChar("lightdurationhours"));
-        lightScheduleData[8] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightdurationhours");
+        lightScheduleData[10] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightdurationhours");
         Log.w(TAG, "lightScheduleButton "+((globalData)getActivity().getApplication()).getAquaLightChar("lightdurationminutes"));
-        lightScheduleData[9] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightdurationminutes");
+        lightScheduleData[11] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightdurationminutes");
 
         Log.w(TAG," Writing Schedule details over BLE");
         mLightBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_LIGHT_CHARACTERISTIC,lightScheduleData);

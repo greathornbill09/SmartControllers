@@ -62,13 +62,13 @@
         android:layout_marginRight="25dp"/>
 
     <Button
-        android:layout_width="65dp"
         android:id="@+id/myScheduleDuration"
         android:textColor="@color/Black"
-        android:layout_height="65dp"
         android:background="@drawable/clock"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_gravity="end"
-        android:layout_marginTop="170dp"
+        android:layout_marginTop="175dp"
         android:layout_marginRight="25dp"/>
 
     <TextView
@@ -84,10 +84,9 @@
 
     <Spinner
         android:id="@+id/spinSelect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="10pt"
-        android:textColor="@color/White"
+        android:background="@drawable/recurrence"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:entries="@array/repeat"
         style="@style/SpinnerTheme"
         android:layout_marginTop="240dp"

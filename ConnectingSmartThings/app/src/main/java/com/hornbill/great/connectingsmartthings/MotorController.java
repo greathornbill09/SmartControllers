@@ -637,7 +637,7 @@ public class MotorController extends FragmentActivity implements AdapterView.OnI
         motorScheduleData[10] = ((globalData)activity.getApplication()).getAquaMotorChar("motordurationminutes");
 
         Log.w(TAG," Writing Schedule details over BLE");
-        motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC,motorScheduleData);
+        motorBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_MOTOR_CHARACTERISTIC, motorScheduleData, "motorctrl");
     }
 
     @Override

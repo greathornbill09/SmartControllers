@@ -37,7 +37,7 @@ public class DeviceList extends Activity {
 
     int devId = 0;
     int maxDevices = 0;
-    public static int deviceId =128;
+    public static int deviceId = 128;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,23 +61,25 @@ public class DeviceList extends Activity {
         arrayList = new ArrayList<String>();
         while(devId < maxDevices) {
             arrayList.add("Device " + devId);
-            devId ++;
+            devId++;
         }
-        adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,arrayList);
+
+        adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, arrayList);
         mainListView.setAdapter(adapter);
 
         mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.w(TAG, "Device that is clicked --> "+i);
-                enablePeripheralGattDatabase(i);
+                enablePeripheralGattDatabase(i & 0x7f);
             }
         });
     }
 
     //Enable the peripheral database
     private void enablePeripheralGattDatabase(int devId){
-        byte[]lightScheduleData = new byte[12];
+        // Array of 12 byte initialised to zero
+        byte[]lightScheduleData = new byte[]{0,0,0,0,0,0,0,0,0,0,0,0};
 
         characteristic = mBluetoothLeService.getAquaCharacteristic(BluetoothLeService.UUID_AQUA_SERVICE,BluetoothLeService.UUID_AQUA_RTC_CHARACTERISTIC);
 
@@ -85,23 +87,13 @@ public class DeviceList extends Activity {
 
         deviceId = devId;
 
-        lightScheduleData[0] = (byte)0x00;
         lightScheduleData[0] |= devId;
-        lightScheduleData[1] = (byte)0x00;
-        lightScheduleData[2] = (byte)0x00;
-        lightScheduleData[3] = (byte)0x00;
-        lightScheduleData[4] = (byte)0x00;
-        lightScheduleData[5] = (byte)0x00;
-        lightScheduleData[6] = (byte)0x00;
-        lightScheduleData[7] = (byte)0x00;
-        lightScheduleData[8] = (byte)0x00;
-        lightScheduleData[9] = (byte)0x00;
-        lightScheduleData[10] = (byte)0x00;
-        lightScheduleData[11] = (byte)0x00;
 
-        for(int i =0; i< 12; i++)
-        Log.w(TAG," " + lightScheduleData[i] + "\n");
-        mBluetoothLeService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_LIGHT_CHARACTERISTIC,lightScheduleData);
+        for(int i =0; i < 12; i++) {
+            Log.w(TAG, " " + lightScheduleData[i] + "\n");
+        }
+
+        mBluetoothLeService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_LIGHT_CHARACTERISTIC, lightScheduleData, "devicelist");
     }
 
     // Code to manage Service lifecycle.
@@ -135,9 +127,7 @@ public class DeviceList extends Activity {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             if (BluetoothLeService.ACTION_AQUA_LIGHT_CHAR_AVAILABLE.equals(action)) {
-
                 Log.w(TAG,"Characteristic response for the respective device Id\n");
-
 
                 /* Update the Global Database */
                 final byte[] scheduleData;
@@ -147,9 +137,7 @@ public class DeviceList extends Activity {
                     final Intent onDummyClickIntent = new Intent(activity,LightControllerTab.class);
                     LightControllerTab.deviceId = deviceId;
                     startActivity(onDummyClickIntent);
-
                 }
-
             }
         }
     };

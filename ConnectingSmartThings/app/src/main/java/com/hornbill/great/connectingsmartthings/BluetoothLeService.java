@@ -57,6 +57,7 @@ public class BluetoothLeService extends Service {
     private String mBluetoothDeviceAddress;
     public BluetoothGatt mBluetoothGatt;
     private int mConnectionState = STATE_DISCONNECTED;
+    private String writedatacustomcharcaller;
 
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
@@ -229,7 +230,9 @@ public class BluetoothLeService extends Service {
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                if (characteristic.getUuid().compareTo(UUID_AQUA_LIGHT_CHARACTERISTIC) == 0) {
+                if ((characteristic.getUuid().compareTo(UUID_AQUA_LIGHT_CHARACTERISTIC) == 0) &&
+                        writedatacustomcharcaller == "devicelist") {
+                    writedatacustomcharcaller = null;
                     Log.w(TAG, "Reading the characteristics" + characteristic);
                     readCharacteristic(characteristic, Boolean.TRUE);
                 }
@@ -520,8 +523,9 @@ public class BluetoothLeService extends Service {
         return mBluetoothGatt.getServices();
     }
 
-    public void writeDataToCustomCharacteristic(UUID uuid,byte[] data){
+    public void writeDataToCustomCharacteristic(UUID uuid,byte[] data, String caller){
         BluetoothGattCharacteristic charValue=null;
+        writedatacustomcharcaller = caller;
 
         Log.w(TAG, "writeDataToCustomCharacteristic:"+data);
 

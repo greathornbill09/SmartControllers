@@ -27,7 +27,7 @@
     </style>
 
     <style name="SpinnerTheme" parent="android:Widget.Spinner">
-        <item name="android:background">@drawable/spinner_bg</item>
+        <item name="android:background">@drawable/recurrence</item>
         <item name="android:layout_marginRight">25dp</item>
     </style>
 
@@ -50,7 +50,7 @@
 
     <style name="Switch.control" parent="Theme.AppCompat.Light">
         <!-- active thumb & track color (30% transparency) -->
-        <item name="colorControlActivated">@color/DeepPink</item>
+        <item name="colorControlActivated">@color/Red</item>
         <item name="colorSwitchThumbNormal">@color/GhostWhite</item>
     </style>
 

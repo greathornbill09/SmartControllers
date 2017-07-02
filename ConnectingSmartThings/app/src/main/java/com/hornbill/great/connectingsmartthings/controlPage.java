@@ -186,8 +186,9 @@ public class controlPage extends Fragment implements AdapterView.OnItemSelectedL
                 // TODO : pop numberpicker to get hourly data, validate as well
                 //updateGlobalSpace("hourly",(byte)4);
                 lightScheduleDurHour = ((globalData)getActivity().getApplication()).getAquaLightChar("lightdurationhours");
+                lightScheduleDurMin = ((globalData)getActivity().getApplication()).getAquaLightChar("lightdurationminutes");
                 Log.w(TAG,"lightScheduleDurHour"+lightScheduleDurHour );
-                if(lightScheduleDurHour == 0)
+                if(lightScheduleDurHour == 0 && lightScheduleDurMin == 0)
                 {
                     AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getActivity());
 
@@ -402,6 +403,6 @@ public class controlPage extends Fragment implements AdapterView.OnItemSelectedL
         lightScheduleData[11] = ((globalData)getActivity().getApplication()).getAquaLightChar("lightdurationminutes");
 
         Log.w(TAG," Writing Schedule details over BLE");
-        mLightBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_LIGHT_CHARACTERISTIC,lightScheduleData);
+        mLightBluetoothService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_LIGHT_CHARACTERISTIC,lightScheduleData, "controlpage");
     }
 }

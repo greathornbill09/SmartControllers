@@ -225,6 +225,16 @@ public class BluetoothLeService extends Service {
                 }
             }
         }
+
+        @Override
+        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                if (characteristic.getUuid().compareTo(UUID_AQUA_LIGHT_CHARACTERISTIC) == 0) {
+                    Log.w(TAG, "Reading the characteristics" + characteristic);
+                    readCharacteristic(characteristic, Boolean.TRUE);
+                }
+            }
+        }
     };
 
     private void broadcastUpdate(final String action) {

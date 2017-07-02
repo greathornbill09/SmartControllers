@@ -71,11 +71,8 @@ public class DeviceList extends Activity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.w(TAG, "Device that is clicked --> "+i);
                 enablePeripheralGattDatabase(i);
-
             }
         });
-
-
     }
 
     //Enable the peripheral database
@@ -105,9 +102,6 @@ public class DeviceList extends Activity {
         for(int i =0; i< 12; i++)
         Log.w(TAG," " + lightScheduleData[i] + "\n");
         mBluetoothLeService.writeDataToCustomCharacteristic(BluetoothLeService.UUID_AQUA_LIGHT_CHARACTERISTIC,lightScheduleData);
-        Log.w(TAG,"Reading the characteristics" +characteristic);
-        mBluetoothLeService.readCharacteristic(characteristic,Boolean.TRUE);
-
     }
 
     // Code to manage Service lifecycle.
